@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" >
+	<head>
+		<title>SQLparser.js</title>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<p><em>Check console to see the real output</em></p>
+		<hr>
+		<script src="sqlParser.js"></script>
+		<script>
+			window.onload = function () {
+				// Example queries
+				var q = new Array();
+				q[0] = 'SELECT table1.champ1, table2.champ2 AS "label", FONCTION2(table3.champ3, 5,12,13,49), FONCTION(table3.champ3, 5) "autre label" FROM table1, table2 LEFT JOIN table2 ON table2.id = table1.id_table1 JOIN table3 ON table3.id = table2.id_table3 AND table2.truc = 5 OR table.batman = table.robin LEFT JOIN table2 ON table2.id = table1.id_table1 WHERE table1.machin = "bidule" AND (table2.truc = "chose" OR NOT table3.batman = 10) ORDER BY table1.id ASC, table2.id DESC LIMIT 1,100';
+				q[1] = 'DELETE FROM table WHERE id = 5;';
+				q[2] = 'DELETE FROM table WHERE id = 5; DELETE FROM table WHERE id = 5; SELECT FONCTION_BIDON(1;2;3) FROM table;';
+				q[3] = 'SELECT * FROM table ORDER BY id ASC';
+				q[4] = 'SELECT EXTRACT(MICROSECOND FROM "2003-01-02 10:30:00.00123"), FONCTION_BIDON(1;2;3) FROM table INNER JOIN table2 ON table2.id = table.id_table2';
+				q[5] = 'SELECT * FROM table WHERE batman = 1';
+				q[6] = 'INSERT INTO table (test,test2, test3, contents) VALUES(1,2,3, "grogktr optkrhorp, geophgktrhopk , t")';
+				q[7] = 'UPDATE table SET truc = "machin", bidule=7 WHERE bool_column';
+				
+				// Parse & display
+				q.forEach(function (item, key) {
+					var div = document.createElement('div');
+					div.id = 'q' + key;
+					div.innerHTML = parseSQL(item);
+					document.body.appendChild(div);
+					
+					if (key != q.length - 1) {
+						var br = document.createElement('br');
+						document.body.appendChild(br);
+						var hr = document.createElement('hr');
+						document.body.appendChild(hr);
+					}
+				});
+			};
+		</script>
+	</body>
+</html>
