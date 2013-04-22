@@ -34,7 +34,7 @@ sqlParser.js **is not a full SQL parser!**
 It only support few SQL mechanisms and keywords.
 Feel free to make a pull request/issue.
 
-*sqlParser.js was made for @GestionAIR.*
+*sqlParser.js was made for @GestionAIR *
 
 ## License
 
