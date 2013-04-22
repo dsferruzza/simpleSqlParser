@@ -19,6 +19,7 @@
 				q[5] = 'SELECT * FROM table WHERE batman = 1';
 				q[6] = 'INSERT INTO table (test,test2, test3, contents) VALUES(1,2,3, "grogktr optkrhorp, geophgktrhopk , t")';
 				q[7] = 'UPDATE table SET truc = "machin", bidule=7 WHERE bool_column';
+				q[8] = 'SELECT table1.column1, UPPER(table2.column2) AS "alias for column2" FROM table1 LEFT JOIN table2 ON `table1`.`id` = table2.id_table1 WHERE table1.column1 AND (table2.column2 != 5 OR table.column3 IS NOT NULL) ORDER BY table1.id ASC, table2.id DESC LIMIT 5;';
 				
 				// Parse & display
 				q.forEach(function (item, key) {
