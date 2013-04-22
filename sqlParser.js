@@ -72,7 +72,7 @@ function parseSQL(query) {
 	
 	// Delete duplicates (caused, for example, by JOIN and LEFT JOIN)
 	var busy_until = 0;
-	parts_order.forEach(function (item, key, _this) {
+	parts_order.forEach(function (item, key) {
 		if (busy_until > key) delete parts_order[key];
 		else {
 			busy_until = parseInt(key) + item.length;
@@ -202,5 +202,234 @@ function parseSQL(query) {
 	console.log(query);
 	console.log(result);
 	
+
+	
+	
+
+	// Parse conditions
+	if (typeof result['WHERE'] == 'string') {
+		result['WHERE'] = CondParser.parse(result['WHERE']);
+	}
+	if (typeof result['LEFT JOIN'] != 'undefined') {
+		if (typeof result['LEFT JOIN']['cond'] != 'undefined') {
+			result['LEFT JOIN']['cond'] = CondParser.parse(result['LEFT JOIN']['cond']);
+		}
+		else {
+			result['LEFT JOIN'].forEach(function (item, key) {
+				result['LEFT JOIN'][key]['cond'] = CondParser.parse(item['cond']);
+			});
+		}
+	}
+	if (typeof result['INNER JOIN'] != 'undefined') {
+		if (typeof result['INNER JOIN']['cond'] != 'undefined') {
+			result['INNER JOIN']['cond'] = CondParser.parse(result['INNER JOIN']['cond']);
+		}
+		else {
+			result['INNER JOIN'].forEach(function (item, key) {
+				result['INNER JOIN'][key]['cond'] = CondParser.parse(item['cond']);
+			});
+		}
+	}
+	
 	return output;
+}
+
+
+/*
+ * LEXER FOR SQL CONDITIONS
+ */
+
+// Constructor
+function CondLexer(source) {
+	this.source = source;
+	this.cursor = 0;
+	this.currentChar = "";
+
+	this.readNextChar();
+}
+
+CondLexer.prototype = {
+	constructor: CondLexer,
+	
+	// Read the next character (or return an empty string if cursor is at the end of the source)
+	readNextChar: function () {
+		this.currentChar = this.source[this.cursor++] || "";
+	},
+
+	// Determine the next token
+	readNextToken: function () {
+		if (/\w/.test(this.currentChar)) return this.readWord();
+		if (/["'`]/.test(this.currentChar)) return this.readString();
+		if (/[()]/.test(this.currentChar)) return this.readGroupSymbol();
+		if (/[!=<>]/.test(this.currentChar)) return this.readOperator();
+		
+		if (this.currentChar == "") return {type: 'eot', value: ''};
+		else {
+			this.readNextChar();
+			return {type: 'empty', value: ''};
+		}
+	},
+	
+	readWord: function () {
+		var tokenValue = "";
+		while (/[A-Za-z0-9_.]/.test(this.currentChar)) {
+			tokenValue += this.currentChar;
+			this.readNextChar();
+		}
+		
+		if (/(AND|OR)/i.test(tokenValue)) return {type: 'logic', value: tokenValue};
+		if (/(IS|NOT)/i.test(tokenValue)) return {type: 'operator', value: tokenValue};
+		else return {type: 'word', value: tokenValue};
+	},
+	
+	readString: function () {
+		var tokenValue = "";
+		var quote = this.currentChar;
+		
+		this.readNextChar();
+		while (this.currentChar != quote) {
+			tokenValue += this.currentChar;
+			this.readNextChar();
+		}
+		this.readNextChar();
+		
+		// Handle this case : `table`.`column`
+		if (this.currentChar == '.') {
+			tokenValue += this.currentChar;
+			this.readNextChar();
+			tokenValue += this.readString().value;
+			
+			return {type: 'word', value: tokenValue};
+		}
+		
+		return {type: 'string', value: tokenValue};
+	},
+	
+	readGroupSymbol: function () {
+		var tokenValue = this.currentChar;
+		this.readNextChar();
+
+		return {type: 'group', value: tokenValue};
+	},
+	
+	readOperator: function () {
+		var tokenValue = this.currentChar;
+		this.readNextChar();
+		
+		if (/[=<>]/.test(this.currentChar)) {
+			tokenValue += this.currentChar;
+			this.readNextChar();
+		}
+		
+		return {type: 'operator', value: tokenValue};
+	},
+};
+
+// Tokenise a string (only useful for debug)
+CondLexer.tokenize = function (source) {
+	var lexer = new CondLexer(source);
+	var tokens = [];
+	do {
+		var token = lexer.readNextToken();
+		if (token.type != 'empty') tokens.push(token);
+	}
+	while (lexer.currentChar);
+	return tokens;
+};
+
+
+/*
+ * PARSER FOR SQL CONDITIONS
+ */
+
+// Constructor
+function CondParser(source) {
+	this.lexer = new CondLexer(source);
+	this.currentToken = "";
+
+	this.readNextToken();
+}
+
+CondParser.prototype = {
+	constructor: CondParser,
+	
+	// Read the next token (skip empty tokens)
+	readNextToken: function () {
+		this.currentToken = this.lexer.readNextToken();
+		while (this.currentToken.type == 'empty') this.currentToken = this.lexer.readNextToken();
+		return this.currentToken;
+	},
+
+	// Wrapper function ; parse the source
+	parseExpressionsRecursively: function () {
+		return this.parseLogicalExpression();
+	},
+	
+	// Parse logical expressions (AND/OR)
+	parseLogicalExpression: function () {
+		var leftNode = this.parseConditionExpression();
+		var logic_operator = "";
+		
+		while (this.currentToken.type == 'logic') {
+			var logic = this.currentToken.value;
+			this.readNextToken();
+			
+			var rightNode = this.parseConditionExpression();
+			
+			// Store the current logical operator
+			if (logic_operator == "") logic_operator = logic;
+			
+			// If we are chaining the same logical operator, add nodes to existing object instead of creating another one
+			if (logic_operator == logic && typeof leftNode.terms != 'undefined') leftNode.terms.push(rightNode);
+			else leftNode = {'logic': logic, 'terms': [leftNode, rightNode]};
+		}
+		
+		return leftNode;
+	},
+	
+	// Parse conditions ([word/string] [operator] [word/string])
+	parseConditionExpression: function () {
+		var leftNode = this.parseBaseExpression();
+		
+		if (this.currentToken.type == 'operator') {
+			var operator = this.currentToken.value;
+			this.readNextToken();
+			
+			// If there are 2 adjacent operators, join them with a space (exemple: IS NOT)
+			if (this.currentToken.type == 'operator') {
+				operator += ' ' + this.currentToken.value;
+				this.readNextToken();
+			}
+			
+			var rightNode = this.parseBaseExpression();
+			
+			leftNode = {'operator': operator, 'left': leftNode, 'right': rightNode};
+		}
+		
+		return leftNode;
+	},
+	
+	// Parse base items
+	parseBaseExpression: function () {
+		var astNode = "";
+		
+		// If this is a word/string, return its value
+		if (this.currentToken.type == 'word' || this.currentToken.type == 'string') {
+			astNode = this.currentToken.value;
+			this.readNextToken();
+		}
+		// If this is a group, skip brackets and parse the inside
+		else if (this.currentToken.type == 'group') {
+			this.readNextToken();
+			astNode = this.parseExpressionsRecursively();
+			this.readNextToken();
+		}
+		
+		return astNode;
+	},
+};
+
+// Parse a string
+CondParser.parse = function (source) {
+	return new CondParser(source).parseExpressionsRecursively();
 }
