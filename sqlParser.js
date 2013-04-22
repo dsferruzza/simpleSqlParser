@@ -36,8 +36,6 @@ function unprotect(str) {
 
 
 function parseSQL(query) {
-	var output = '<strong>Query :</strong> ' + query + '<br><br>';
-	
 	// Remove semi-colons and keep only the first query
 	var semi_colon = '###semi-colon###';
 	query = query.replace(/[("'`].*;.*[)"'`]/g, function (match) {
@@ -89,16 +87,8 @@ function parseSQL(query) {
 	});
 	words = words.join('|');
 	
-	// Display parts
+	// Split parts
 	var parts = query.split(new RegExp(parts_name.join('|'), 'i'));
-	var j = 0;
-	parts_order.forEach(function (item, key) {
-		j++;
-		parts[j] = parts[j].replace(/\((.+?)\)/gi, function (match) {	// Unhide words precedently hidden with protect()
-			return match.replace(new RegExp(words, 'i'), unprotect);
-		});
-		output += '<strong>' + item + '</strong> : ' + parts[j] + '<br>';
-	});
 	
 	// Unhide words precedently hidden with protect()
 	query = query.replace(/\((.+?)\)/gi, function (match) {
@@ -199,12 +189,6 @@ function parseSQL(query) {
 			else result[item] = part_result;
 		}
 	});
-	console.log(query);
-	console.log(result);
-	
-
-	
-	
 
 	// Parse conditions
 	if (typeof result['WHERE'] == 'string') {
@@ -231,7 +215,7 @@ function parseSQL(query) {
 		}
 	}
 	
-	return output;
+	return result;
 }
 
 

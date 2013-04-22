@@ -5,8 +5,7 @@
 		<meta charset="utf-8" />
 	</head>
 	<body>
-		<p><em>Check console to see the real output</em></p>
-		<hr>
+		<p><em>Check console to see the output</em></p>
 		<script src="sqlParser.js"></script>
 		<script>
 			window.onload = function () {
@@ -23,17 +22,7 @@
 				
 				// Parse & display
 				q.forEach(function (item, key) {
-					var div = document.createElement('div');
-					div.id = 'q' + key;
-					div.innerHTML = parseSQL(item);
-					document.body.appendChild(div);
-					
-					if (key != q.length - 1) {
-						var br = document.createElement('br');
-						document.body.appendChild(br);
-						var hr = document.createElement('hr');
-						document.body.appendChild(hr);
-					}
+					console.log(item, parseSQL(item));
 				});
 			};
 		</script>
