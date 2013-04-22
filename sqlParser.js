@@ -236,7 +236,8 @@ function parseSQL(query) {
 
 
 /*
- * LEXER FOR SQL CONDITIONS
+ * LEXER & PARSER FOR SQL CONDITIONS
+ * Inspired by https://github.com/DmitrySoshnikov/Essentials-of-interpretation
  */
 
 // Constructor
@@ -337,10 +338,6 @@ CondLexer.tokenize = function (source) {
 	return tokens;
 };
 
-
-/*
- * PARSER FOR SQL CONDITIONS
- */
 
 // Constructor
 function CondParser(source) {
