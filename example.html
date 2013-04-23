@@ -11,7 +11,7 @@
 			window.onload = function () {
 				// Example queries
 				var q = new Array();
-				q[0] = 'SELECT table1.champ1, table2.champ2 AS "label", FONCTION2(table3.champ3, 5,12,13,49), FONCTION(table3.champ3, 5) "autre label" FROM table1, table2 LEFT JOIN table2 ON table2.id = table1.id_table1 JOIN table3 ON table3.id = table2.id_table3 AND table2.truc = 5 OR table.batman = table.robin LEFT JOIN table2 ON table2.id = table1.id_table1 WHERE table1.machin = "bidule" AND (table2.truc != "chose" OR `table3`.`batman`<=10) AND (machin) AND machin IS NOT NULL OR machin IS null ORDER BY table1.id ASC, table2.id DESC LIMIT 1,100';
+				q[0] = 'SELECT table1.champ1, table2.champ2 AS "label", FONCTION2(table3.champ3, 5,12,13,49), FONCTION(table3.champ3, 5) "autre label" FROM table1, table2 LEFT JOIN table2 ON table2.id = table1.id_table1 JOIN table3 ON table3.id = table2.id_table3 AND table2.truc = 5 OR table.batman = table.robin LEFT JOIN table2 ON table2.id = table1.id_table1 WHERE table1.machin = "bidule" AND (table2.truc != UPPER("chose (grth") OR `table3`.`batman`<=10) AND (machin) AND machin IS NOT NULL OR machin IS null ORDER BY table1.id ASC, table2.id DESC LIMIT 1,100';
 				q[1] = 'DELETE FROM table WHERE id = 5;';
 				q[2] = 'DELETE FROM table WHERE id = 5; DELETE FROM table WHERE id = 5; SELECT FONCTION_BIDON(1;2;3) FROM table;';
 				q[3] = 'SELECT * FROM table ORDER BY id ASC';

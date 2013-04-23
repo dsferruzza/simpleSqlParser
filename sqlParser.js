@@ -257,8 +257,25 @@ CondLexer.prototype = {
 	
 	readWord: function () {
 		var tokenValue = "";
-		while (/[A-Za-z0-9_.]/.test(this.currentChar)) {
-			tokenValue += this.currentChar;
+		var nb_brackets = 0;
+		var string = false;
+		while (/./.test(this.currentChar)) {
+			// Check if we are in a string
+			if (!string && /['"`]/.test(this.currentChar)) string = this.currentChar;
+			else if (string && this.currentChar == string) string = false;
+			else {
+				// Allow spaces inside functions (only if we are not in a string)
+				if (!string) {
+					if (this.currentChar == '(') nb_brackets++;
+					else if (this.currentChar == ')') nb_brackets--;
+				}
+				
+				// Token is finished on the first space which is outside a string or a function
+				if (this.currentChar == ' ' && nb_brackets <= 0) break;
+				
+				tokenValue += this.currentChar;
+			}
+			
 			this.readNextChar();
 		}
 		
