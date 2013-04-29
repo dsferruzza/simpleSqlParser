@@ -1,12 +1,14 @@
 
 test('trim', function () {
-	expect(8);
+	expect(9);
 
 	deepEqual(trim('test'), 'test');
 	deepEqual(trim('test '), 'test');
 	deepEqual(trim(' test'), 'test');
 	deepEqual(trim(' test '), 'test');
 	deepEqual(trim('test test'), 'test test');
+	deepEqual(trim('    test     \
+							'), 'test');
 	
 	var integer = 5;
 	var array = [0, 1, 2];
@@ -26,7 +28,7 @@ test('protect/unprotect', function () {
 	deepEqual(unprotect('###t###e###s###t###'), '#t#e#s#t#');
 	
 	var string = "this is a (complex) string, with some special chars like !:@.#ù%$^\
-	and also a line break";
+	and also a line break and des caractères français !";
 	deepEqual(unprotect(protect(string)), string);
 	
 	deepEqual(protect(''), '#');
