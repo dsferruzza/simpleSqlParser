@@ -266,16 +266,21 @@ CondLexer.prototype = {
 			else {
 				// Allow spaces inside functions (only if we are not in a string)
 				if (!string) {
+					// Token is finished if there is a closing bracket outside a string and with no opening
+					if (this.currentChar == ')' && nb_brackets <= 0) break;
+
 					if (this.currentChar == '(') nb_brackets++;
 					else if (this.currentChar == ')') nb_brackets--;
+
+					// Token is finished if there is a operator symbol outside a string
+					if (/[!=<>]/.test(this.currentChar)) break;
 				}
-				
+
 				// Token is finished on the first space which is outside a string or a function
 				if (this.currentChar == ' ' && nb_brackets <= 0) break;
-				
-				tokenValue += this.currentChar;
 			}
-			
+
+			tokenValue += this.currentChar;
 			this.readNextChar();
 		}
 		
