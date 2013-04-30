@@ -38,7 +38,7 @@ test('protect/unprotect', function () {
 });
 
 test('protect_split', function () {
-	expect(7);
+	expect(9);
 	
 	deepEqual(protect_split(',', 'test'), ['test']);
 	deepEqual(protect_split(',', 'test(1,2)'), ['test(1,2)']);
@@ -47,10 +47,19 @@ test('protect_split', function () {
 	deepEqual(protect_split(',', 'test1,"test2,test3"'), ['test1', '"test2,test3"']);
 	deepEqual(protect_split(',', 'test1,\'test2,test3\''), ['test1', '\'test2,test3\'']);
 	deepEqual(protect_split(',', 'test1,`test2,test3`'), ['test1', '`test2,test3`']);
+	deepEqual(protect_split(',', 'test1,function(test2,"test3(test4)\'test5\'"),test6()'), ['test1', 'function(test2,"test3(test4)\'test5\'")', 'test6()']);
+	deepEqual(protect_split(',', 'column1, column2, FUNCTION("string )\'\'", column3),  column4 AS Test1,column5 AS "Test 2", column6 "Test,3" '), [
+		'column1',
+		'column2',
+		'FUNCTION("string )\'\'", column3)',
+		'column4 AS Test1',
+		'column5 AS "Test 2"',
+		'column6 "Test,3"',
+	]);
 });
 
 test('condition lexer', function () {
-	expect(18);
+	expect(19);
 
 	deepEqual(CondLexer.tokenize('column = othercolumn'), [
 		{type: 'word', value: 'column'},
@@ -128,6 +137,20 @@ test('condition lexer', function () {
 		{type: 'operator', value: '<'},
 		{type: 'word', value: '2'},
 		{type: 'logic', value: 'OR'},
+		{type: 'word', value: 'column'},
+		{type: 'operator', value: '='},
+		{type: 'string', value: 'string'},
+	]);
+
+	deepEqual(CondLexer.tokenize('column = othercolumn OR column < 2 AND column = "string"'), [
+		{type: 'word', value: 'column'},
+		{type: 'operator', value: '='},
+		{type: 'word', value: 'othercolumn'},
+		{type: 'logic', value: 'OR'},
+		{type: 'word', value: 'column'},
+		{type: 'operator', value: '<'},
+		{type: 'word', value: '2'},
+		{type: 'logic', value: 'AND'},
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '='},
 		{type: 'string', value: 'string'},
@@ -222,7 +245,7 @@ test('condition lexer', function () {
 });
 
 test('condition parser', function () {
-	expect(18);
+	expect(20);
 
 	deepEqual(CondParser.parse('column = othercolumn'), {left: 'column', operator: '=', right: 'othercolumn'});
 
@@ -254,6 +277,15 @@ test('condition parser', function () {
 	deepEqual(CondParser.parse('column = othercolumn AND column < 2 OR column = "string"'), {
 		logic: 'OR', terms: [
 			{logic: 'AND', terms: [
+				{left: 'column', operator: '=', right: 'othercolumn'},
+				{left: 'column', operator: '<', right: '2'},
+			]},
+			{left: 'column', operator: '=', right: 'string'},
+	]});
+
+	deepEqual(CondParser.parse('column = othercolumn OR column < 2 AND column = "string"'), {
+		logic: 'AND', terms: [
+			{logic: 'OR', terms: [
 				{left: 'column', operator: '=', right: 'othercolumn'},
 				{left: 'column', operator: '<', right: '2'},
 			]},
@@ -299,16 +331,160 @@ test('condition parser', function () {
 			]},
 	]});
 
+	deepEqual(CondParser.parse('(a AND b) OR (c AND d)'), {
+		logic: 'OR', terms: [
+			{logic: 'AND', terms: ['a', 'b']},
+			{logic: 'AND', terms: ['c', 'd']},
+	]});
+
 	deepEqual(CondParser.parse('column IS NULL'), {left: 'column', operator: 'IS', right: 'NULL'});
 
 	deepEqual(CondParser.parse('column IS NOT NULL'), {left: 'column', operator: 'IS NOT', right: 'NULL'});
 });
 
 test('parse SQL', function() {
-	expect(1);
+	expect(17);
 
 	deepEqual(parseSQL('SELECT * FROM table'), {
 		'SELECT': ['*'],
 		'FROM': ['table'],
+	});
+
+	deepEqual(parseSQL('SELECT * FROM table;'), {
+		'SELECT': ['*'],
+		'FROM': ['table'],
+	});
+
+	deepEqual(parseSQL('SELECT * FROM table; SELECT * FROM table2'), {
+		'SELECT': ['*'],
+		'FROM': ['table'],
+	});
+
+	deepEqual(parseSQL('SELECT column1, column2, FUNCTION("string ()\'\'", column3),  column4 AS Test1,column5 AS "Test 2", column6 "Test 3" FROM table'), {
+		'SELECT': [
+			'column1',
+			'column2',
+			'FUNCTION("string ()\'\'", column3)',
+			'column4 AS Test1',
+			'column5 AS "Test 2"',
+			'column6 "Test 3"',
+		],
+		'FROM': ['table'],
+	});
+
+	deepEqual(parseSQL('SELECT * FROM table1,table2 AS t2   ,   table3 AS "t 3"'), {
+		'SELECT': ['*'],
+		'FROM': [
+			'table1',
+			'table2 AS t2',
+			'table3 AS "t 3"',
+		],
+	});
+
+	deepEqual(parseSQL('SELECT * FROM table LEFT JOIN table2 ON table.id = table2.id_table INNER JOIN table4 AS t4 ON table.id = FUNCTION(table4.id_table, "string()") JOIN table3 ON table.id=table3.id_table'), {
+		'SELECT': ['*'],
+		'FROM': ['table'],
+		'LEFT JOIN': [
+			{
+				table: 'table2',
+				cond: {left: 'table.id', operator: '=', right: 'table2.id_table'},
+			},
+			{
+				table: 'table3',
+				cond: {left: 'table.id', operator: '=', right: 'table3.id_table'},
+			},
+		],
+		'INNER JOIN': {
+			table: 'table4 AS t4',
+			cond: {left: 'table.id', operator: '=', right: 'FUNCTION(table4.id_table, "string()")'},
+		},
+	});
+
+	deepEqual(parseSQL('SELECT * FROM table WHERE (column1 = "something ()" AND table.column2 != column3) AND (column4 OR column5 IS NOT NULL)'), {
+		'SELECT': ['*'],
+		'FROM': ['table'],
+		'WHERE': {
+			logic: 'AND', terms: [
+				{left: 'column1', operator: '=', right: 'something ()'},
+				{left: 'table.column2', operator: '!=', right: 'column3'},
+				{logic: 'OR', terms: [
+					'column4',
+					{left: 'column5', operator: 'IS NOT', right: 'NULL'},
+				]},
+			],
+		},
+	});
+
+	deepEqual(parseSQL('SELECT * FROM table ORDER BY column1 ASC, column2 DESC'), {
+		'SELECT': ['*'],
+		'FROM': ['table'],
+		'ORDER BY': [
+			{column: 'column1', order: 'ASC'},
+			{column: 'column2', order: 'DESC'},
+		],
+	});
+
+	deepEqual(parseSQL('SELECT * FROM table LIMIT 5'), {
+		'SELECT': ['*'],
+		'FROM': ['table'],
+		'LIMIT': {nb: 5, from: 1},
+	});
+
+	deepEqual(parseSQL('SELECT * FROM table LIMIT 10,20'), {
+		'SELECT': ['*'],
+		'FROM': ['table'],
+		'LIMIT': {nb: 20, from: 10},
+	});
+
+	deepEqual(parseSQL('SELECT EXTRACT(MICROSECOND FROM "2003-01-02 10:30:00.00123") FROM table'), {
+		'SELECT': ['EXTRACT(MICROSECOND FROM "2003-01-02 10:30:00.00123")'],
+		'FROM': ['table'],
+	});
+
+	deepEqual(parseSQL('DELETE FROM table WHERE id = 5'), {
+		'DELETE FROM': ['table'],
+		'WHERE': {left: 'id', operator: '=', right: '5'},
+	});
+
+	deepEqual(parseSQL('INSERT INTO table (column1, column2) VALUES("test ()", CURDATE())'), {
+		'INSERT INTO': {
+			table: 'table',
+			columns: ['column1', 'column2'],
+		},
+		'VALUES': [['"test ()"', 'CURDATE()']],
+	});
+
+	deepEqual(parseSQL('INSERT INTO table (col_A,col_B,col_C) VALUES (1,2,3)'), {
+		'INSERT INTO': {
+			table: 'table',
+			columns: ['col_A', 'col_B', 'col_C'],
+		},
+		'VALUES': [['1', '2', '3']],
+	});
+
+	deepEqual(parseSQL('INSERT INTO table VALUES (1,2,3), (4,5,6), (7,8,9)'), {
+		'INSERT INTO': {table: 'table'},
+		'VALUES': [
+			['1', '2', '3'],
+			['4', '5', '6'],
+			['7', '8', '9'],
+		],
+	});
+
+	deepEqual(parseSQL('INSERT INTO table (col_A,col_B,col_C) VALUES (1,2,3), (4,5,6), (7,8,9)'), {
+		'INSERT INTO': {
+			table: 'table',
+			columns: ['col_A', 'col_B', 'col_C'],
+		},
+		'VALUES': [
+			['1', '2', '3'],
+			['4', '5', '6'],
+			['7', '8', '9'],
+		],
+	});
+
+	deepEqual(parseSQL('INSERT INTO table VALUES (1,2,3)'), {
+		'INSERT INTO': {table: 'table'},
+		'VALUES': [['1', '2', '3']],
 	});
 });
