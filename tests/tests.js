@@ -149,12 +149,12 @@ test('condition lexer', function () {
 		{type: 'string', value: 'string'},
 	]);
 
-	deepEqual(CondLexer.tokenize('column = othercolumn (AND column < 2 OR column = "string")'), [
+	deepEqual(CondLexer.tokenize('column = othercolumn AND (column < 2 OR column = "string")'), [
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '='},
 		{type: 'word', value: 'othercolumn'},
-		{type: 'group', value: '('},
 		{type: 'logic', value: 'AND'},
+		{type: 'group', value: '('},
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '<'},
 		{type: 'word', value: '2'},
@@ -173,12 +173,12 @@ test('condition lexer', function () {
 		{type: 'group', value: ')'},
 	]);
 
-	deepEqual(CondLexer.tokenize('column = othercolumn (AND column < 2 OR (column = "string" AND table.othercolumn))'), [
+	deepEqual(CondLexer.tokenize('column = othercolumn AND (column < 2 OR (column = "string" AND table.othercolumn))'), [
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '='},
 		{type: 'word', value: 'othercolumn'},
-		{type: 'group', value: '('},
 		{type: 'logic', value: 'AND'},
+		{type: 'group', value: '('},
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '<'},
 		{type: 'word', value: '2'},
@@ -205,4 +205,81 @@ test('condition lexer', function () {
 		{type: 'operator', value: 'NOT'},
 		{type: 'word', value: 'NULL'},
 	]);
+});
+
+test('condition parser', function () {
+	expect(16);
+
+	deepEqual(CondParser.parse('column = othercolumn'), {left: 'column', operator: '=', right: 'othercolumn'});
+
+	deepEqual(CondParser.parse('column=othercolumn'), {left: 'column', operator: '=', right: 'othercolumn'});
+
+	deepEqual(CondParser.parse('column                 = \
+		othercolumn'), {left: 'column', operator: '=', right: 'othercolumn'});
+
+	deepEqual(CondParser.parse('table.column = othertable.othercolumn'), {left: 'table.column', operator: '=', right: 'othertable.othercolumn'});
+
+	deepEqual(CondParser.parse('table.column <= othertable.othercolumn'), {left: 'table.column', operator: '<=', right: 'othertable.othercolumn'});
+
+	deepEqual(CondParser.parse('table.column = "string"'), {left: 'table.column', operator: '=', right: 'string'});
+
+	deepEqual(CondParser.parse('table.column = FUNCTION("string")'), {left: 'table.column', operator: '=', right: 'FUNCTION("string")'});
+
+	deepEqual(CondParser.parse('table.column = FUNCTION("string", columns,"otherstring"       ,\
+		"string with SQL stuff like = AND OR ()")'), {left: 'table.column', operator: '=', right: 'FUNCTION("string", columns,"otherstring"       ,\
+		"string with SQL stuff like = AND OR ()")'});
+
+	deepEqual(CondParser.parse('table.column != "string with SQL stuff like = AND OR ()"'), {left: 'table.column', operator: '!=', right: 'string with SQL stuff like = AND OR ()'});
+
+	deepEqual(CondParser.parse('column = othercolumn AND column < 2'), {
+		logic: 'AND', terms: [
+			{left: 'column', operator: '=', right: 'othercolumn'},
+			{left: 'column', operator: '<', right: '2'},
+	]});
+
+	deepEqual(CondParser.parse('column = othercolumn AND column < 2 OR column = "string"'), {
+		logic: 'OR', terms: [
+			{logic: 'AND', terms: [
+				{left: 'column', operator: '=', right: 'othercolumn'},
+				{left: 'column', operator: '<', right: '2'},
+			]},
+			{left: 'column', operator: '=', right: 'string'},
+	]});
+
+	/*	FIXME!
+	deepEqual(CondParser.parse('(column = othercolumn AND column < 2) OR column = "string"'), {
+		logic: 'OR', terms: [
+			{logic: 'AND', terms: [
+				{left: 'column', operator: '=', right: 'othercolumn'},
+				{left: 'column', operator: '<', right: '2'},
+			]},
+			{left: 'column', operator: '=', right: 'string'},
+	]});*/
+
+	deepEqual(CondParser.parse('column = othercolumn AND (column < 2 OR column = "string")'), {
+		logic: 'AND', terms: [
+			{left: 'column', operator: '=', right: 'othercolumn'},
+			{logic: 'OR', terms: [
+				{left: 'column', operator: '<', right: '2'},
+				{left: 'column', operator: '=', right: 'string'},
+			]},
+	]});
+
+	deepEqual(CondParser.parse('(column = othercolumn)'), {left: 'column', operator: '=', right: 'othercolumn'});
+
+	deepEqual(CondParser.parse('column = othercolumn AND (column < 2 OR (column = "string" AND table.othercolumn))'), {
+		logic: 'AND', terms: [
+			{left: 'column', operator: '=', right: 'othercolumn'},
+			{logic: 'OR', terms: [
+				{left: 'column', operator: '<', right: '2'},
+				{logic: 'AND', terms: [
+					{left: 'column', operator: '=', right: 'string'},
+					'table.othercolumn',
+				]},
+			]},
+	]});
+
+	deepEqual(CondParser.parse('column IS NULL'), {left: 'column', operator: 'IS', right: 'NULL'});
+
+	deepEqual(CondParser.parse('column IS NOT NULL'), {left: 'column', operator: 'IS NOT', right: 'NULL'});
 });
