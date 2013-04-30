@@ -58,7 +58,7 @@ function parseSQL(query) {
 	query = query.replace(/;/g, eor);
 	query = query.split(eor)[0];
 	query = query.replace(new RegExp(semi_colon, 'g'), ';');
-	
+
 	// Define which words can act as separator
 	var parts_name = ['SELECT', 'FROM', 'DELETE FROM', 'INSERT INTO', 'UPDATE', 'JOIN', 'LEFT JOIN', 'INNER JOIN', 'ORDER BY', 'GROUP BY', 'HAVING', 'WHERE', 'LIMIT', 'VALUES', 'SET'];
 	var parts_order = new Array();
@@ -129,8 +129,8 @@ function parseSQL(query) {
 	};
 	
 	analysis['LEFT JOIN'] = analysis['JOIN'] = analysis['INNER JOIN'] = function (str) {
-		str = str.split('ON');
-		var result = new Array();
+		str = str.split(' ON ');
+		var result = new Object();
 		result['table'] = trim(str[0]);
 		result['cond'] = trim(str[1]);				
 		return result;
@@ -146,7 +146,7 @@ function parseSQL(query) {
 		str.forEach(function (item, key) {
 			var order_by = /([A-Za-z0-9_\.]+)\s+(ASC|DESC){1}/gi;
 			order_by = order_by.exec(item);
-			var tmp = new Array();
+			var tmp = new Object();
 			tmp['column'] = trim(order_by[1]);
 			tmp['order'] = trim(order_by[2]);
 			result.push(tmp);
@@ -158,30 +158,33 @@ function parseSQL(query) {
 		var limit = /((\d+)\s*,\s*)?(\d+)/gi;
 		limit = limit.exec(str);
 		if (typeof limit[2] == 'undefined') limit[2] = 1;
-		var result = new Array();
-		result['nb'] = trim(limit[3]);
-		result['from'] = trim(limit[2]);
+		var result = new Object();
+		result['nb'] = parseInt(trim(limit[3]));
+		result['from'] = parseInt(trim(limit[2]));
 		return result;
 	};
 	
 	analysis['INSERT INTO'] = function (str) {
-		var insert = /([A-Za-z0-9_\.]+)\s*\(([A-Za-z0-9_\., ]+)\)/gi;
+		var insert = /([A-Za-z0-9_\.]+)\s*(\(([A-Za-z0-9_\., ]+)\))?/gi;
 		insert = insert.exec(str);
-		var result = new Array();
+		var result = new Object();
 		result['table'] = trim(insert[1]);
-		result['columns'] = insert[2].split(',');
-		result['columns'] = result['columns'].map(function (item) {
-			return trim(item);
-		});
+		if (typeof insert[3] != 'undefined') {
+			result['columns'] = insert[3].split(',');
+			result['columns'] = result['columns'].map(function (item) {
+				return trim(item);
+			});
+		}
 		return result;
 	};
 	
 	analysis['VALUES'] = function (str) {
-		var values = /\(([A-Za-z0-9_\.,"' ]+)\)/gi;
-		values = values.exec(str);
-		var result = protect_split(',', values[1]);
-		result = result.map(function (item) {
-			return trim(item);
+		var groups = protect_split(',', str);
+		var result = new Array();
+		groups.forEach(function(group) {
+			var group = group.replace(/^\(/g,'').replace(/\)$/g,'');
+			group = protect_split(',', group);
+			result.push(group);
 		});
 		return result;
 	};
