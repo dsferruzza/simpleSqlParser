@@ -343,7 +343,7 @@ test('condition parser', function () {
 });
 
 test('parse SQL', function() {
-	expect(17);
+	expect(18);
 
 	deepEqual(parseSQL('SELECT * FROM table'), {
 		'SELECT': ['*'],
@@ -486,5 +486,17 @@ test('parse SQL', function() {
 	deepEqual(parseSQL('INSERT INTO table VALUES (1,2,3)'), {
 		'INSERT INTO': {table: 'table'},
 		'VALUES': [['1', '2', '3']],
+	});
+
+	deepEqual(parseSQL('UPDATE table SET column1 = "string ()", column2=5,column3=column4, column5 = CURDATE(), column6 = FUNCTION("string ()", column7) WHERE id = 5'), {
+		'UPDATE': ['table'],
+		'SET': [
+			'column1 = "string ()"',
+			'column2=5',
+			'column3=column4',
+			'column5 = CURDATE()',
+			'column6 = FUNCTION("string ()", column7)',
+		],
+		'WHERE': {left: 'id', operator: '=', right: '5'},
 	});
 });
