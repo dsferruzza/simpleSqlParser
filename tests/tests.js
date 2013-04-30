@@ -303,3 +303,12 @@ test('condition parser', function () {
 
 	deepEqual(CondParser.parse('column IS NOT NULL'), {left: 'column', operator: 'IS NOT', right: 'NULL'});
 });
+
+test('parse SQL', function() {
+	expect(1);
+
+	deepEqual(parseSQL('SELECT * FROM table'), {
+		'SELECT': ['*'],
+		'FROM': ['table'],
+	});
+});
