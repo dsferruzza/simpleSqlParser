@@ -371,7 +371,6 @@ CondParser.prototype = {
 	// Parse logical expressions (AND/OR)
 	parseLogicalExpression: function () {
 		var leftNode = this.parseConditionExpression();
-		var logic_operator = "";
 		
 		while (this.currentToken.type == 'logic') {
 			var logic = this.currentToken.value;
@@ -379,12 +378,12 @@ CondParser.prototype = {
 			
 			var rightNode = this.parseConditionExpression();
 			
-			// Store the current logical operator
-			if (logic_operator == "") logic_operator = logic;
-			
 			// If we are chaining the same logical operator, add nodes to existing object instead of creating another one
-			if (logic_operator == logic && typeof leftNode.terms != 'undefined') leftNode.terms.push(rightNode);
-			else leftNode = {'logic': logic, 'terms': [leftNode, rightNode]};
+			if (typeof leftNode.logic != 'undefined' && leftNode.logic == logic && typeof leftNode.terms != 'undefined') leftNode.terms.push(rightNode);
+			else {
+				var terms = [leftNode, rightNode];
+				leftNode = {'logic': logic, 'terms': terms.slice(0)};
+			}
 		}
 		
 		return leftNode;

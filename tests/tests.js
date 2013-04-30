@@ -50,7 +50,7 @@ test('protect_split', function () {
 });
 
 test('condition lexer', function () {
-	expect(17);
+	expect(18);
 
 	deepEqual(CondLexer.tokenize('column = othercolumn'), [
 		{type: 'word', value: 'column'},
@@ -165,6 +165,20 @@ test('condition lexer', function () {
 		{type: 'group', value: ')'},
 	]);
 
+	deepEqual(CondLexer.tokenize('column = othercolumn AND column < 2 AND column = "string"'), [
+		{type: 'word', value: 'column'},
+		{type: 'operator', value: '='},
+		{type: 'word', value: 'othercolumn'},
+		{type: 'logic', value: 'AND'},
+		{type: 'word', value: 'column'},
+		{type: 'operator', value: '<'},
+		{type: 'word', value: '2'},
+		{type: 'logic', value: 'AND'},
+		{type: 'word', value: 'column'},
+		{type: 'operator', value: '='},
+		{type: 'string', value: 'string'},
+	]);
+
 	deepEqual(CondLexer.tokenize('(column = othercolumn)'), [
 		{type: 'group', value: '('},
 		{type: 'word', value: 'column'},
@@ -208,7 +222,7 @@ test('condition lexer', function () {
 });
 
 test('condition parser', function () {
-	expect(16);
+	expect(18);
 
 	deepEqual(CondParser.parse('column = othercolumn'), {left: 'column', operator: '=', right: 'othercolumn'});
 
@@ -246,7 +260,6 @@ test('condition parser', function () {
 			{left: 'column', operator: '=', right: 'string'},
 	]});
 
-	/*	FIXME!
 	deepEqual(CondParser.parse('(column = othercolumn AND column < 2) OR column = "string"'), {
 		logic: 'OR', terms: [
 			{logic: 'AND', terms: [
@@ -254,7 +267,7 @@ test('condition parser', function () {
 				{left: 'column', operator: '<', right: '2'},
 			]},
 			{left: 'column', operator: '=', right: 'string'},
-	]});*/
+	]});
 
 	deepEqual(CondParser.parse('column = othercolumn AND (column < 2 OR column = "string")'), {
 		logic: 'AND', terms: [
@@ -263,6 +276,13 @@ test('condition parser', function () {
 				{left: 'column', operator: '<', right: '2'},
 				{left: 'column', operator: '=', right: 'string'},
 			]},
+	]});
+
+	deepEqual(CondParser.parse('column = othercolumn AND column < 2 AND column = "string"'), {
+		logic: 'AND', terms: [
+			{left: 'column', operator: '=', right: 'othercolumn'},
+			{left: 'column', operator: '<', right: '2'},
+			{left: 'column', operator: '=', right: 'string'},
 	]});
 
 	deepEqual(CondParser.parse('(column = othercolumn)'), {left: 'column', operator: '=', right: 'othercolumn'});
