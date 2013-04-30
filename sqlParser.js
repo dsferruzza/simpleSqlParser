@@ -7,13 +7,26 @@ function trim(str) {
 // Split a string using a separator, only if this separator isn't beetween brackets
 function protect_split(separator, str) {
 	var sep = '######';
-	str = str.replace(/(\((.+?)\)|"(.+?)"|'(.+?)'|`(.+?)`)/gi, function (match) {
-		return match.replace(/,/g, sep);
-	});
+	
+	var string = false;
+	var nb_brackets = 0;
+	var new_str = "";
+	for (var i = 0 ; i < str.length ; i++) {
+		if (!string && /['"`]/.test(str[i])) string = str[i];
+		else if (string && str[i] == string) string = false;
+		else if (!string && str[i] == '(') nb_brackets ++;
+		else if (!string && str[i] == ')') nb_brackets --;
+		
+		if (str[i] == ',' && (nb_brackets > 0 || string)) new_str += sep;
+		else new_str += str[i];
+	}
+	str = new_str;
+	
 	str = str.split(',');
 	str = str.map(function (item) {
 		return trim(item.replace(new RegExp(sep, 'g'), ','));
 	});
+	
 	return str;
 }
 
