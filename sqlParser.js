@@ -108,7 +108,11 @@ function parseSQL(query) {
 	};
 	
 	analysis['FROM'] = analysis['DELETE FROM'] = analysis['UPDATE'] = function (str) {
-		return str.split(',');
+		var result = str.split(',');
+		result = result.map(function(item) {
+			return trim(item);
+		});
+		return result;
 	};
 	
 	analysis['LEFT JOIN'] = analysis['JOIN'] = analysis['INNER JOIN'] = function (str) {
@@ -170,7 +174,7 @@ function parseSQL(query) {
 	};
 	
 	// Analyze parts
-	var result = new Array();
+	var result = new Object();
 	var j = 0;
 	parts_order.forEach(function (item, key) {
 		j++;
@@ -385,7 +389,7 @@ CondParser.prototype = {
 				leftNode = {'logic': logic, 'terms': terms.slice(0)};
 			}
 		}
-		
+
 		return leftNode;
 	},
 	
@@ -407,7 +411,7 @@ CondParser.prototype = {
 			
 			leftNode = {'operator': operator, 'left': leftNode, 'right': rightNode};
 		}
-		
+
 		return leftNode;
 	},
 	
@@ -426,7 +430,7 @@ CondParser.prototype = {
 			astNode = this.parseExpressionsRecursively();
 			this.readNextToken();
 		}
-		
+
 		return astNode;
 	},
 };
