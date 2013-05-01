@@ -518,3 +518,49 @@ test('parse SQL', function() {
 		'WHERE': {left: 'id', operator: '=', right: '5'},
 	});
 });
+
+
+
+module('ast2sql');
+
+test('SELECT query', function() {
+	//expect();
+
+	var q = 'SELECT * FROM table';
+	deepEqual(ast2sql(parseSQL(q)), q);
+
+	deepEqual(ast2sql(parseSQL('select * from table')), 'SELECT * FROM table');
+
+	var q = 'SELECT t.column1, ot.column2 FROM table AS t LEFT JOIN othertable AS ot ON t.id = ot.id_table WHERE t.column3 = 5';
+	deepEqual(ast2sql(parseSQL(q)), q);
+
+	var q = 'SELECT * FROM table AS t LEFT JOIN othertable AS ot ON t.id = ot.id_table LEFT JOIN othertable2 AS ot2 ON t.id = ot2.id_table AND ot2.column INNER JOIN othertable3 AS ot3 ON t.id = ot3.id_table';
+	deepEqual(ast2sql(parseSQL(q)), q);
+
+	var q = 'SELECT * FROM table WHERE (column1 = "something ()" AND table.column2 != column3) AND (column4 OR column5 IS NOT NULL)';
+	deepEqual(ast2sql(parseSQL('SELECT * FROM table WHERE (column1 = "something ()" AND table.column2 != column3) AND (column4 OR column5 IS NOT NULL)')), 
+		'SELECT * FROM table WHERE column1 = "something ()" AND table.column2 != column3 AND (column4 OR column5 IS NOT NULL)');
+
+	var q = 'SELECT * FROM table ORDER BY a ASC, b DESC, c ASC';
+	deepEqual(ast2sql(parseSQL(q)), q);
+
+	var q = 'SELECT * FROM table LIMIT 1';
+	deepEqual(ast2sql(parseSQL(q)), q);
+
+	var q = 'SELECT * FROM table LIMIT 10,1';
+	deepEqual(ast2sql(parseSQL(q)), q);
+});
+
+test('INSERT query', function() {
+	var q = 'INSERT INTO table (col_A, col_B, col_C) VALUES (1, 2, 3)';
+	deepEqual(ast2sql(parseSQL(q)), q);
+
+	var q = 'INSERT INTO table VALUES (1, 2, 3), (4, 5, 6), (7, 8, 9)';
+	deepEqual(ast2sql(parseSQL(q)), q);
+
+	var q = 'INSERT INTO table (col_A, col_B, col_C) VALUES (1, 2, 3), (4, 5, 6), (7, 8, 9)';
+	deepEqual(ast2sql(parseSQL(q)), q);
+
+	var q = 'INSERT INTO table VALUES (1, 2, 3)';
+	deepEqual(ast2sql(parseSQL(q)), q);
+});
