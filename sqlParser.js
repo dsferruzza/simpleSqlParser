@@ -61,6 +61,9 @@ function parseSQL(query) {
 
 	// Define which words can act as separator
 	var parts_name = ['SELECT', 'FROM', 'DELETE FROM', 'INSERT INTO', 'UPDATE', 'JOIN', 'LEFT JOIN', 'INNER JOIN', 'ORDER BY', 'GROUP BY', 'HAVING', 'WHERE', 'LIMIT', 'VALUES', 'SET'];
+	parts_name = parts_name.concat(parts_name.map(function (item) {
+		return item.toLowerCase();
+	}));
 	var parts_order = new Array();
 	
 	// Hide words defined as separator but written inside brackets in the query
@@ -202,6 +205,7 @@ function parseSQL(query) {
 	var result = new Object();
 	var j = 0;
 	parts_order.forEach(function (item, key) {
+		item = item.toUpperCase();
 		j++;
 		if (typeof analysis[item] != 'undefined') {
 			var part_result = analysis[item](parts[j]);
@@ -243,7 +247,7 @@ function parseSQL(query) {
 			});
 		}
 	}
-	
+
 	return result;
 }
 

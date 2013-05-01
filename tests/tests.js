@@ -343,9 +343,14 @@ test('condition parser', function () {
 });
 
 test('parse SQL', function() {
-	expect(20);
+	expect(21);
 
 	deepEqual(parseSQL('SELECT * FROM table'), {
+		'SELECT': ['*'],
+		'FROM': ['table'],
+	});
+
+	deepEqual(parseSQL('select * from table'), {
 		'SELECT': ['*'],
 		'FROM': ['table'],
 	});
