@@ -64,10 +64,10 @@ function parseSQL(query) {
 	var parts_order = new Array();
 	
 	// Hide words defined as separator but written inside brackets in the query
-	query = query.replace(/\((.+?)\)/gi, function (match) {
-		return match.replace(new RegExp(parts_name.join('|'), 'i'), protect);
+	query = query.replace(/\((.+?)\)|"(.+?)"|'(.+?)'|`(.+?)`/gi, function (match) {
+		return match.replace(new RegExp(parts_name.join('|'), 'gi'), protect);
 	});
-	
+
 	// Write the position(s) in query of these separators
 	parts_name.forEach(function (item) {
 		var pos = 0;
@@ -104,12 +104,12 @@ function parseSQL(query) {
 	var parts = query.split(new RegExp(parts_name.join('|'), 'i'));
 	
 	// Unhide words precedently hidden with protect()
-	query = query.replace(/\((.+?)\)/gi, function (match) {
-		return match.replace(new RegExp(words, 'i'), unprotect);
+	query = query.replace(/\((.+?)\)|"(.+?)"|'(.+?)'|`(.+?)`/gi, function (match) {
+		return match.replace(new RegExp(words, 'gi'), unprotect);
 	});
 	parts = parts.map(function (item) {
-		return item.replace(/\((.+?)\)/gi, function (match) {
-			return match.replace(new RegExp(words, 'i'), unprotect);
+		return item.replace(/\((.+?)\)|"(.+?)"|'(.+?)'|`(.+?)`/gi, function (match) {
+			return match.replace(new RegExp(words, 'gi'), unprotect);
 		});
 	});
 	

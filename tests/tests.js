@@ -343,7 +343,7 @@ test('condition parser', function () {
 });
 
 test('parse SQL', function() {
-	expect(18);
+	expect(19);
 
 	deepEqual(parseSQL('SELECT * FROM table'), {
 		'SELECT': ['*'],
@@ -369,6 +369,11 @@ test('parse SQL', function() {
 			'column5 AS "Test 2"',
 			'column6 "Test 3"',
 		],
+		'FROM': ['table'],
+	});
+
+	deepEqual(parseSQL('SELECT FUCTION("SQL syntax like: FROM or LIMIT", \'SQL syntax like: FROM or LIMIT\', `SQL syntax like: FROM or LIMIT`) FROM table'), {
+		'SELECT': ['FUCTION("SQL syntax like: FROM or LIMIT", \'SQL syntax like: FROM or LIMIT\', `SQL syntax like: FROM or LIMIT`)'],
 		'FROM': ['table'],
 	});
 
