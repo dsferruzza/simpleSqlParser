@@ -75,19 +75,19 @@ function ast2sql(ast) {
 		result += values.join(', ');
 		return result;
 	}
-/*
+
 	function delete_from(ast) {
-		
+		return 'DELETE FROM ' + ast['DELETE FROM'][0];
 	}
 
 	function update(ast) {
-		
+		return 'UPDATE ' + ast['UPDATE'][0];
 	}
 
 	function set(ast) {
-		
+		return ' SET ' + ast['SET'].join(', ');
 	}
-*/
+
 
 	// Check request's type
 	if (typeof ast['SELECT'] != 'undefined' && typeof ast['FROM'] != 'undefined') {
@@ -97,10 +97,10 @@ function ast2sql(ast) {
 		result = insert_into(ast) + values(ast);
 	}
 	else if (typeof ast['UPDATE'] != 'undefined') {
-		// TODO
+		result = update(ast) + set(ast) + where(ast);
 	}
-	else if (typeof ast['DELETE'] != 'undefined') {
-		// TODO
+	else if (typeof ast['DELETE FROM'] != 'undefined') {
+		result = delete_from(ast) + where(ast);
 	}
 	else result = null
 
