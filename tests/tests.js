@@ -343,7 +343,7 @@ test('condition parser', function () {
 });
 
 test('parse SQL', function() {
-	expect(19);
+	expect(20);
 
 	deepEqual(parseSQL('SELECT * FROM table'), {
 		'SELECT': ['*'],
@@ -444,6 +444,12 @@ test('parse SQL', function() {
 	deepEqual(parseSQL('SELECT EXTRACT(MICROSECOND FROM "2003-01-02 10:30:00.00123") FROM table'), {
 		'SELECT': ['EXTRACT(MICROSECOND FROM "2003-01-02 10:30:00.00123")'],
 		'FROM': ['table'],
+	});
+
+	deepEqual(parseSQL('SELECT column1, FROM table, ORDER BY id ASC,'), {
+		'SELECT': ['column1'],
+		'FROM': ['table'],
+		'ORDER BY': [{column: 'id', order: 'ASC'}],
 	});
 
 	deepEqual(parseSQL('DELETE FROM table WHERE id = 5'), {

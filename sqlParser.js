@@ -117,13 +117,20 @@ function parseSQL(query) {
 	var analysis = new Array();
 	
 	analysis['SELECT'] = analysis['SET'] = function (str) {
-		return protect_split(',', str);
+		var result = protect_split(',', str);
+		result.forEach(function(item, key) {
+			if (item == '') result.splice(key);
+		});
+		return result;
 	};
 	
 	analysis['FROM'] = analysis['DELETE FROM'] = analysis['UPDATE'] = function (str) {
 		var result = str.split(',');
 		result = result.map(function(item) {
 			return trim(item);
+		});
+		result.forEach(function(item, key) {
+			if (item == '') result.splice(key);
 		});
 		return result;
 	};
@@ -146,10 +153,12 @@ function parseSQL(query) {
 		str.forEach(function (item, key) {
 			var order_by = /([A-Za-z0-9_\.]+)\s+(ASC|DESC){1}/gi;
 			order_by = order_by.exec(item);
-			var tmp = new Object();
-			tmp['column'] = trim(order_by[1]);
-			tmp['order'] = trim(order_by[2]);
-			result.push(tmp);
+			if (order_by != null) {
+				var tmp = new Object();
+				tmp['column'] = trim(order_by[1]);
+				tmp['order'] = trim(order_by[2]);
+				result.push(tmp);
+			}
 		});
 		return result;
 	};
