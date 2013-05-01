@@ -200,6 +200,8 @@ function parseSQL(query) {
 		});
 		return result;
 	};
+
+	// TODO: handle GROUP BY and HAVING
 	
 	// Analyze parts
 	var result = new Object();
