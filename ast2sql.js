@@ -1,7 +1,6 @@
 // Generate the SQL query corresponding to an AST output by parseSQL()
 function ast2sql(ast) {
 	var result = '';
-	console.log(ast);
 
 	// Define subfunctions
 	function select(ast) {
@@ -104,7 +103,6 @@ function ast2sql(ast) {
 	}
 	else result = null
 
-	console.log(result);
 	return result;
 }
 
