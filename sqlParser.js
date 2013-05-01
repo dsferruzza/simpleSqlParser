@@ -326,11 +326,15 @@ CondLexer.prototype = {
 		var tokenValue = "";
 		var quote = this.currentChar;
 		
+		tokenValue += this.currentChar;
 		this.readNextChar();
+
 		while (this.currentChar != quote) {
 			tokenValue += this.currentChar;
 			this.readNextChar();
 		}
+
+		tokenValue += this.currentChar;
 		this.readNextChar();
 		
 		// Handle this case : `table`.`column`

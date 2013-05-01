@@ -1,4 +1,6 @@
 
+module('sqlParser');
+
 test('trim', function () {
 	expect(9);
 
@@ -95,7 +97,7 @@ test('condition lexer', function () {
 	deepEqual(CondLexer.tokenize('table.column = "string"'), [
 		{type: 'word', value: 'table.column'},
 		{type: 'operator', value: '='},
-		{type: 'string', value: 'string'},
+		{type: 'string', value: '"string"'},
 	]);
 
 	deepEqual(CondLexer.tokenize('table.column = FUNCTION("string")'), [
@@ -115,7 +117,7 @@ test('condition lexer', function () {
 	deepEqual(CondLexer.tokenize('table.column != "string with SQL stuff like = AND OR ()"'), [
 		{type: 'word', value: 'table.column'},
 		{type: 'operator', value: '!='},
-		{type: 'string', value: 'string with SQL stuff like = AND OR ()'},
+		{type: 'string', value: '"string with SQL stuff like = AND OR ()"'},
 	]);
 
 	deepEqual(CondLexer.tokenize('column = othercolumn AND column < 2'), [
@@ -139,7 +141,7 @@ test('condition lexer', function () {
 		{type: 'logic', value: 'OR'},
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '='},
-		{type: 'string', value: 'string'},
+		{type: 'string', value: '"string"'},
 	]);
 
 	deepEqual(CondLexer.tokenize('column = othercolumn OR column < 2 AND column = "string"'), [
@@ -153,7 +155,7 @@ test('condition lexer', function () {
 		{type: 'logic', value: 'AND'},
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '='},
-		{type: 'string', value: 'string'},
+		{type: 'string', value: '"string"'},
 	]);
 
 	deepEqual(CondLexer.tokenize('(column = othercolumn AND column < 2) OR column = "string"'), [
@@ -169,7 +171,7 @@ test('condition lexer', function () {
 		{type: 'logic', value: 'OR'},
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '='},
-		{type: 'string', value: 'string'},
+		{type: 'string', value: '"string"'},
 	]);
 
 	deepEqual(CondLexer.tokenize('column = othercolumn AND (column < 2 OR column = "string")'), [
@@ -184,7 +186,7 @@ test('condition lexer', function () {
 		{type: 'logic', value: 'OR'},
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '='},
-		{type: 'string', value: 'string'},
+		{type: 'string', value: '"string"'},
 		{type: 'group', value: ')'},
 	]);
 
@@ -199,7 +201,7 @@ test('condition lexer', function () {
 		{type: 'logic', value: 'AND'},
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '='},
-		{type: 'string', value: 'string'},
+		{type: 'string', value: '"string"'},
 	]);
 
 	deepEqual(CondLexer.tokenize('(column = othercolumn)'), [
@@ -223,7 +225,7 @@ test('condition lexer', function () {
 		{type: 'group', value: '('},
 		{type: 'word', value: 'column'},
 		{type: 'operator', value: '='},
-		{type: 'string', value: 'string'},
+		{type: 'string', value: '"string"'},
 		{type: 'logic', value: 'AND'},
 		{type: 'word', value: 'table.othercolumn'},
 		{type: 'group', value: ')'},
@@ -258,7 +260,7 @@ test('condition parser', function () {
 
 	deepEqual(CondParser.parse('table.column <= othertable.othercolumn'), {left: 'table.column', operator: '<=', right: 'othertable.othercolumn'});
 
-	deepEqual(CondParser.parse('table.column = "string"'), {left: 'table.column', operator: '=', right: 'string'});
+	deepEqual(CondParser.parse('table.column = "string"'), {left: 'table.column', operator: '=', right: '"string"'});
 
 	deepEqual(CondParser.parse('table.column = FUNCTION("string")'), {left: 'table.column', operator: '=', right: 'FUNCTION("string")'});
 
@@ -266,7 +268,7 @@ test('condition parser', function () {
 		"string with SQL stuff like = AND OR ()")'), {left: 'table.column', operator: '=', right: 'FUNCTION("string", columns,"otherstring"       ,\
 		"string with SQL stuff like = AND OR ()")'});
 
-	deepEqual(CondParser.parse('table.column != "string with SQL stuff like = AND OR ()"'), {left: 'table.column', operator: '!=', right: 'string with SQL stuff like = AND OR ()'});
+	deepEqual(CondParser.parse('table.column != "string with SQL stuff like = AND OR ()"'), {left: 'table.column', operator: '!=', right: '"string with SQL stuff like = AND OR ()"'});
 
 	deepEqual(CondParser.parse('column = othercolumn AND column < 2'), {
 		logic: 'AND', terms: [
@@ -280,7 +282,7 @@ test('condition parser', function () {
 				{left: 'column', operator: '=', right: 'othercolumn'},
 				{left: 'column', operator: '<', right: '2'},
 			]},
-			{left: 'column', operator: '=', right: 'string'},
+			{left: 'column', operator: '=', right: '"string"'},
 	]});
 
 	deepEqual(CondParser.parse('column = othercolumn OR column < 2 AND column = "string"'), {
@@ -289,7 +291,7 @@ test('condition parser', function () {
 				{left: 'column', operator: '=', right: 'othercolumn'},
 				{left: 'column', operator: '<', right: '2'},
 			]},
-			{left: 'column', operator: '=', right: 'string'},
+			{left: 'column', operator: '=', right: '"string"'},
 	]});
 
 	deepEqual(CondParser.parse('(column = othercolumn AND column < 2) OR column = "string"'), {
@@ -298,7 +300,7 @@ test('condition parser', function () {
 				{left: 'column', operator: '=', right: 'othercolumn'},
 				{left: 'column', operator: '<', right: '2'},
 			]},
-			{left: 'column', operator: '=', right: 'string'},
+			{left: 'column', operator: '=', right: '"string"'},
 	]});
 
 	deepEqual(CondParser.parse('column = othercolumn AND (column < 2 OR column = "string")'), {
@@ -306,7 +308,7 @@ test('condition parser', function () {
 			{left: 'column', operator: '=', right: 'othercolumn'},
 			{logic: 'OR', terms: [
 				{left: 'column', operator: '<', right: '2'},
-				{left: 'column', operator: '=', right: 'string'},
+				{left: 'column', operator: '=', right: '"string"'},
 			]},
 	]});
 
@@ -314,7 +316,7 @@ test('condition parser', function () {
 		logic: 'AND', terms: [
 			{left: 'column', operator: '=', right: 'othercolumn'},
 			{left: 'column', operator: '<', right: '2'},
-			{left: 'column', operator: '=', right: 'string'},
+			{left: 'column', operator: '=', right: '"string"'},
 	]});
 
 	deepEqual(CondParser.parse('(column = othercolumn)'), {left: 'column', operator: '=', right: 'othercolumn'});
@@ -325,7 +327,7 @@ test('condition parser', function () {
 			{logic: 'OR', terms: [
 				{left: 'column', operator: '<', right: '2'},
 				{logic: 'AND', terms: [
-					{left: 'column', operator: '=', right: 'string'},
+					{left: 'column', operator: '=', right: '"string"'},
 					'table.othercolumn',
 				]},
 			]},
@@ -415,7 +417,7 @@ test('parse SQL', function() {
 		'FROM': ['table'],
 		'WHERE': {
 			logic: 'AND', terms: [
-				{left: 'column1', operator: '=', right: 'something ()'},
+				{left: 'column1', operator: '=', right: '"something ()"'},
 				{left: 'table.column2', operator: '!=', right: 'column3'},
 				{logic: 'OR', terms: [
 					'column4',
