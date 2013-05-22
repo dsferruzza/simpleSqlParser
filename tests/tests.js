@@ -525,7 +525,7 @@ test('parse SQL', function() {
 module('ast2sql');
 
 test('SELECT query', function() {
-	//expect();
+	expect(8);
 
 	var q = 'SELECT * FROM table';
 	deepEqual(m.ast2sql(m.sql2ast(q)), q);
@@ -553,6 +553,8 @@ test('SELECT query', function() {
 });
 
 test('INSERT query', function() {
+	expect(4);
+
 	var q = 'INSERT INTO table (col_A, col_B, col_C) VALUES (1, 2, 3)';
 	deepEqual(m.ast2sql(m.sql2ast(q)), q);
 
@@ -567,11 +569,15 @@ test('INSERT query', function() {
 });
 
 test('DELETE query', function() {
+	expect(1);
+
 	var q = 'DELETE FROM table WHERE id = 5';
 	deepEqual(m.ast2sql(m.sql2ast(q)), q);
 });
 
 test('UPDATE query', function() {
+	expect(2);
+
 	var q = 'UPDATE table SET column = 1';
 	deepEqual(m.ast2sql(m.sql2ast(q)), q);
 

@@ -4,7 +4,6 @@
 		if (typeof str == 'string') return str.replace(/^\s+/g,'').replace(/\s+$/g,'');
 		else return str;
 	}
-	// TODO: use Mootools trim() ?
 
 	// Split a string using a separator, only if this separator isn't beetween brackets
 	function protect_split(separator, str) {
