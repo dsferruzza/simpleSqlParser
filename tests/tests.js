@@ -41,12 +41,13 @@ test('protect/unprotect', function () {
 });
 
 test('protect_split', function () {
-	expect(9);
+	expect(10);
 	
 	deepEqual(m.protect_split(',', 'test'), ['test']);
 	deepEqual(m.protect_split(',', 'test(1,2)'), ['test(1,2)']);
 	deepEqual(m.protect_split(',', 'test1,test2'), ['test1', 'test2']);
 	deepEqual(m.protect_split(',', 'test1,(test2,test3)'), ['test1', '(test2,test3)']);
+	deepEqual(m.protect_split(';', 'test1;(test2;test3)'), ['test1', '(test2;test3)']);
 	deepEqual(m.protect_split(',', 'test1,"test2,test3"'), ['test1', '"test2,test3"']);
 	deepEqual(m.protect_split(',', 'test1,\'test2,test3\''), ['test1', '\'test2,test3\'']);
 	deepEqual(m.protect_split(',', 'test1,`test2,test3`'), ['test1', '`test2,test3`']);

@@ -18,14 +18,14 @@
 			else if (!string && str[i] == '(') nb_brackets ++;
 			else if (!string && str[i] == ')') nb_brackets --;
 			
-			if (str[i] == ',' && (nb_brackets > 0 || string)) new_str += sep;
+			if (str[i] == separator && (nb_brackets > 0 || string)) new_str += sep;
 			else new_str += str[i];
 		}
 		str = new_str;
 		
-		str = str.split(',');
+		str = str.split(separator);
 		str = str.map(function (item) {
-			return trim(item.replace(new RegExp(sep, 'g'), ','));
+			return trim(item.replace(new RegExp(sep, 'g'), separator));
 		});
 		
 		return str;
