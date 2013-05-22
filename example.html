@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" >
 	<head>
-		<title>sqlParser.js</title>
+		<title>simpleSqlParser</title>
 		<meta charset="utf-8" />
 	</head>
 	<body>
 		<p><em>Check console to see the output</em></p>
-		<script src="sqlParser.js"></script>
+		<script src="simpleSqlParser.js"></script>
 		<script>
 			window.onload = function () {
 				// Example queries
@@ -23,7 +23,7 @@
 				
 				// Parse & display
 				q.forEach(function (item, key) {
-					console.log(item, parseSQL(item));
+					console.log(item, simpleSqlParser.sql2ast(item));
 				});
 			};
 		</script>
