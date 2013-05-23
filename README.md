@@ -13,7 +13,15 @@ Import the JS file in your page:
 <script src="simpleSqlParser.js"></script>
 ```
 
-Parse a query:
+### From Node.js
+
+Import the JS module in your app:
+
+```js
+var simpleSqlParser = require('./simpleSqlParser.js');
+```
+
+### Parse a query:
 
 ```js
 var ast = simpleSqlParser.sql2ast('your SQL query');
@@ -27,19 +35,12 @@ var query = simpleSqlParser.ast2sql(ast);
 console.log(query);
 ```
 
-### From Node.js
+*AST means Abstract Syntax Tree.*
 
-Importe the JS module in your app:
+## Examples
 
-```js
-var simpleSqlParser = require('./simpleSqlParser.js');
-```
-
-*Then it works the same as in browser!*
-
-## Example
-
-See `example.html` (open brower's console).
+* See `example.html` (open brower's console)
+* Have a look to the unit tests `tests/tests.js` to see what's possible
 
 ## Notes
 
