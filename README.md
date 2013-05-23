@@ -28,7 +28,7 @@ var ast = simpleSqlParser.sql2ast('your SQL query');
 console.log(ast);
 ```
 
-Create a query from AST:
+### Create a query from AST:
 
 ```js
 var query = simpleSqlParser.ast2sql(ast);
