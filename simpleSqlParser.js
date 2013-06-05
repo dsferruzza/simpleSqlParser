@@ -527,7 +527,7 @@
 		function limit(ast) {
 			if (typeof ast['LIMIT'] != 'undefined' && typeof ast['LIMIT'].nb != 'undefined' && parseInt(ast['LIMIT'].nb) > 0) {
 				var result = ' LIMIT ';
-				if (typeof ast['LIMIT'].from != 'undefined' && ast['LIMIT'].from != '1') result += ast['LIMIT'].from + ',';
+				if (typeof ast['LIMIT'].from != 'undefined' && parseInt(ast['LIMIT'].from) > 1) result += ast['LIMIT'].from + ',';
 				result += ast['LIMIT'].nb;
 				return result;
 			}

@@ -526,7 +526,7 @@ test('parse SQL', function() {
 module('ast2sql');
 
 test('SELECT query', function() {
-	expect(10);
+	expect(12);
 
 	var q = 'SELECT * FROM table';
 	deepEqual(m.ast2sql(m.sql2ast(q)), q);
@@ -554,6 +554,8 @@ test('SELECT query', function() {
 
 	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': ['table'], 'LIMIT': {'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
 	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': ['table'], 'LIMIT': {'nb': ''}}), 'SELECT * FROM table');
+	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': ['table'], 'LIMIT': {'from': null, 'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
+	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': ['table'], 'LIMIT': {'from': '-1', 'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
 });
 
 test('INSERT query', function() {
