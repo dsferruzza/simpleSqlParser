@@ -48,8 +48,11 @@
 	}
 
 
+	// Parse a query
+	// parseCond: (bool) parse conditions in WHERE and JOIN (default true)
+	exports.sql2ast = function (query, parseCond) {
+		if (typeof parseCond == 'undefined' || typeof parseCond == 'null') parseCond = true;
 
-	exports.sql2ast = function (query) {
 		// Remove semi-colons and keep only the first query
 		var semi_colon = '###semi-colon###';
 		query = query.replace(/[("'`].*;.*[)"'`]/g, function (match) {
@@ -227,27 +230,29 @@
 		});
 
 		// Parse conditions
-		if (typeof result['WHERE'] == 'string') {
-			result['WHERE'] = CondParser.parse(result['WHERE']);
-		}
-		if (typeof result['LEFT JOIN'] != 'undefined') {
-			if (typeof result['LEFT JOIN']['cond'] != 'undefined') {
-				result['LEFT JOIN']['cond'] = CondParser.parse(result['LEFT JOIN']['cond']);
+		if (parseCond) {
+			if (typeof result['WHERE'] == 'string') {
+				result['WHERE'] = CondParser.parse(result['WHERE']);
 			}
-			else {
-				result['LEFT JOIN'].forEach(function (item, key) {
-					result['LEFT JOIN'][key]['cond'] = CondParser.parse(item['cond']);
-				});
+			if (typeof result['LEFT JOIN'] != 'undefined') {
+				if (typeof result['LEFT JOIN']['cond'] != 'undefined') {
+					result['LEFT JOIN']['cond'] = CondParser.parse(result['LEFT JOIN']['cond']);
+				}
+				else {
+					result['LEFT JOIN'].forEach(function (item, key) {
+						result['LEFT JOIN'][key]['cond'] = CondParser.parse(item['cond']);
+					});
+				}
 			}
-		}
-		if (typeof result['INNER JOIN'] != 'undefined') {
-			if (typeof result['INNER JOIN']['cond'] != 'undefined') {
-				result['INNER JOIN']['cond'] = CondParser.parse(result['INNER JOIN']['cond']);
-			}
-			else {
-				result['INNER JOIN'].forEach(function (item, key) {
-					result['INNER JOIN'][key]['cond'] = CondParser.parse(item['cond']);
-				});
+			if (typeof result['INNER JOIN'] != 'undefined') {
+				if (typeof result['INNER JOIN']['cond'] != 'undefined') {
+					result['INNER JOIN']['cond'] = CondParser.parse(result['INNER JOIN']['cond']);
+				}
+				else {
+					result['INNER JOIN'].forEach(function (item, key) {
+						result['INNER JOIN'][key]['cond'] = CondParser.parse(item['cond']);
+					});
+				}
 			}
 		}
 

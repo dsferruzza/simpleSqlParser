@@ -347,7 +347,7 @@ test('condition parser', function () {
 });
 
 test('parse SQL', function() {
-	expect(21);
+	expect(22);
 
 	deepEqual(m.sql2ast('SELECT * FROM table'), {
 		'SELECT': ['*'],
@@ -464,6 +464,11 @@ test('parse SQL', function() {
 	deepEqual(m.sql2ast('DELETE FROM table WHERE id = 5'), {
 		'DELETE FROM': ['table'],
 		'WHERE': {left: 'id', operator: '=', right: '5'},
+	});
+
+	deepEqual(m.sql2ast('DELETE FROM table WHERE id = 5', false), {
+		'DELETE FROM': ['table'],
+		'WHERE': 'id = 5',
 	});
 
 	deepEqual(m.sql2ast('INSERT INTO table (column1, column2) VALUES("test ()", CURDATE())'), {
