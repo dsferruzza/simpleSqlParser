@@ -347,26 +347,46 @@ test('condition parser', function () {
 });
 
 test('parse SQL', function() {
-	expect(23);
+	expect(24);
 
 	deepEqual(m.sql2ast('SELECT * FROM table'), {
 		'SELECT': ['*'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 	});
 
 	deepEqual(m.sql2ast('select * from table'), {
 		'SELECT': ['*'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 	});
 
 	deepEqual(m.sql2ast('SELECT * FROM table;'), {
 		'SELECT': ['*'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
+	});
+
+	deepEqual(m.sql2ast('SELECT * FROM table AS t'), {
+		'SELECT': ['*'],
+		'FROM': [{
+			table: 'table',
+			as: 't',
+		}],
 	});
 
 	deepEqual(m.sql2ast('SELECT * FROM table; SELECT * FROM table2'), {
 		'SELECT': ['*'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 	});
 
 	deepEqual(m.sql2ast('SELECT column1, column2, FUNCTION("string ()\'\'", column3),  column4 AS Test1,column5 AS "Test 2", column6 "Test 3" FROM table'), {
@@ -378,26 +398,35 @@ test('parse SQL', function() {
 			'column5 AS "Test 2"',
 			'column6 "Test 3"',
 		],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 	});
 
 	deepEqual(m.sql2ast('SELECT FUCTION("SQL syntax like: FROM or LIMIT", \'SQL syntax like: FROM or LIMIT\', `SQL syntax like: FROM or LIMIT`) FROM table'), {
 		'SELECT': ['FUCTION("SQL syntax like: FROM or LIMIT", \'SQL syntax like: FROM or LIMIT\', `SQL syntax like: FROM or LIMIT`)'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 	});
 
 	deepEqual(m.sql2ast('SELECT * FROM table1,table2 AS t2   ,   table3 AS "t 3"'), {
 		'SELECT': ['*'],
 		'FROM': [
-			'table1',
-			'table2 AS t2',
-			'table3 AS "t 3"',
+			{table: 'table1',	as: ''},
+			{table: 'table2',	as: 't2'},
+			{table: 'table3',	as: 't 3'},
 		],
 	});
 
 	deepEqual(m.sql2ast('SELECT * FROM table LEFT JOIN table2 ON table.id = table2.id_table INNER JOIN table4 AS t4 ON table.id = FUNCTION(table4.id_table, "string()") JOIN table3 ON table.id=table3.id_table'), {
 		'SELECT': ['*'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 		'JOIN': [
 			{
 				type: 'left',
@@ -422,7 +451,10 @@ test('parse SQL', function() {
 
 	deepEqual(m.sql2ast('SELECT * FROM table LEFT JOIN table2 AS t2 ON table.id = t2.id_table'), {
 		'SELECT': ['*'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 		'JOIN': [
 			{
 				type: 'left',
@@ -435,7 +467,10 @@ test('parse SQL', function() {
 
 	deepEqual(m.sql2ast('SELECT * FROM table WHERE (column1 = "something ()" AND table.column2 != column3) AND (column4 OR column5 IS NOT NULL)'), {
 		'SELECT': ['*'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 		'WHERE': {
 			logic: 'AND', terms: [
 				{left: 'column1', operator: '=', right: '"something ()"'},
@@ -450,7 +485,10 @@ test('parse SQL', function() {
 
 	deepEqual(m.sql2ast('SELECT * FROM table ORDER BY column1 ASC, column2 DESC'), {
 		'SELECT': ['*'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 		'ORDER BY': [
 			{column: 'column1', order: 'ASC'},
 			{column: 'column2', order: 'DESC'},
@@ -459,24 +497,36 @@ test('parse SQL', function() {
 
 	deepEqual(m.sql2ast('SELECT * FROM table LIMIT 5'), {
 		'SELECT': ['*'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 		'LIMIT': {nb: 5, from: 1},
 	});
 
 	deepEqual(m.sql2ast('SELECT * FROM table LIMIT 10,20'), {
 		'SELECT': ['*'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 		'LIMIT': {nb: 20, from: 10},
 	});
 
 	deepEqual(m.sql2ast('SELECT EXTRACT(MICROSECOND FROM "2003-01-02 10:30:00.00123") FROM table'), {
 		'SELECT': ['EXTRACT(MICROSECOND FROM "2003-01-02 10:30:00.00123")'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 	});
 
 	deepEqual(m.sql2ast('SELECT column1, FROM table, ORDER BY id ASC,'), {
 		'SELECT': ['column1'],
-		'FROM': ['table'],
+		'FROM': [{
+			table: 'table',
+			as: '',
+		}],
 		'ORDER BY': [{column: 'id', order: 'ASC'}],
 	});
 
@@ -576,10 +626,10 @@ test('SELECT query', function() {
 	var q = 'SELECT * FROM table LIMIT 10,1';
 	deepEqual(m.ast2sql(m.sql2ast(q)), q);
 
-	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': ['table'], 'LIMIT': {'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
-	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': ['table'], 'LIMIT': {'nb': ''}}), 'SELECT * FROM table');
-	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': ['table'], 'LIMIT': {'from': null, 'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
-	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': ['table'], 'LIMIT': {'from': '-1', 'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
+	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': [{table: 'table',	as: ''}], 'LIMIT': {'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
+	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': [{table: 'table',	as: ''}], 'LIMIT': {'nb': ''}}), 'SELECT * FROM table');
+	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': [{table: 'table',	as: ''}], 'LIMIT': {'from': null, 'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
+	deepEqual(m.ast2sql({'SELECT': ['*'], 'FROM': [{table: 'table',	as: ''}], 'LIMIT': {'from': '-1', 'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
 });
 
 test('INSERT query', function() {

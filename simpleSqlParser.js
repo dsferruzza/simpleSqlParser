@@ -131,7 +131,24 @@
 			return result;
 		};
 		
-		analysis['FROM'] = analysis['DELETE FROM'] = analysis['UPDATE'] = function (str) {
+		analysis['FROM'] = function (str) {
+			var result = str.split(',');
+			result = result.map(function(item) {
+				return trim(item);
+			});
+			result.forEach(function(item, key) {
+				if (item == '') result.splice(key);
+			});
+			result = result.map(function(item) {
+				var table = item.split(' AS ');
+				var alias = table[1] || '';
+				if (alias.indexOf('"') == 0 && alias.lastIndexOf('"') == alias.length - 1) alias = alias.substring(1, alias.length - 1);
+				return {table: table[0], as: alias};
+			});
+			return result;
+		};
+		
+		analysis['DELETE FROM'] = analysis['UPDATE'] = function (str) {
 			var result = str.split(',');
 			result = result.map(function(item) {
 				return trim(item);
@@ -509,7 +526,12 @@
 		}
 
 		function from(ast) {
-			return ' FROM ' + ast['FROM'].join(', ');
+			var result = ' FROM';
+			ast['FROM'].forEach(function (item) {
+				result += ' ' + item.table;
+				if (item.as != '') result += ' AS ' + item.as;
+			});
+			return result;
 		}
 
 		function join(ast) {
