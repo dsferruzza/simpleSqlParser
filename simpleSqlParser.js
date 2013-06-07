@@ -229,30 +229,58 @@
 			}
 		});
 
+		// Reorganize joins
+		if (typeof result['LEFT JOIN'] != 'undefined') {
+			if (typeof result['JOIN'] == 'undefined') result['JOIN'] = [];
+			if (typeof result['LEFT JOIN'][0] != 'undefined') {
+				result['LEFT JOIN'].forEach(function (item) {
+					//console.log(item);
+					result['JOIN'].push({
+						type: 'left',
+						cond: item.cond,
+						table: item.table,
+					});
+				});
+			}
+			else {
+				result['JOIN'].push({
+					type: 'left',
+					cond: result['LEFT JOIN'].cond,
+					table: result['LEFT JOIN'].table,
+				});
+			}
+			delete result['LEFT JOIN'];
+		}
+		if (typeof result['INNER JOIN'] != 'undefined') {
+			if (typeof result['JOIN'] == 'undefined') result['JOIN'] = [];
+			if (typeof result['INNER JOIN'][0] != 'undefined') {
+				result['INNER JOIN'].forEach(function (item) {
+					result['JOIN'].push({
+						type: 'inner',
+						cond: item.cond,
+						table: item.table,
+					});
+				});
+			}
+			else {
+				result['JOIN'].push({
+					type: 'inner',
+					cond: result['INNER JOIN'].cond,
+					table: result['INNER JOIN'].table,
+				});
+			}
+			delete result['INNER JOIN'];
+		}
+
 		// Parse conditions
 		if (parseCond) {
 			if (typeof result['WHERE'] == 'string') {
 				result['WHERE'] = CondParser.parse(result['WHERE']);
 			}
-			if (typeof result['LEFT JOIN'] != 'undefined') {
-				if (typeof result['LEFT JOIN']['cond'] != 'undefined') {
-					result['LEFT JOIN']['cond'] = CondParser.parse(result['LEFT JOIN']['cond']);
-				}
-				else {
-					result['LEFT JOIN'].forEach(function (item, key) {
-						result['LEFT JOIN'][key]['cond'] = CondParser.parse(item['cond']);
-					});
-				}
-			}
-			if (typeof result['INNER JOIN'] != 'undefined') {
-				if (typeof result['INNER JOIN']['cond'] != 'undefined') {
-					result['INNER JOIN']['cond'] = CondParser.parse(result['INNER JOIN']['cond']);
-				}
-				else {
-					result['INNER JOIN'].forEach(function (item, key) {
-						result['INNER JOIN'][key]['cond'] = CondParser.parse(item['cond']);
-					});
-				}
+			if (typeof result['JOIN'] != 'undefined') {
+				result['JOIN'].forEach(function (item, key) {
+					result['JOIN'][key]['cond'] = CondParser.parse(item['cond']);
+				});
 			}
 		}
 
@@ -494,18 +522,13 @@
 			return ' FROM ' + ast['FROM'].join(', ');
 		}
 
-		function join(ast, type) {
-			if (typeof ast[type + ' JOIN'] != 'undefined') {
-				var join = ast[type + ' JOIN'];
+		function join(ast) {
+			if (typeof ast['JOIN'] != 'undefined') {
 				var result = '';
-				if (typeof join[0] != 'undefined') {
-					join.forEach(function(item) {
-						result += ' ' + type + ' JOIN ' + item.table + ' ON ' + cond2sql(item.cond);
-					});
-				}
-				else result += ' ' + type + ' JOIN ' + join.table + ' ON ' + cond2sql(join.cond);
+				ast['JOIN'].forEach(function(item) {
+					result += ' ' + item.type.toUpperCase() + ' JOIN ' + item.table + ' ON ' + cond2sql(item.cond);
+				});
 				return result;
-
 			}
 			else return '';
 		}
@@ -573,7 +596,7 @@
 
 		// Check request's type
 		if (typeof ast['SELECT'] != 'undefined' && typeof ast['FROM'] != 'undefined') {
-			result = select(ast) + from(ast) + join(ast, 'LEFT') + join(ast, 'INNER') + where(ast) + order_by(ast) + limit(ast);		
+			result = select(ast) + from(ast) + join(ast) + where(ast) + order_by(ast) + limit(ast);		
 		}
 		else if (typeof ast['INSERT INTO'] != 'undefined') {
 			result = insert_into(ast) + values(ast);

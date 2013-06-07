@@ -398,20 +398,23 @@ test('parse SQL', function() {
 	deepEqual(m.sql2ast('SELECT * FROM table LEFT JOIN table2 ON table.id = table2.id_table INNER JOIN table4 AS t4 ON table.id = FUNCTION(table4.id_table, "string()") JOIN table3 ON table.id=table3.id_table'), {
 		'SELECT': ['*'],
 		'FROM': ['table'],
-		'LEFT JOIN': [
+		'JOIN': [
 			{
+				type: 'left',
 				table: 'table2',
 				cond: {left: 'table.id', operator: '=', right: 'table2.id_table'},
 			},
 			{
+				type: 'left',
 				table: 'table3',
 				cond: {left: 'table.id', operator: '=', right: 'table3.id_table'},
 			},
+			{
+				type: 'inner',
+				table: 'table4 AS t4',
+				cond: {left: 'table.id', operator: '=', right: 'FUNCTION(table4.id_table, "string()")'},
+			},
 		],
-		'INNER JOIN': {
-			table: 'table4 AS t4',
-			cond: {left: 'table.id', operator: '=', right: 'FUNCTION(table4.id_table, "string()")'},
-		},
 	});
 
 	deepEqual(m.sql2ast('SELECT * FROM table WHERE (column1 = "something ()" AND table.column2 != column3) AND (column4 OR column5 IS NOT NULL)'), {
