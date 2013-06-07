@@ -600,12 +600,15 @@ test('parse SQL', function() {
 module('ast2sql');
 
 test('SELECT query', function() {
-	expect(12);
+	expect(13);
 
 	var q = 'SELECT * FROM table';
 	deepEqual(m.ast2sql(m.sql2ast(q)), q);
 
 	deepEqual(m.ast2sql(m.sql2ast('select * from table')), 'SELECT * FROM table');
+
+	var q = 'SELECT * FROM table1, table2';
+	deepEqual(m.ast2sql(m.sql2ast(q)), q);
 
 	var q = 'SELECT t.column1, ot.column2 FROM table AS t LEFT JOIN othertable AS ot ON t.id = ot.id_table WHERE t.column3 = 5';
 	deepEqual(m.ast2sql(m.sql2ast(q)), q);

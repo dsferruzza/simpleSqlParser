@@ -526,11 +526,13 @@
 		}
 
 		function from(ast) {
-			var result = ' FROM';
-			ast['FROM'].forEach(function (item) {
-				result += ' ' + item.table;
-				if (item.as != '') result += ' AS ' + item.as;
+			var result = ' FROM ';
+			var tmp = ast['FROM'].map(function (item) {
+				var str = item.table;
+				if (item.as != '') str += ' AS ' + item.as;
+				return str;
 			});
+			result += tmp.join(', ');
 			return result;
 		}
 
