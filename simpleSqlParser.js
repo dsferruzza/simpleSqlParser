@@ -144,9 +144,12 @@
 		
 		analysis['LEFT JOIN'] = analysis['JOIN'] = analysis['INNER JOIN'] = function (str) {
 			str = str.split(' ON ');
+			var table = str[0].split(' AS ');
 			var result = {};
-			result['table'] = trim(str[0]);
-			result['cond'] = trim(str[1]);				
+			result['table'] = trim(table[0]);
+			result['as'] = trim(table[1]) || '';
+			result['cond'] = trim(str[1]);
+
 			return result;
 		};
 		
@@ -234,20 +237,13 @@
 			if (typeof result['JOIN'] == 'undefined') result['JOIN'] = [];
 			if (typeof result['LEFT JOIN'][0] != 'undefined') {
 				result['LEFT JOIN'].forEach(function (item) {
-					//console.log(item);
-					result['JOIN'].push({
-						type: 'left',
-						cond: item.cond,
-						table: item.table,
-					});
+					item.type = 'left';
+					result['JOIN'].push(item);
 				});
 			}
 			else {
-				result['JOIN'].push({
-					type: 'left',
-					cond: result['LEFT JOIN'].cond,
-					table: result['LEFT JOIN'].table,
-				});
+				result['LEFT JOIN'].type = 'left';
+				result['JOIN'].push(result['LEFT JOIN']);
 			}
 			delete result['LEFT JOIN'];
 		}
@@ -255,19 +251,13 @@
 			if (typeof result['JOIN'] == 'undefined') result['JOIN'] = [];
 			if (typeof result['INNER JOIN'][0] != 'undefined') {
 				result['INNER JOIN'].forEach(function (item) {
-					result['JOIN'].push({
-						type: 'inner',
-						cond: item.cond,
-						table: item.table,
-					});
+					item.type = 'inner';
+					result['JOIN'].push(item);
 				});
 			}
 			else {
-				result['JOIN'].push({
-					type: 'inner',
-					cond: result['INNER JOIN'].cond,
-					table: result['INNER JOIN'].table,
-				});
+				result['INNER JOIN'].type = 'inner';
+				result['JOIN'].push(result['INNER JOIN']);
 			}
 			delete result['INNER JOIN'];
 		}
@@ -526,7 +516,9 @@
 			if (typeof ast['JOIN'] != 'undefined') {
 				var result = '';
 				ast['JOIN'].forEach(function(item) {
-					result += ' ' + item.type.toUpperCase() + ' JOIN ' + item.table + ' ON ' + cond2sql(item.cond);
+					result += ' ' + item.type.toUpperCase() + ' JOIN ' + item.table;
+					if (item.as != '') result += ' AS ' + item.as;
+					result += ' ON ' + cond2sql(item.cond);
 				});
 				return result;
 			}

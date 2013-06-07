@@ -347,7 +347,7 @@ test('condition parser', function () {
 });
 
 test('parse SQL', function() {
-	expect(22);
+	expect(23);
 
 	deepEqual(m.sql2ast('SELECT * FROM table'), {
 		'SELECT': ['*'],
@@ -402,17 +402,33 @@ test('parse SQL', function() {
 			{
 				type: 'left',
 				table: 'table2',
+				as: '',
 				cond: {left: 'table.id', operator: '=', right: 'table2.id_table'},
 			},
 			{
 				type: 'left',
 				table: 'table3',
+				as: '',
 				cond: {left: 'table.id', operator: '=', right: 'table3.id_table'},
 			},
 			{
 				type: 'inner',
-				table: 'table4 AS t4',
+				table: 'table4',
+				as: 't4',
 				cond: {left: 'table.id', operator: '=', right: 'FUNCTION(table4.id_table, "string()")'},
+			},
+		],
+	});
+
+	deepEqual(m.sql2ast('SELECT * FROM table LEFT JOIN table2 AS t2 ON table.id = t2.id_table'), {
+		'SELECT': ['*'],
+		'FROM': ['table'],
+		'JOIN': [
+			{
+				type: 'left',
+				table: 'table2',
+				as: 't2',
+				cond: {left: 'table.id', operator: '=', right: 't2.id_table'},
 			},
 		],
 	});
