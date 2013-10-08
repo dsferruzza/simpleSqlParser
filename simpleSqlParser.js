@@ -1,4 +1,5 @@
 (function(exports) {
+	"use strict";
 
 	function trim(str) {
 		if (typeof str == 'string') return str.replace(/^\s+/g,'').replace(/\s+$/g,'');

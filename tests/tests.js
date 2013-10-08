@@ -1,3 +1,5 @@
+"use strict";
+
 var m = simpleSqlParser;
 
 module('sql2ast');
