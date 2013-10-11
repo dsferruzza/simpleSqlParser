@@ -36,7 +36,7 @@
 	function protect(str) {
 		var result = '#';
 		var length = str.length;
-		for (var i = 0 ; i < length ; i++)  result += str[i] + "#";
+		for (var i = 0 ; i < length ; i++) result += str[i] + "#";
 		return result;
 	}
 
@@ -44,7 +44,7 @@
 	function unprotect(str) {
 		var result = '';
 		var length = str.length;
-		for (var i = 1 ; i < length ; i = i + 2)  result += str[i];
+		for (var i = 1 ; i < length ; i = i + 2) result += str[i];
 		return result;
 	}
 
