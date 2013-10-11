@@ -3,7 +3,11 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      all: ['Gruntfile.js', 'SimpleSqlParser.js', 'tests/**/*.js']
+      all: ['Gruntfile.js', 'SimpleSqlParser.js', 'tests/tests.js'],
+      options : {
+        multistr: true,
+        sub: true,
+      },
     },
     qunit: {
       all: ['tests/**/*.html']
@@ -13,6 +17,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-qunit');
 
-  grunt.registerTask('default', ['qunit']);
+  grunt.registerTask('default', ['qunit', 'jshint']);
 
 };

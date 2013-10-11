@@ -79,14 +79,15 @@
 		// Write the position(s) in query of these separators
 		parts_name.forEach(function (item) {
 			var pos = 0;
+			var part = query.indexOf(item, pos);
 			do {
-				var part = query.indexOf(item, pos);
+				part = query.indexOf(item, pos);
 				if (part != -1) {
 					parts_order[part] = item;	// Position won't be exact because the use of protect() (above) and unprotect() alter the query string ; but we just need the order :)
 					pos = part + item.length;
 				}
 			}
-			while (part != -1)
+			while (part != -1);
 		});
 		
 		// Delete duplicates (caused, for example, by JOIN and LEFT JOIN)
@@ -94,7 +95,7 @@
 		parts_order.forEach(function (item, key) {
 			if (busy_until > key) delete parts_order[key];
 			else {
-				busy_until = parseInt(key) + item.length;
+				busy_until = parseInt(key, 10) + item.length;
 			
 				// Replace JOIN by LEFT JOIN
 				if (item == 'JOIN') parts_order[key] = 'LEFT JOIN';
@@ -127,7 +128,7 @@
 		analysis['SELECT'] = analysis['SET'] = function (str) {
 			var result = protect_split(',', str);
 			result.forEach(function(item, key) {
-				if (item == '') result.splice(key);
+				if (item === '') result.splice(key);
 			});
 			return result;
 		};
@@ -138,12 +139,12 @@
 				return trim(item);
 			});
 			result.forEach(function(item, key) {
-				if (item == '') result.splice(key);
+				if (item === '') result.splice(key);
 			});
 			result = result.map(function(item) {
 				var table = item.split(' AS ');
 				var alias = table[1] || '';
-				if (alias.indexOf('"') == 0 && alias.lastIndexOf('"') == alias.length - 1) alias = alias.substring(1, alias.length - 1);
+				if (alias.indexOf('"') === 0 && alias.lastIndexOf('"') == alias.length - 1) alias = alias.substring(1, alias.length - 1);
 				return {table: table[0], as: alias};
 			});
 			return result;
@@ -155,7 +156,7 @@
 				return trim(item);
 			});
 			result.forEach(function(item, key) {
-				if (item == '') result.splice(key);
+				if (item === '') result.splice(key);
 			});
 			return result;
 		};
@@ -181,7 +182,7 @@
 			str.forEach(function (item, key) {
 				var order_by = /([A-Za-z0-9_\.]+)\s+(ASC|DESC){1}/gi;
 				order_by = order_by.exec(item);
-				if (order_by != null) {
+				if (order_by !== null) {
 					var tmp = {};
 					tmp['column'] = trim(order_by[1]);
 					tmp['order'] = trim(order_by[2]);
@@ -196,8 +197,8 @@
 			limit = limit.exec(str);
 			if (typeof limit[2] == 'undefined') limit[2] = 1;
 			var result = {};
-			result['nb'] = parseInt(trim(limit[3]));
-			result['from'] = parseInt(trim(limit[2]));
+			result['nb'] = parseInt(trim(limit[3]), 10);
+			result['from'] = parseInt(trim(limit[2]), 10);
 			return result;
 		};
 		
@@ -219,7 +220,7 @@
 			var groups = protect_split(',', str);
 			var result = [];
 			groups.forEach(function(group) {
-				var group = group.replace(/^\(/g,'').replace(/\)$/g,'');
+				group = group.replace(/^\(/g,'').replace(/\)$/g,'');
 				group = protect_split(',', group);
 				result.push(group);
 			});
@@ -293,7 +294,7 @@
 		}
 
 		return result;
-	}
+	};
 
 
 	/*
@@ -325,7 +326,7 @@
 			if (/[()]/.test(this.currentChar)) return this.readGroupSymbol();
 			if (/[!=<>]/.test(this.currentChar)) return this.readOperator();
 			
-			if (this.currentChar == "") return {type: 'eot', value: ''};
+			if (this.currentChar === "") return {type: 'eot', value: ''};
 			else {
 				this.readNextChar();
 				return {type: 'empty', value: ''};
@@ -515,7 +516,7 @@
 	// Parse a string
 	CondParser.parse = function (source) {
 		return new CondParser(source).parseExpressionsRecursively();
-	}
+	};
 
 	// Generate the SQL query corresponding to an AST output by sql2ast()
 	exports.ast2sql = function (ast) {
@@ -530,7 +531,7 @@
 			var result = ' FROM ';
 			var tmp = ast['FROM'].map(function (item) {
 				var str = item.table;
-				if (item.as != '') str += ' AS ' + item.as;
+				if (item.as !== '') str += ' AS ' + item.as;
 				return str;
 			});
 			result += tmp.join(', ');
@@ -542,7 +543,7 @@
 				var result = '';
 				ast['JOIN'].forEach(function(item) {
 					result += ' ' + item.type.toUpperCase() + ' JOIN ' + item.table;
-					if (item.as != '') result += ' AS ' + item.as;
+					if (item.as !== '') result += ' AS ' + item.as;
 					result += ' ON ' + cond2sql(item.cond);
 				});
 				return result;
@@ -560,19 +561,19 @@
 		function order_by(ast) {
 			if (typeof ast['ORDER BY'] != 'undefined') {
 				var result = ' ORDER BY ';
-				var order_by = ast['ORDER BY'].map(function (item) {
+				var orders = ast['ORDER BY'].map(function (item) {
 					return item.column + ' ' + item.order;
 				});
-				result += order_by.join(', ');
+				result += orders.join(', ');
 				return result;
 			}
 			else return '';
 		}
 
 		function limit(ast) {
-			if (typeof ast['LIMIT'] != 'undefined' && typeof ast['LIMIT'].nb != 'undefined' && parseInt(ast['LIMIT'].nb) > 0) {
+			if (typeof ast['LIMIT'] != 'undefined' && typeof ast['LIMIT'].nb != 'undefined' && parseInt(ast['LIMIT'].nb, 10) > 0) {
 				var result = ' LIMIT ';
-				if (typeof ast['LIMIT'].from != 'undefined' && parseInt(ast['LIMIT'].from) > 1) result += ast['LIMIT'].from + ',';
+				if (typeof ast['LIMIT'].from != 'undefined' && parseInt(ast['LIMIT'].from, 10) > 1) result += ast['LIMIT'].from + ',';
 				result += ast['LIMIT'].nb;
 				return result;
 			}
@@ -591,10 +592,10 @@
 
 		function values(ast) {
 			var result = ' VALUES ';
-			var values = ast['VALUES'].map(function (item) {
+			var vals = ast['VALUES'].map(function (item) {
 				return '(' + item.join(', ') + ')';
 			});
-			result += values.join(', ');
+			result += vals.join(', ');
 			return result;
 		}
 
@@ -624,10 +625,10 @@
 		else if (typeof ast['DELETE FROM'] != 'undefined') {
 			result = delete_from(ast) + where(ast);
 		}
-		else result = null
+		else result = null;
 
 		return result;
-	}
+	};
 
 	// Generate SQL from a condition AST output by sql2ast() or CondParser
 	function cond2sql(cond, not_first) {
@@ -638,8 +639,8 @@
 			result = cond.terms.map(function (item) {
 				return cond2sql(item, true);
 			});
-			result = result.join(' ' + cond.logic + ' ')
-			if (not_first != null) result = '(' + result + ')';
+			result = result.join(' ' + cond.logic + ' ');
+			if (typeof not_first !== 'undefined') result = '(' + result + ')';
 		}
 		// If there is a condition
 		else if (typeof cond.left != 'undefined') {
