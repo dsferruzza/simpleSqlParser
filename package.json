@@ -38,5 +38,8 @@
     "grunt-contrib-qunit": "*",
     "grunt-contrib-jshint": "*",
     "grunt-contrib-watch": "*"
+  },
+  "scripts": {
+    "test": "grunt"
   }
 }
