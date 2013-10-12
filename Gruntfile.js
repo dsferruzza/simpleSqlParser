@@ -3,7 +3,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      all: ['Gruntfile.js', 'SimpleSqlParser.js', 'tests/tests.js'],
+      all: ['Gruntfile.js', 'simpleSqlParser.js', 'tests/tests.js'],
       options : {
         multistr: true,
         sub: true,
