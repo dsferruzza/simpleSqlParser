@@ -3,3 +3,7 @@
 *.sublime-workspace
 
 node_modules
+tests
+example.html
+Gruntfile.js
+.git*
