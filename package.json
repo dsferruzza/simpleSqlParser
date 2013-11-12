@@ -8,6 +8,11 @@
     "parse",
     "ast"
   ],
+  "author": {
+    "name": "David Sferruzza",
+    "email": "david.sferruzza@gmail.com",
+    "url": "https://github.com/dsferruzza"
+  },
   "contributors": [
     {
       "name": "RienNeVaPlus",
