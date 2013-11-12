@@ -52,7 +52,7 @@
 	// Parse a query
 	// parseCond: (bool) parse conditions in WHERE and JOIN (default true)
 	exports.sql2ast = function (query, parseCond) {
-		if (typeof parseCond == 'undefined' || typeof parseCond == 'null') parseCond = true;
+		if (typeof parseCond == 'undefined' || parseCond === null) parseCond = true;
 
 		// Remove semi-colons and keep only the first query
 		var semi_colon = '###semi-colon###';
