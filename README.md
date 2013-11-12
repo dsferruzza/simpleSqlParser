@@ -15,10 +15,12 @@ Import the JS file in your page:
 
 ### From Node.js
 
+Install the module from [npm](https://npmjs.org/package/simple-sql-parser) using `npm i simple-sql-parser --save`.
+
 Import the JS module in your app:
 
 ```js
-var simpleSqlParser = require('./simpleSqlParser.js');
+var simpleSqlParser = require('simple-sql-parser');
 ```
 
 ### Parse a query:
@@ -45,6 +47,7 @@ console.log(query);
 ## Notes
 
 simpleSqlParser only supports these queries:
+
 * SELECT
 * INSERT
 * UPDATE
@@ -54,7 +57,16 @@ simpleSqlParser **is not a full SQL parser!**
 It only support few SQL mechanisms and keywords.
 Feel free to make a pull request/issue.
 
-*simpleSqlParser was made for @GestionAIR*
+## How to install dev tools
+
+If you want to contribute, please write tests and respect the coding style.
+
+To install dev tools:
+
+- install Node.js (http://nodejs.org/)
+- install **grunt-cli** globally: `npm i -g grunt-cli`
+- install dev dependencies: `npm i`
+- use `grunt` to check your code!
 
 ## License
 
