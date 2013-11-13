@@ -1,0 +1,23 @@
+{
+  "name": "simple-sql-parser",
+  "main": "simpleSqlParser.js",
+  "homepage": "https://github.com/dsferruzza/simpleSqlParser",
+  "authors": [
+    "David Sferruzza <david.sferruzza@gmail.com>"
+  ],
+  "description": "Javascript library to parse CRUD (Create Retrieve Update Delete) SQL queries.",
+  "keywords": [
+    "sql",
+    "parse",
+    "ast"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "tests",
+    "package.json",
+    "Gruntfile.js"
+  ]
+}
