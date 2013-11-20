@@ -125,7 +125,17 @@
 		// Define analysis functions
 		var analysis = [];
 		
-		analysis['SELECT'] = analysis['SET'] = function (str) {
+		analysis['SELECT'] = function (str) {
+			var result = protect_split(',', str);
+			result = result.filter(function(item) {
+				return item !== '';
+			}).map(function(item) {
+				return {name: item};
+			});
+			return result;
+		};
+
+		analysis['SET'] = function (str) {
 			var result = protect_split(',', str);
 			result.forEach(function(item, key) {
 				if (item === '') result.splice(key);
@@ -524,7 +534,9 @@
 
 		// Define subfunctions
 		function select(ast) {
-			return 'SELECT ' + ast['SELECT'].join(', ');
+			return 'SELECT ' + ast['SELECT'].map(function(item) {
+				return item.name;
+			}).join(', ');
 		}
 
 		function from(ast) {
