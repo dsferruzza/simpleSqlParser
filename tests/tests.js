@@ -351,48 +351,56 @@
 
 	test('parse SQL', function() {
 		expect(24);
+		var q;
 
-		deepEqual(m.sql2ast('SELECT * FROM table'), {
+		q = 'SELECT * FROM table';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
 				table: 'table',
 				as: '',
 			}],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('select * from table'), {
+		q = 'select * from table';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
 				table: 'table',
 				as: '',
 			}],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT * FROM table;'), {
+		q = 'SELECT * FROM table;';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
 				table: 'table',
 				as: '',
 			}],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT * FROM table AS t'), {
+
+		q = 'SELECT * FROM table AS t';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
 				table: 'table',
 				as: 't',
 			}],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT * FROM table; SELECT * FROM table2'), {
+		q = 'SELECT * FROM table; SELECT * FROM table2';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
 				table: 'table',
 				as: '',
 			}],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT column1, column2, FUNCTION("string ()\'\'", column3),  column4 AS Test1,column5 AS "Test 2", column6 "Test 3" FROM table'), {
+		q = 'SELECT column1, column2, FUNCTION("string ()\'\'", column3),  column4 AS Test1,column5 AS "Test 2", column6 "Test 3" FROM table';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [
 				{name: 'column1'},
 				{name: 'column2'},
@@ -405,26 +413,29 @@
 				table: 'table',
 				as: '',
 			}],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT FUCTION("SQL syntax like: FROM or LIMIT", \'SQL syntax like: FROM or LIMIT\', `SQL syntax like: FROM or LIMIT`) FROM table'), {
+		q = 'SELECT FUCTION("SQL syntax like: FROM or LIMIT", \'SQL syntax like: FROM or LIMIT\', `SQL syntax like: FROM or LIMIT`) FROM table';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: 'FUCTION("SQL syntax like: FROM or LIMIT", \'SQL syntax like: FROM or LIMIT\', `SQL syntax like: FROM or LIMIT`)'}],
 			'FROM': [{
 				table: 'table',
 				as: '',
 			}],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT * FROM table1,table2 AS t2   ,   table3 AS "t 3"'), {
+		q = 'SELECT * FROM table1,table2 AS t2   ,   table3 AS "t 3"';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [
 				{table: 'table1',	as: ''},
 				{table: 'table2',	as: 't2'},
 				{table: 'table3',	as: 't 3'},
 			],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT * FROM table LEFT JOIN table2 ON table.id = table2.id_table INNER JOIN table4 AS t4 ON table.id = FUNCTION(table4.id_table, "string()") JOIN table3 ON table.id=table3.id_table'), {
+		q = 'SELECT * FROM table LEFT JOIN table2 ON table.id = table2.id_table INNER JOIN table4 AS t4 ON table.id = FUNCTION(table4.id_table, "string()") JOIN table3 ON table.id=table3.id_table';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
 				table: 'table',
@@ -450,9 +461,10 @@
 					cond: {left: 'table.id', operator: '=', right: 'FUNCTION(table4.id_table, "string()")'},
 				},
 			],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT * FROM table LEFT JOIN table2 AS t2 ON table.id = t2.id_table'), {
+		q = 'SELECT * FROM table LEFT JOIN table2 AS t2 ON table.id = t2.id_table';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
 				table: 'table',
@@ -466,9 +478,10 @@
 					cond: {left: 'table.id', operator: '=', right: 't2.id_table'},
 				},
 			],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT * FROM table WHERE (column1 = "something ()" AND table.column2 != column3) AND (column4 OR column5 IS NOT NULL)'), {
+		q = 'SELECT * FROM table WHERE (column1 = "something ()" AND table.column2 != column3) AND (column4 OR column5 IS NOT NULL)';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
 				table: 'table',
@@ -484,9 +497,10 @@
 					]},
 				],
 			},
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT * FROM table ORDER BY column1 ASC, column2 DESC'), {
+		q = 'SELECT * FROM table ORDER BY column1 ASC, column2 DESC';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
 				table: 'table',
@@ -496,7 +510,7 @@
 				{column: 'column1', order: 'ASC'},
 				{column: 'column2', order: 'DESC'},
 			],
-		});
+		}, q);
 
 		deepEqual(m.sql2ast('SELECT * FROM table LIMIT 5'), {
 			'SELECT': [{name: '*'}],
@@ -505,70 +519,79 @@
 				as: '',
 			}],
 			'LIMIT': {nb: 5, from: 1},
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT * FROM table LIMIT 10,20'), {
+		q = 'SELECT * FROM table LIMIT 10,20';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
 				table: 'table',
 				as: '',
 			}],
 			'LIMIT': {nb: 20, from: 10},
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT EXTRACT(MICROSECOND FROM "2003-01-02 10:30:00.00123") FROM table'), {
+		q = 'SELECT EXTRACT(MICROSECOND FROM "2003-01-02 10:30:00.00123") FROM table';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: 'EXTRACT(MICROSECOND FROM "2003-01-02 10:30:00.00123")'}],
 			'FROM': [{
 				table: 'table',
 				as: '',
 			}],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('SELECT column1, FROM table, ORDER BY id ASC,'), {
+		q = 'SELECT column1, FROM table, ORDER BY id ASC,';
+		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: 'column1'}],
 			'FROM': [{
 				table: 'table',
 				as: '',
 			}],
 			'ORDER BY': [{column: 'id', order: 'ASC'}],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('DELETE FROM table WHERE id = 5'), {
+		q = 'DELETE FROM table WHERE id = 5';
+		deepEqual(m.sql2ast(q), {
 			'DELETE FROM': ['table'],
 			'WHERE': {left: 'id', operator: '=', right: '5'},
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('DELETE FROM table WHERE id = 5', false), {
+		q = 'DELETE FROM table WHERE id = 5';
+		deepEqual(m.sql2ast(q, false), {
 			'DELETE FROM': ['table'],
 			'WHERE': 'id = 5',
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('INSERT INTO table (column1, column2) VALUES("test ()", CURDATE())'), {
+		q = 'INSERT INTO table (column1, column2) VALUES("test ()", CURDATE())';
+		deepEqual(m.sql2ast(q), {
 			'INSERT INTO': {
 				table: 'table',
 				columns: ['column1', 'column2'],
 			},
 			'VALUES': [['"test ()"', 'CURDATE()']],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('INSERT INTO table (col_A,col_B,col_C) VALUES (1,2,3)'), {
+		q = 'INSERT INTO table (col_A,col_B,col_C) VALUES (1,2,3)';
+		deepEqual(m.sql2ast(q), {
 			'INSERT INTO': {
 				table: 'table',
 				columns: ['col_A', 'col_B', 'col_C'],
 			},
 			'VALUES': [['1', '2', '3']],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('INSERT INTO table VALUES (1,2,3), (4,5,6), (7,8,9)'), {
+		q = 'INSERT INTO table VALUES (1,2,3), (4,5,6), (7,8,9)';
+		deepEqual(m.sql2ast(q), {
 			'INSERT INTO': {table: 'table'},
 			'VALUES': [
 				['1', '2', '3'],
 				['4', '5', '6'],
 				['7', '8', '9'],
 			],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('INSERT INTO table (col_A,col_B,col_C) VALUES (1,2,3), (4,5,6), (7,8,9)'), {
+		q = 'INSERT INTO table (col_A,col_B,col_C) VALUES (1,2,3), (4,5,6), (7,8,9)';
+		deepEqual(m.sql2ast(q), {
 			'INSERT INTO': {
 				table: 'table',
 				columns: ['col_A', 'col_B', 'col_C'],
@@ -578,14 +601,16 @@
 				['4', '5', '6'],
 				['7', '8', '9'],
 			],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('INSERT INTO table VALUES (1,2,3)'), {
+		q = 'INSERT INTO table VALUES (1,2,3)';
+		deepEqual(m.sql2ast(q), {
 			'INSERT INTO': {table: 'table'},
 			'VALUES': [['1', '2', '3']],
-		});
+		}, q);
 
-		deepEqual(m.sql2ast('UPDATE table SET column1 = "string ()", column2=5,column3=column4, column5 = CURDATE(), column6 = FUNCTION("string ()", column7) WHERE id = 5'), {
+		q = 'UPDATE table SET column1 = "string ()", column2=5,column3=column4, column5 = CURDATE(), column6 = FUNCTION("string ()", column7) WHERE id = 5';
+		deepEqual(m.sql2ast(q), {
 			'UPDATE': ['table'],
 			'SET': [
 				'column1 = "string ()"',
@@ -595,7 +620,7 @@
 				'column6 = FUNCTION("string ()", column7)',
 			],
 			'WHERE': {left: 'id', operator: '=', right: '5'},
-		});
+		}, q);
 	});
 
 
@@ -607,36 +632,43 @@
 		var q;
 
 		q = 'SELECT * FROM table';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
-		deepEqual(m.ast2sql(m.sql2ast('select * from table')), 'SELECT * FROM table');
+		q = 'SELECT * FROM table';
+		deepEqual(m.ast2sql(m.sql2ast('select * from table')), q, q);
 
 		q = 'SELECT * FROM table1, table2';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'SELECT t.column1, ot.column2 FROM table AS t LEFT JOIN othertable AS ot ON t.id = ot.id_table WHERE t.column3 = 5';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'SELECT * FROM table AS t LEFT JOIN othertable AS ot ON t.id = ot.id_table LEFT JOIN othertable2 AS ot2 ON t.id = ot2.id_table AND ot2.column INNER JOIN othertable3 AS ot3 ON t.id = ot3.id_table';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'SELECT * FROM table WHERE (column1 = "something ()" AND table.column2 != column3) AND (column4 OR column5 IS NOT NULL)';
-		deepEqual(m.ast2sql(m.sql2ast('SELECT * FROM table WHERE (column1 = "something ()" AND table.column2 != column3) AND (column4 OR column5 IS NOT NULL)')), 
-			'SELECT * FROM table WHERE column1 = "something ()" AND table.column2 != column3 AND (column4 OR column5 IS NOT NULL)');
+		deepEqual(m.ast2sql(m.sql2ast(q)), 'SELECT * FROM table WHERE column1 = "something ()" AND table.column2 != column3 AND (column4 OR column5 IS NOT NULL)', q);
 
 		q = 'SELECT * FROM table ORDER BY a ASC, b DESC, c ASC';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'SELECT * FROM table LIMIT 1';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'SELECT * FROM table LIMIT 10,1';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
-		deepEqual(m.ast2sql({'SELECT': [{name: '*'}], 'FROM': [{table: 'table', as: ''}], 'LIMIT': {'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
-		deepEqual(m.ast2sql({'SELECT': [{name: '*'}], 'FROM': [{table: 'table', as: ''}], 'LIMIT': {'nb': ''}}), 'SELECT * FROM table');
-		deepEqual(m.ast2sql({'SELECT': [{name: '*'}], 'FROM': [{table: 'table', as: ''}], 'LIMIT': {'from': null, 'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
-		deepEqual(m.ast2sql({'SELECT': [{name: '*'}], 'FROM': [{table: 'table', as: ''}], 'LIMIT': {'from': '-1', 'nb': '1'}}), 'SELECT * FROM table LIMIT 1');
+		q = 'SELECT * FROM table LIMIT 1';
+		deepEqual(m.ast2sql({'SELECT': [{name: '*'}], 'FROM': [{table: 'table', as: ''}], 'LIMIT': {'nb': '1'}}), q, q);
+
+		q = 'SELECT * FROM table';
+		deepEqual(m.ast2sql({'SELECT': [{name: '*'}], 'FROM': [{table: 'table', as: ''}], 'LIMIT': {'nb': ''}}), q, q);
+
+		q = 'SELECT * FROM table LIMIT 1';
+		deepEqual(m.ast2sql({'SELECT': [{name: '*'}], 'FROM': [{table: 'table', as: ''}], 'LIMIT': {'from': null, 'nb': '1'}}), q, q);
+
+		q = 'SELECT * FROM table LIMIT 1';
+		deepEqual(m.ast2sql({'SELECT': [{name: '*'}], 'FROM': [{table: 'table', as: ''}], 'LIMIT': {'from': '-1', 'nb': '1'}}), q, q);
 	});
 
 	test('INSERT query', function() {
@@ -644,16 +676,16 @@
 		var q;
 
 		q = 'INSERT INTO table (col_A, col_B, col_C) VALUES (1, 2, 3)';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'INSERT INTO table VALUES (1, 2, 3), (4, 5, 6), (7, 8, 9)';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'INSERT INTO table (col_A, col_B, col_C) VALUES (1, 2, 3), (4, 5, 6), (7, 8, 9)';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'INSERT INTO table VALUES (1, 2, 3)';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 	});
 
 	test('DELETE query', function() {
@@ -661,7 +693,7 @@
 		var q;
 
 		q = 'DELETE FROM table WHERE id = 5';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 	});
 
 	test('UPDATE query', function() {
@@ -669,10 +701,10 @@
 		var q;
 
 		q = 'UPDATE table SET column = 1';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'UPDATE table SET column1 = "string ()", column2=5, column3=column4, column5 = CURDATE(), column6 = FUNCTION("string ()", column7) WHERE id = 5';
-		deepEqual(m.ast2sql(m.sql2ast(q)), q);
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 	});
 
 }());
