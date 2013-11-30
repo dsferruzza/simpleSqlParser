@@ -65,31 +65,45 @@
 		query = query.replace(new RegExp(semi_colon, 'g'), ';');
 
 		// Define which words can act as separator
-		var parts_name = ['SELECT', 'FROM', 'DELETE FROM', 'INSERT INTO', 'UPDATE', 'JOIN', 'LEFT JOIN', 'INNER JOIN', 'ORDER BY', 'GROUP BY', 'HAVING', 'WHERE', 'LIMIT', 'VALUES', 'SET'];
+		var keywords = ['SELECT', 'FROM', 'DELETE FROM', 'INSERT INTO', 'UPDATE', 'JOIN', 'LEFT JOIN', 'INNER JOIN', 'ORDER BY', 'GROUP BY', 'HAVING', 'WHERE', 'LIMIT', 'VALUES', 'SET'];
+		var parts_name = keywords.map(function (item) {
+			return item + ' ';
+		});
+		parts_name = parts_name.concat(keywords.map(function (item) {
+			return item + '(';
+		}));
 		parts_name = parts_name.concat(parts_name.map(function (item) {
 			return item.toLowerCase();
 		}));
-		var parts_order = [];
+		var parts_name_escaped = parts_name.map(function (item) {
+			return item.replace('(', '[\\(]');
+		});
 		
 		// Hide words defined as separator but written inside brackets in the query
 		query = query.replace(/\((.+?)\)|"(.+?)"|'(.+?)'|`(.+?)`/gi, function (match) {
-			return match.replace(new RegExp(parts_name.join('|'), 'gi'), protect);
+			return match.replace(new RegExp(parts_name_escaped.join('|'), 'gi'), protect);
 		});
 
 		// Write the position(s) in query of these separators
+		var parts_order = [];
+		function realNameCallback(match, name) {
+			return name;
+		}
 		parts_name.forEach(function (item) {
 			var pos = 0;
-			var part = query.indexOf(item, pos);
+			var part;
+
 			do {
 				part = query.indexOf(item, pos);
 				if (part != -1) {
-					parts_order[part] = item;	// Position won't be exact because the use of protect() (above) and unprotect() alter the query string ; but we just need the order :)
-					pos = part + item.length;
+					var realName = item.replace(/^((\w|\s)+?)\s?\(?$/i, realNameCallback);
+					parts_order[part] = realName;	// Position won't be exact because the use of protect() (above) and unprotect() alter the query string ; but we just need the order :)
+					pos = part + realName.length;
 				}
 			}
 			while (part != -1);
 		});
-		
+
 		// Delete duplicates (caused, for example, by JOIN and LEFT JOIN)
 		var busy_until = 0;
 		parts_order.forEach(function (item, key) {
@@ -103,14 +117,14 @@
 		});
 		
 		// Generate protected word list to reverse the use of protect()
-		var words = parts_name.slice(0);
+		var words = parts_name_escaped.slice(0);
 		words = words.map(function (item) {
 			return protect(item);
 		});
 		words = words.join('|');
 		
 		// Split parts
-		var parts = query.split(new RegExp(parts_name.join('|'), 'i'));
+		var parts = query.split(new RegExp(parts_name_escaped.join('|'), 'i'));
 		
 		// Unhide words precedently hidden with protect()
 		query = query.replace(/\((.+?)\)|"(.+?)"|'(.+?)'|`(.+?)`/gi, function (match) {
@@ -227,6 +241,8 @@
 		};
 		
 		analysis['VALUES'] = function (str) {
+			str = trim(str);
+			if (str[0] != '(') str = '(' + str;	// If query has "VALUES(...)" instead of "VALUES (...)"
 			var groups = protect_split(',', str);
 			var result = [];
 			groups.forEach(function(group) {
@@ -259,6 +275,7 @@
 				}
 				else result[item] = part_result;
 			}
+			else console.log('Can\'t analyze statement "' + item + '"');
 		});
 
 		// Reorganize joins

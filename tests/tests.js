@@ -350,7 +350,7 @@
 	});
 
 	test('parse SQL', function() {
-		expect(24);
+		expect(25);
 		var q;
 
 		q = 'SELECT * FROM table';
@@ -548,6 +548,15 @@
 				as: '',
 			}],
 			'ORDER BY': [{column: 'id', order: 'ASC'}],
+		}, q);
+
+		q = 'SELECT column1, setup, column2 FROM table';
+		deepEqual(m.sql2ast(q), {
+			'SELECT': [{name: 'column1'}, {name: 'setup'}, {name: 'column2'}],
+			'FROM': [{
+				table: 'table',
+				as: '',
+			}],
 		}, q);
 
 		q = 'DELETE FROM table WHERE id = 5';
