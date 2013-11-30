@@ -9,7 +9,7 @@
 	// Split a string using a separator, only if this separator isn't beetween brackets
 	function protect_split(separator, str) {
 		var sep = '######';
-		
+
 		var string = false;
 		var nb_brackets = 0;
 		var new_str = "";
@@ -18,17 +18,17 @@
 			else if (string && str[i] == string) string = false;
 			else if (!string && str[i] == '(') nb_brackets ++;
 			else if (!string && str[i] == ')') nb_brackets --;
-			
+
 			if (str[i] == separator && (nb_brackets > 0 || string)) new_str += sep;
 			else new_str += str[i];
 		}
 		str = new_str;
-		
+
 		str = str.split(separator);
 		str = str.map(function (item) {
 			return trim(item.replace(new RegExp(sep, 'g'), separator));
 		});
-		
+
 		return str;
 	}
 
@@ -78,7 +78,7 @@
 		var parts_name_escaped = parts_name.map(function (item) {
 			return item.replace('(', '[\\(]');
 		});
-		
+
 		// Hide words defined as separator but written inside brackets in the query
 		query = query.replace(/\((.+?)\)|"(.+?)"|'(.+?)'|`(.+?)`/gi, function (match) {
 			return match.replace(new RegExp(parts_name_escaped.join('|'), 'gi'), protect);
@@ -110,22 +110,22 @@
 			if (busy_until > key) delete parts_order[key];
 			else {
 				busy_until = parseInt(key, 10) + item.length;
-			
+
 				// Replace JOIN by LEFT JOIN
 				if (item == 'JOIN') parts_order[key] = 'LEFT JOIN';
 			}
 		});
-		
+
 		// Generate protected word list to reverse the use of protect()
 		var words = parts_name_escaped.slice(0);
 		words = words.map(function (item) {
 			return protect(item);
 		});
 		words = words.join('|');
-		
+
 		// Split parts
 		var parts = query.split(new RegExp(parts_name_escaped.join('|'), 'i'));
-		
+
 		// Unhide words precedently hidden with protect()
 		query = query.replace(/\((.+?)\)|"(.+?)"|'(.+?)'|`(.+?)`/gi, function (match) {
 			return match.replace(new RegExp(words, 'gi'), unprotect);
@@ -135,10 +135,10 @@
 				return match.replace(new RegExp(words, 'gi'), unprotect);
 			});
 		});
-		
+
 		// Define analysis functions
 		var analysis = [];
-		
+
 		analysis['SELECT'] = function (str) {
 			var result = protect_split(',', str);
 			result = result.filter(function(item) {
@@ -156,7 +156,7 @@
 			});
 			return result;
 		};
-		
+
 		analysis['FROM'] = function (str) {
 			var result = str.split(',');
 			result = result.map(function(item) {
@@ -173,7 +173,7 @@
 			});
 			return result;
 		};
-		
+
 		analysis['DELETE FROM'] = analysis['UPDATE'] = function (str) {
 			var result = str.split(',');
 			result = result.map(function(item) {
@@ -184,7 +184,7 @@
 			});
 			return result;
 		};
-		
+
 		analysis['LEFT JOIN'] = analysis['JOIN'] = analysis['INNER JOIN'] = function (str) {
 			str = str.split(' ON ');
 			var table = str[0].split(' AS ');
@@ -195,11 +195,11 @@
 
 			return result;
 		};
-		
+
 		analysis['WHERE'] = function (str) {
 			return trim(str);
 		};
-		
+
 		analysis['ORDER BY'] = function (str) {
 			str = str.split(',');
 			var result = [];
@@ -215,7 +215,7 @@
 			});
 			return result;
 		};
-		
+
 		analysis['LIMIT'] = function (str) {
 			var limit = /((\d+)\s*,\s*)?(\d+)/gi;
 			limit = limit.exec(str);
@@ -225,7 +225,7 @@
 			result['from'] = parseInt(trim(limit[2]), 10);
 			return result;
 		};
-		
+
 		analysis['INSERT INTO'] = function (str) {
 			var insert = /([A-Za-z0-9_\.]+)\s*(\(([A-Za-z0-9_\., ]+)\))?/gi;
 			insert = insert.exec(str);
@@ -239,7 +239,7 @@
 			}
 			return result;
 		};
-		
+
 		analysis['VALUES'] = function (str) {
 			str = trim(str);
 			if (str[0] != '(') str = '(' + str;	// If query has "VALUES(...)" instead of "VALUES (...)"
@@ -254,7 +254,7 @@
 		};
 
 		// TODO: handle GROUP BY and HAVING
-		
+
 		// Analyze parts
 		var result = {};
 		var j = 0;
@@ -263,14 +263,14 @@
 			j++;
 			if (typeof analysis[item] != 'undefined') {
 				var part_result = analysis[item](parts[j]);
-				
+
 				if (typeof result[item] != 'undefined') {
 					if (typeof result[item] == 'string' || typeof result[item][0] == 'undefined') {
 						var tmp = result[item];
 						result[item] = [];
 						result[item].push(tmp);
 					}
-					
+
 					result[item].push(part_result);
 				}
 				else result[item] = part_result;
@@ -340,7 +340,7 @@
 
 	CondLexer.prototype = {
 		constructor: CondLexer,
-		
+
 		// Read the next character (or return an empty string if cursor is at the end of the source)
 		readNextChar: function () {
 			this.currentChar = this.source[this.cursor++] || "";
@@ -352,14 +352,14 @@
 			if (/["'`]/.test(this.currentChar)) return this.readString();
 			if (/[()]/.test(this.currentChar)) return this.readGroupSymbol();
 			if (/[!=<>]/.test(this.currentChar)) return this.readOperator();
-			
+
 			if (this.currentChar === "") return {type: 'eot', value: ''};
 			else {
 				this.readNextChar();
 				return {type: 'empty', value: ''};
 			}
 		},
-		
+
 		readWord: function () {
 			var tokenValue = "";
 			var nb_brackets = 0;
@@ -388,16 +388,16 @@
 				tokenValue += this.currentChar;
 				this.readNextChar();
 			}
-			
+
 			if (/^(AND|OR)$/i.test(tokenValue)) return {type: 'logic', value: tokenValue};
 			if (/^(IS|NOT)$/i.test(tokenValue)) return {type: 'operator', value: tokenValue};
 			else return {type: 'word', value: tokenValue};
 		},
-		
+
 		readString: function () {
 			var tokenValue = "";
 			var quote = this.currentChar;
-			
+
 			tokenValue += this.currentChar;
 			this.readNextChar();
 
@@ -408,35 +408,35 @@
 
 			tokenValue += this.currentChar;
 			this.readNextChar();
-			
+
 			// Handle this case : `table`.`column`
 			if (this.currentChar == '.') {
 				tokenValue += this.currentChar;
 				this.readNextChar();
 				tokenValue += this.readString().value;
-				
+
 				return {type: 'word', value: tokenValue};
 			}
-			
+
 			return {type: 'string', value: tokenValue};
 		},
-		
+
 		readGroupSymbol: function () {
 			var tokenValue = this.currentChar;
 			this.readNextChar();
 
 			return {type: 'group', value: tokenValue};
 		},
-		
+
 		readOperator: function () {
 			var tokenValue = this.currentChar;
 			this.readNextChar();
-			
+
 			if (/[=<>]/.test(this.currentChar)) {
 				tokenValue += this.currentChar;
 				this.readNextChar();
 			}
-			
+
 			return {type: 'operator', value: tokenValue};
 		},
 	};
@@ -464,7 +464,7 @@
 
 	CondParser.prototype = {
 		constructor: CondParser,
-		
+
 		// Read the next token (skip empty tokens)
 		readNextToken: function () {
 			this.currentToken = this.lexer.readNextToken();
@@ -476,17 +476,17 @@
 		parseExpressionsRecursively: function () {
 			return this.parseLogicalExpression();
 		},
-		
+
 		// Parse logical expressions (AND/OR)
 		parseLogicalExpression: function () {
 			var leftNode = this.parseConditionExpression();
-			
+
 			while (this.currentToken.type == 'logic') {
 				var logic = this.currentToken.value;
 				this.readNextToken();
-				
+
 				var rightNode = this.parseConditionExpression();
-				
+
 				// If we are chaining the same logical operator, add nodes to existing object instead of creating another one
 				if (typeof leftNode.logic != 'undefined' && leftNode.logic == logic && typeof leftNode.terms != 'undefined') leftNode.terms.push(rightNode);
 				else {
@@ -497,33 +497,33 @@
 
 			return leftNode;
 		},
-		
+
 		// Parse conditions ([word/string] [operator] [word/string])
 		parseConditionExpression: function () {
 			var leftNode = this.parseBaseExpression();
-			
+
 			if (this.currentToken.type == 'operator') {
 				var operator = this.currentToken.value;
 				this.readNextToken();
-				
+
 				// If there are 2 adjacent operators, join them with a space (exemple: IS NOT)
 				if (this.currentToken.type == 'operator') {
 					operator += ' ' + this.currentToken.value;
 					this.readNextToken();
 				}
-				
+
 				var rightNode = this.parseBaseExpression();
-				
+
 				leftNode = {'operator': operator, 'left': leftNode, 'right': rightNode};
 			}
 
 			return leftNode;
 		},
-		
+
 		// Parse base items
 		parseBaseExpression: function () {
 			var astNode = "";
-			
+
 			// If this is a word/string, return its value
 			if (this.currentToken.type == 'word' || this.currentToken.type == 'string') {
 				astNode = this.currentToken.value;
@@ -643,7 +643,7 @@
 
 		// Check request's type
 		if (typeof ast['SELECT'] != 'undefined' && typeof ast['FROM'] != 'undefined') {
-			result = select(ast) + from(ast) + join(ast) + where(ast) + order_by(ast) + limit(ast);		
+			result = select(ast) + from(ast) + join(ast) + where(ast) + order_by(ast) + limit(ast);
 		}
 		else if (typeof ast['INSERT INTO'] != 'undefined') {
 			result = insert_into(ast) + values(ast);
