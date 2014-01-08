@@ -219,7 +219,7 @@
 		analysis['LIMIT'] = function (str) {
 			var limit = /((\d+)\s*,\s*)?(\d+)/gi;
 			limit = limit.exec(str);
-			if (typeof limit[2] == 'undefined') limit[2] = 1;
+			if (typeof limit[2] == 'undefined') limit[2] = 0;
 			var result = {};
 			result['nb'] = parseInt(trim(limit[3]), 10);
 			result['from'] = parseInt(trim(limit[2]), 10);
