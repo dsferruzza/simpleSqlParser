@@ -518,7 +518,7 @@
 				table: 'table',
 				as: '',
 			}],
-			'LIMIT': {nb: 5, from: 1},
+			'LIMIT': {nb: 5, from: 0},
 		}, q);
 
 		q = 'SELECT * FROM table LIMIT 10,20';
