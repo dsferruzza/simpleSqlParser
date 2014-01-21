@@ -669,7 +669,7 @@
 
 		// Check request's type
 		if (typeof ast['SELECT'] != 'undefined' && typeof ast['FROM'] != 'undefined') {
-			result = select(ast) + from(ast) + join(ast) + where(ast) + order_by(ast) + group_by(ast) + limit(ast);
+			result = select(ast) + from(ast) + join(ast) + where(ast) + group_by(ast) + order_by(ast) + limit(ast);
 		}
 		else if (typeof ast['INSERT INTO'] != 'undefined') {
 			result = insert_into(ast) + values(ast);
