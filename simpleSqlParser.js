@@ -613,13 +613,13 @@
 			else return '';
 		}
 		
-		function order_by(ast) {
-			if (typeof ast['ORDER BY'] != 'undefined') {
-				var result = ' ORDER BY ';
-				var orders = ast['ORDER BY'].map(function (item) {
-					return item.column + ' ' + item.order;
+		function group_by(ast) {
+			if (typeof ast['GROUP BY'] != 'undefined') {
+				var result = ' GROUP BY ';
+				var groups = ast['GROUP BY'].map(function (item) {
+					return item.column;
 				});
-				result += orders.join(', ');
+				result += groups.join(', ');
 				return result;
 			}
 			else return '';
