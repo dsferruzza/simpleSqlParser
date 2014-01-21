@@ -215,7 +215,21 @@
 			});
 			return result;
 		};
-
+		
+		analysis['GROUP BY'] = function (str) {
+			str = str.split(',');
+			var result = [];
+			str.forEach(function (item, key) {
+				var group_by = /([A-Za-z0-9_\.]+)/gi;
+				group_by = group_by.exec(item);
+				if (group_by !== null) {
+					var tmp = {};
+					tmp['column'] = trim(group_by[1]);
+					result.push(tmp);
+				}
+			});
+			return result;
+		};
 		analysis['LIMIT'] = function (str) {
 			var limit = /((\d+)\s*,\s*)?(\d+)/gi;
 			limit = limit.exec(str);
@@ -598,7 +612,19 @@
 			}
 			else return '';
 		}
-
+		
+		function order_by(ast) {
+			if (typeof ast['ORDER BY'] != 'undefined') {
+				var result = ' ORDER BY ';
+				var orders = ast['ORDER BY'].map(function (item) {
+					return item.column + ' ' + item.order;
+				});
+				result += orders.join(', ');
+				return result;
+			}
+			else return '';
+		}
+		
 		function limit(ast) {
 			if (typeof ast['LIMIT'] != 'undefined' && typeof ast['LIMIT'].nb != 'undefined' && parseInt(ast['LIMIT'].nb, 10) > 0) {
 				var result = ' LIMIT ';
@@ -643,7 +669,7 @@
 
 		// Check request's type
 		if (typeof ast['SELECT'] != 'undefined' && typeof ast['FROM'] != 'undefined') {
-			result = select(ast) + from(ast) + join(ast) + where(ast) + order_by(ast) + limit(ast);
+			result = select(ast) + from(ast) + join(ast) + where(ast) + order_by(ast) + group_by(ast) + limit(ast);
 		}
 		else if (typeof ast['INSERT INTO'] != 'undefined') {
 			result = insert_into(ast) + values(ast);
