@@ -267,7 +267,7 @@
 			return result;
 		};
 
-		// TODO: handle GROUP BY and HAVING
+		// TODO: handle HAVING
 
 		// Analyze parts
 		var result = {};
