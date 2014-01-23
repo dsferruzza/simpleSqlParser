@@ -350,7 +350,7 @@
 	});
 
 	test('parse SQL', function() {
-		expect(25);
+		expect(27);
 		var q;
 
 		q = 'SELECT * FROM table';
@@ -512,6 +512,19 @@
 			],
 		}, q);
 
+		q = 'SELECT * FROM table GROUP BY column1, column2';
+		deepEqual(m.sql2ast(q), {
+			'SELECT': [{name: '*'}],
+			'FROM': [{
+				table: 'table',
+				as: '',
+			}],
+			'GROUP BY': [
+				{column: 'column1'},
+				{column: 'column2'},
+			],
+		}, q);
+
 		deepEqual(m.sql2ast('SELECT * FROM table LIMIT 5'), {
 			'SELECT': [{name: '*'}],
 			'FROM': [{
@@ -548,6 +561,16 @@
 				as: '',
 			}],
 			'ORDER BY': [{column: 'id', order: 'ASC'}],
+		}, q);
+
+		q = 'SELECT column1, FROM table, GROUP BY id,';
+		deepEqual(m.sql2ast(q), {
+			'SELECT': [{name: 'column1'}],
+			'FROM': [{
+				table: 'table',
+				as: '',
+			}],
+			'GROUP BY': [{column: 'id'}],
 		}, q);
 
 		q = 'SELECT column1, setup, column2 FROM table';
@@ -637,7 +660,7 @@
 	module('ast2sql');
 
 	test('SELECT query', function() {
-		expect(13);
+		expect(14);
 		var q;
 
 		q = 'SELECT * FROM table';
@@ -659,6 +682,9 @@
 		deepEqual(m.ast2sql(m.sql2ast(q)), 'SELECT * FROM table WHERE column1 = "something ()" AND table.column2 != column3 AND (column4 OR column5 IS NOT NULL)', q);
 
 		q = 'SELECT * FROM table ORDER BY a ASC, b DESC, c ASC';
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
+
+		q = 'SELECT * FROM table GROUP BY a, b';
 		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'SELECT * FROM table LIMIT 1';
