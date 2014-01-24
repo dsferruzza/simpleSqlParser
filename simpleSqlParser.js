@@ -157,7 +157,7 @@
 			return result;
 		};
 
-		analysis['FROM'] = analysis['DELETE FROM'] = function (str) {
+		analysis['FROM'] = analysis['DELETE FROM'] = analysis['UPDATE'] = function (str) {
 			var result = str.split(',');
 			result = result.map(function(item) {
 				return trim(item);
@@ -170,17 +170,6 @@
 				var alias = table[1] || '';
 				if (alias.indexOf('"') === 0 && alias.lastIndexOf('"') == alias.length - 1) alias = alias.substring(1, alias.length - 1);
 				return {table: table[0], as: alias};
-			});
-			return result;
-		};
-
-		analysis['UPDATE'] = function (str) {
-			var result = str.split(',');
-			result = result.map(function(item) {
-				return trim(item);
-			});
-			result.forEach(function(item, key) {
-				if (item === '') result.splice(key);
 			});
 			return result;
 		};
@@ -665,7 +654,13 @@
 		}
 
 		function update(ast) {
-			return 'UPDATE ' + ast['UPDATE'][0];
+			var result = 'UPDATE ';
+			result += ast['UPDATE'].map(function (item) {
+				var str = item.table;
+				if (item.as !== '') str += ' AS ' + item.as;
+				return str;
+			}).join(', ');
+			return result;
 		}
 
 		function set(ast) {

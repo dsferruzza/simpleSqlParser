@@ -649,7 +649,10 @@
 
 		q = 'UPDATE table SET column1 = "string ()", column2=5,column3=column4, column5 = CURDATE(), column6 = FUNCTION("string ()", column7) WHERE id = 5';
 		deepEqual(m.sql2ast(q), {
-			'UPDATE': ['table'],
+			'UPDATE': [{
+				table: 'table',
+				as: '',
+			}],
 			'SET': [
 				'column1 = "string ()"',
 				'column2=5',
@@ -741,10 +744,13 @@
 	});
 
 	test('UPDATE query', function() {
-		expect(2);
+		expect(3);
 		var q;
 
 		q = 'UPDATE table SET column = 1';
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
+
+		q = 'UPDATE table1, table2 SET column = 1';
 		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'UPDATE table SET column1 = "string ()", column2=5, column3=column4, column5 = CURDATE(), column6 = FUNCTION("string ()", column7) WHERE id = 5';
