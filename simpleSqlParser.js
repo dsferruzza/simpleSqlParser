@@ -554,20 +554,26 @@
 
 		// Define subfunctions
 		function select(ast) {
-			return 'SELECT ' + ast['SELECT'].map(function(item) {
-				return item.name;
-			}).join(', ');
+			if (typeof ast['SELECT'] != 'undefined') {
+				return 'SELECT ' + ast['SELECT'].map(function(item) {
+					return item.name;
+				}).join(', ');
+			}
+			else return '';
 		}
 
 		function from(ast) {
-			var result = ' FROM ';
-			var tmp = ast['FROM'].map(function (item) {
-				var str = item.table;
-				if (item.as !== '') str += ' AS ' + item.as;
-				return str;
-			});
-			result += tmp.join(', ');
-			return result;
+			if (typeof ast['FROM'] != 'undefined') {
+				var result = ' FROM ';
+				var tmp = ast['FROM'].map(function (item) {
+					var str = item.table;
+					if (item.as !== '') str += ' AS ' + item.as;
+					return str;
+				});
+				result += tmp.join(', ');
+				return result;
+			}
+			else return '';
 		}
 
 		function join(ast) {
@@ -625,46 +631,61 @@
 		}
 
 		function insert_into(ast) {
-			var result = 'INSERT INTO ' + ast['INSERT INTO'].table;
-			if (typeof ast['INSERT INTO'].columns != 'undefined') {
-				result += ' (';
-				result += ast['INSERT INTO'].columns.join(', ');
-				result += ')';
+			if (typeof ast['INSERT INTO'] != 'undefined') {
+				var result = 'INSERT INTO ' + ast['INSERT INTO'].table;
+				if (typeof ast['INSERT INTO'].columns != 'undefined') {
+					result += ' (';
+					result += ast['INSERT INTO'].columns.join(', ');
+					result += ')';
+				}
+				return result;
 			}
-			return result;
+			else return '';
 		}
 
 		function values(ast) {
-			var result = ' VALUES ';
-			var vals = ast['VALUES'].map(function (item) {
-				return '(' + item.join(', ') + ')';
-			});
-			result += vals.join(', ');
-			return result;
+			if (typeof ast['VALUES'] != 'undefined') {
+				var result = ' VALUES ';
+				var vals = ast['VALUES'].map(function (item) {
+					return '(' + item.join(', ') + ')';
+				});
+				result += vals.join(', ');
+				return result;
+			}
+			else return '';
 		}
 
 		function delete_from(ast) {
-			var result = 'DELETE FROM ';
-			result += ast['DELETE FROM'].map(function (item) {
-				var str = item.table;
-				if (item.as !== '') str += ' AS ' + item.as;
-				return str;
-			}).join(', ');
-			return result;
+			if (typeof ast['DELETE FROM'] != 'undefined') {
+				var result = 'DELETE FROM ';
+				result += ast['DELETE FROM'].map(function (item) {
+					var str = item.table;
+					if (item.as !== '') str += ' AS ' + item.as;
+					return str;
+				}).join(', ');
+				return result;
+			}
+			else return '';
 		}
 
 		function update(ast) {
-			var result = 'UPDATE ';
-			result += ast['UPDATE'].map(function (item) {
-				var str = item.table;
-				if (item.as !== '') str += ' AS ' + item.as;
-				return str;
-			}).join(', ');
-			return result;
+			if (typeof ast['UPDATE'] != 'undefined') {
+				var result = 'UPDATE ';
+				result += ast['UPDATE'].map(function (item) {
+					var str = item.table;
+					if (item.as !== '') str += ' AS ' + item.as;
+					return str;
+				}).join(', ');
+				return result;
+			}
+			else return '';
 		}
 
 		function set(ast) {
-			return ' SET ' + ast['SET'].join(', ');
+			if (typeof ast['SET'] != 'undefined') {
+				return ' SET ' + ast['SET'].join(', ');
+			}
+			else return '';
 		}
 
 
