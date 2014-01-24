@@ -584,13 +584,19 @@
 
 		q = 'DELETE FROM table WHERE id = 5';
 		deepEqual(m.sql2ast(q), {
-			'DELETE FROM': ['table'],
+			'DELETE FROM': [{
+				table: 'table',
+				as: '',
+			}],
 			'WHERE': {left: 'id', operator: '=', right: '5'},
 		}, q);
 
 		q = 'DELETE FROM table WHERE id = 5';
 		deepEqual(m.sql2ast(q, false), {
-			'DELETE FROM': ['table'],
+			'DELETE FROM': [{
+				table: 'table',
+				as: '',
+			}],
 			'WHERE': 'id = 5',
 		}, q);
 
@@ -724,10 +730,13 @@
 	});
 
 	test('DELETE query', function() {
-		expect(1);
+		expect(2);
 		var q;
 
 		q = 'DELETE FROM table WHERE id = 5';
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
+
+		q = 'DELETE FROM table1, table2 WHERE id = 5';
 		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 	});
 

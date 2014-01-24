@@ -157,7 +157,7 @@
 			return result;
 		};
 
-		analysis['FROM'] = function (str) {
+		analysis['FROM'] = analysis['DELETE FROM'] = function (str) {
 			var result = str.split(',');
 			result = result.map(function(item) {
 				return trim(item);
@@ -174,7 +174,7 @@
 			return result;
 		};
 
-		analysis['DELETE FROM'] = analysis['UPDATE'] = function (str) {
+		analysis['UPDATE'] = function (str) {
 			var result = str.split(',');
 			result = result.map(function(item) {
 				return trim(item);
@@ -655,7 +655,13 @@
 		}
 
 		function delete_from(ast) {
-			return 'DELETE FROM ' + ast['DELETE FROM'][0];
+			var result = 'DELETE FROM ';
+			result += ast['DELETE FROM'].map(function (item) {
+				var str = item.table;
+				if (item.as !== '') str += ' AS ' + item.as;
+				return str;
+			}).join(', ');
+			return result;
 		}
 
 		function update(ast) {
