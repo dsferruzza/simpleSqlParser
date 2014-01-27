@@ -151,8 +151,10 @@
 
 		analysis['SET'] = function (str) {
 			var result = protect_split(',', str);
-			result.forEach(function(item, key) {
-				if (item === '') result.splice(key);
+			result = result.filter(function(item) {
+				return item !== '';
+			}).map(function(item) {
+				return {expression: item};
 			});
 			return result;
 		};
@@ -683,7 +685,9 @@
 
 		function set(ast) {
 			if (typeof ast['SET'] != 'undefined') {
-				return ' SET ' + ast['SET'].join(', ');
+				return ' SET ' + ast['SET'].map(function(item) {
+					return item.expression;
+				}).join(', ');
 			}
 			else return '';
 		}

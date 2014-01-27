@@ -654,11 +654,11 @@
 				as: '',
 			}],
 			'SET': [
-				'column1 = "string ()"',
-				'column2=5',
-				'column3=column4',
-				'column5 = CURDATE()',
-				'column6 = FUNCTION("string ()", column7)',
+				{ expression: 'column1 = "string ()"'},
+				{ expression: 'column2=5'},
+				{ expression: 'column3=column4'},
+				{ expression: 'column5 = CURDATE()'},
+				{ expression: 'column6 = FUNCTION("string ()", column7)'},
 			],
 			'WHERE': {left: 'id', operator: '=', right: '5'},
 		}, q);
