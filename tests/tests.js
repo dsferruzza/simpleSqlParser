@@ -664,6 +664,12 @@
 		}, q);
 	});
 
+	test('Infinite loop', function() {
+		m.sql2ast('SELECT * FROM foo where "a');
+		ok(true);
+	});
+
+
 
 
 	module('ast2sql');
