@@ -406,7 +406,7 @@
 			tokenValue += this.currentChar;
 			this.readNextChar();
 
-			while (this.currentChar != quote) {
+			while (this.currentChar != quote && this.currentChar != "") {
 				tokenValue += this.currentChar;
 				this.readNextChar();
 			}
