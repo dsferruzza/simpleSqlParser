@@ -36,6 +36,7 @@
   "license": "MIT",
   "homepage": "https://github.com/dsferruzza/simpleSqlParser",
   "devDependencies": {
+    "qunitjs": "*",
     "grunt": "*",
     "grunt-contrib-qunit": "*",
     "grunt-contrib-jshint": "*",
