@@ -350,7 +350,7 @@
 	});
 
 	test('parse SQL', function() {
-		expect(27);
+		expect(28);
 		var q;
 
 		q = 'SELECT * FROM table';
@@ -462,6 +462,41 @@
                 },
 			],
 		}, q);
+		
+	      q = 'SELECT * FROM table LEFT JOIN table10 ON table.id = table10.id RIGHT JOIN table2 ON table.id = table2.id INNER JOIN table3 AS t3 ON table.id = FUNCTION(table4.id_table, "string()") JOIN table4 ON table.id=table4.id';
+	        deepEqual(m.sql2ast(q), {
+	            'SELECT': [{name: '*'}],
+	            'FROM': [{
+	                table: 'table',
+	                as: '',
+	            }],
+	            'JOIN': [
+	                {
+	                    type: 'left',
+	                    table: 'table10',
+	                    as: '',
+	                    cond: {left: 'table.id', operator: '=', right: 'table10.id'},
+	                },
+	                {
+	                    type: 'inner',
+	                    table: 'table3',
+	                    as: 't3',
+	                    cond: {left: 'table.id', operator: '=', right: 'FUNCTION(table4.id_table, "string()")'},
+	                },
+	                {
+	                    type: 'inner',
+	                    table: 'table4',
+	                    as: '',
+	                    cond: {left: 'table.id', operator: '=', right: 'table4.id'},
+	                },
+	                {
+	                    type: 'right',
+	                    table: 'table2',
+	                    as: '',
+	                    cond: {left: 'table.id', operator: '=', right: 'table2.id'},
+	                },
+	            ],
+	        }, q);
 
 		q = 'SELECT * FROM table LEFT JOIN table2 AS t2 ON table.id = t2.id_table';
 		deepEqual(m.sql2ast(q), {

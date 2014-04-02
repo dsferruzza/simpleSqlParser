@@ -65,7 +65,7 @@
 		query = query.replace(new RegExp(semi_colon, 'g'), ';');
 
 		// Define which words can act as separator
-		var keywords = ['SELECT', 'FROM', 'DELETE FROM', 'INSERT INTO', 'UPDATE', 'JOIN', 'LEFT JOIN', 'INNER JOIN', 'ORDER BY', 'GROUP BY', 'HAVING', 'WHERE', 'LIMIT', 'VALUES', 'SET'];
+		var keywords = ['SELECT', 'FROM', 'DELETE FROM', 'INSERT INTO', 'UPDATE', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN', 'ORDER BY', 'GROUP BY', 'HAVING', 'WHERE', 'LIMIT', 'VALUES', 'SET'];
 		var parts_name = keywords.map(function (item) {
 			return item + ' ';
 		});
@@ -176,7 +176,7 @@
 			return result;
 		};
 
-		analysis['LEFT JOIN'] = analysis['JOIN'] = analysis['INNER JOIN'] = function (str) {
+		analysis['LEFT JOIN'] = analysis['JOIN'] = analysis['INNER JOIN'] = analysis['RIGHT JOIN'] = function (str) {
 			str = str.split(' ON ');
 			var table = str[0].split(' AS ');
 			var result = {};
@@ -312,7 +312,21 @@
 			}
 			delete result['INNER JOIN'];
 		}
-
+        if (typeof result['RIGHT JOIN'] != 'undefined') {
+            if (typeof result['JOIN'] == 'undefined') result['JOIN'] = [];
+            if (typeof result['RIGHT JOIN'][0] != 'undefined') {
+                result['RIGHT JOIN'].forEach(function (item) {
+                    item.type = 'right';
+                    result['JOIN'].push(item);
+                });
+            }
+            else {
+                result['RIGHT JOIN'].type = 'right';
+                result['JOIN'].push(result['RIGHT JOIN']);
+            }
+            delete result['RIGHT JOIN'];
+        }
+        
 		// Parse conditions
 		if (parseCond) {
 			if (typeof result['WHERE'] == 'string') {
