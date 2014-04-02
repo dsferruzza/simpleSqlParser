@@ -723,7 +723,7 @@
 	module('ast2sql');
 
 	test('SELECT query', function() {
-		expect(14);
+		expect(15);
 		var q;
 
 		q = 'SELECT * FROM table';
@@ -736,6 +736,9 @@
 		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'SELECT t.column1, ot.column2 FROM table AS t LEFT JOIN othertable AS ot ON t.id = ot.id_table WHERE t.column3 = 5';
+		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
+
+		q = 'SELECT t.column1, ot.column2 FROM table AS t RIGHT JOIN othertable AS ot ON t.id = ot.id_table WHERE t.column3 = 5';
 		deepEqual(m.ast2sql(m.sql2ast(q)), q, q);
 
 		q = 'SELECT * FROM table AS t LEFT JOIN othertable AS ot ON t.id = ot.id_table LEFT JOIN othertable2 AS ot2 ON t.id = ot2.id_table AND ot2.column INNER JOIN othertable3 AS ot3 ON t.id = ot3.id_table';
