@@ -449,17 +449,17 @@
 					cond: {left: 'table.id', operator: '=', right: 'table2.id_table'},
 				},
 				{
-					type: 'left',
-					table: 'table3',
-					as: '',
-					cond: {left: 'table.id', operator: '=', right: 'table3.id_table'},
-				},
-				{
 					type: 'inner',
 					table: 'table4',
 					as: 't4',
 					cond: {left: 'table.id', operator: '=', right: 'FUNCTION(table4.id_table, "string()")'},
 				},
+                {
+                    type: 'inner',
+                    table: 'table3',
+                    as: '',
+                    cond: {left: 'table.id', operator: '=', right: 'table3.id_table'},
+                },
 			],
 		}, q);
 

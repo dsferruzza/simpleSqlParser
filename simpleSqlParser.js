@@ -112,7 +112,7 @@
 				busy_until = parseInt(key, 10) + item.length;
 
 				// Replace JOIN by LEFT JOIN
-				if (item == 'JOIN') parts_order[key] = 'LEFT JOIN';
+				if (item == 'JOIN') parts_order[key] = 'INNER JOIN';
 			}
 		});
 
