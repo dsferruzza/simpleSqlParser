@@ -65,7 +65,7 @@
 		query = query.replace(new RegExp(semi_colon, 'g'), ';');
 
 		// Define which words can act as separator
-		var keywords = ['SELECT', 'FROM', 'DELETE FROM', 'INSERT INTO', 'UPDATE', 'JOIN', 'LEFT JOIN', 'INNER JOIN', 'ORDER BY', 'GROUP BY', 'HAVING', 'WHERE', 'LIMIT', 'VALUES', 'SET'];
+		var keywords = ['SELECT', 'FROM', 'DELETE FROM', 'INSERT INTO', 'UPDATE', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN', 'ORDER BY', 'GROUP BY', 'HAVING', 'WHERE', 'LIMIT', 'VALUES', 'SET'];
 		var parts_name = keywords.map(function (item) {
 			return item + ' ';
 		});
@@ -104,15 +104,15 @@
 			while (part != -1);
 		});
 
-		// Delete duplicates (caused, for example, by JOIN and LEFT JOIN)
+		// Delete duplicates (caused, for example, by JOIN and INNER JOIN)
 		var busy_until = 0;
 		parts_order.forEach(function (item, key) {
 			if (busy_until > key) delete parts_order[key];
 			else {
 				busy_until = parseInt(key, 10) + item.length;
 
-				// Replace JOIN by LEFT JOIN
-				if (item == 'JOIN') parts_order[key] = 'LEFT JOIN';
+				// Replace JOIN by INNER JOIN
+				if (item == 'JOIN') parts_order[key] = 'INNER JOIN';
 			}
 		});
 
@@ -176,7 +176,7 @@
 			return result;
 		};
 
-		analysis['LEFT JOIN'] = analysis['JOIN'] = analysis['INNER JOIN'] = function (str) {
+		analysis['LEFT JOIN'] = analysis['JOIN'] = analysis['INNER JOIN'] = analysis['RIGHT JOIN'] = function (str) {
 			str = str.split(' ON ');
 			var table = str[0].split(' AS ');
 			var result = {};
@@ -195,13 +195,16 @@
 			str = str.split(',');
 			var result = [];
 			str.forEach(function (item, key) {
-				var order_by = /([A-Za-z0-9_\.]+)\s+(ASC|DESC){1}/gi;
-				order_by = order_by.exec(item);
-				if (order_by !== null) {
-					var tmp = {};
-					tmp['column'] = trim(order_by[1]);
-					tmp['order'] = trim(order_by[2]);
-					result.push(tmp);
+			var order_by = /([A-Za-z0-9_\.]+)\s*(ASC|DESC){0,1}/gi;
+			    order_by = order_by.exec(item);
+			    if (order_by !== null) {
+			        var tmp = {};
+			        tmp['column'] = trim(order_by[1]);
+			        tmp['order'] = trim(order_by[2]);
+                    if(order_by[2] === undefined ){
+                        tmp['order']="ASC";
+                    }
+                    result.push(tmp);
 				}
 			});
 			return result;
@@ -311,6 +314,20 @@
 				result['JOIN'].push(result['INNER JOIN']);
 			}
 			delete result['INNER JOIN'];
+		}
+		if (typeof result['RIGHT JOIN'] != 'undefined') {
+			if (typeof result['JOIN'] == 'undefined') result['JOIN'] = [];
+			if (typeof result['RIGHT JOIN'][0] != 'undefined') {
+				result['RIGHT JOIN'].forEach(function (item) {
+					item.type = 'right';
+					result['JOIN'].push(item);
+				});
+			}
+			else {
+				result['RIGHT JOIN'].type = 'right';
+				result['JOIN'].push(result['RIGHT JOIN']);
+			}
+			delete result['RIGHT JOIN'];
 		}
 
 		// Parse conditions
