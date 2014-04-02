@@ -350,7 +350,7 @@
 	});
 
 	test('parse SQL', function() {
-		expect(28);
+		expect(29);
 		var q;
 
 		q = 'SELECT * FROM table';
@@ -546,6 +546,20 @@
 				{column: 'column2', order: 'DESC'},
 			],
 		}, q);
+		
+        q = 'SELECT * FROM table ORDER BY column1, column2';
+          deepEqual(m.sql2ast(q), {
+              'SELECT': [{name: '*'}],
+              'FROM': [{
+                  table: 'table',
+                  as: '',
+              }],
+              'ORDER BY': [
+                  {column: 'column1', order: 'ASC'},
+                  {column: 'column2', order: 'ASC'},
+              ],
+          }, q);
+
 
 		q = 'SELECT * FROM table GROUP BY column1, column2';
 		deepEqual(m.sql2ast(q), {

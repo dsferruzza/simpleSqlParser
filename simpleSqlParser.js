@@ -195,13 +195,16 @@
 			str = str.split(',');
 			var result = [];
 			str.forEach(function (item, key) {
-				var order_by = /([A-Za-z0-9_\.]+)\s+(ASC|DESC){1}/gi;
-				order_by = order_by.exec(item);
-				if (order_by !== null) {
-					var tmp = {};
-					tmp['column'] = trim(order_by[1]);
-					tmp['order'] = trim(order_by[2]);
-					result.push(tmp);
+                var order_by = /([A-Za-z0-9_\.]+)\s*(ASC|DESC){0,1}/gi;
+                order_by = order_by.exec(item);
+                if (order_by !== null) {
+                    var tmp = {};
+                    tmp['column'] = trim(order_by[1]);
+                    tmp['order'] = trim(order_by[2]);
+                    if(order_by[2] === undefined ){
+                        tmp['order']="ASC";
+                    }
+                    result.push(tmp);
 				}
 			});
 			return result;
