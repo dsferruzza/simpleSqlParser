@@ -365,7 +365,8 @@
 
 		// Read the next character (or return an empty string if cursor is at the end of the source)
 		readNextChar: function () {
-			this.currentChar = this.source[this.cursor++] || "";
+			if (typeof this.source != 'string') this.currentChar = "";
+			else this.currentChar = this.source[this.cursor++] || "";
 		},
 
 		// Determine the next token

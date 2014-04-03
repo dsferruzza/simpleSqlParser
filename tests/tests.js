@@ -350,7 +350,7 @@
 	});
 
 	test('parse SQL', function() {
-		expect(29);
+		expect(30);
 		var q;
 
 		q = 'SELECT * FROM table';
@@ -511,6 +511,24 @@
 					table: 'table2',
 					as: 't2',
 					cond: {left: 'table.id', operator: '=', right: 't2.id_table'},
+				},
+			],
+		}, q);
+
+		// This is an invalid query, but the parser should not crash
+		q = 'SELECT * FROM table LEFT JOIN table2 table.id = t2.id_table';
+		deepEqual(m.sql2ast(q), {
+			'SELECT': [{name: '*'}],
+			'FROM': [{
+				table: 'table',
+				as: '',
+			}],
+			'JOIN': [
+				{
+					type: 'left',
+					table: 'table2 table.id = t2.id_table',
+					as: '',
+					cond: '',
 				},
 			],
 		}, q);
