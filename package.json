@@ -1,7 +1,7 @@
 {
   "name": "simple-sql-parser",
   "description": "Javascript library to parse CRUD (Create Retrieve Update Delete) SQL queries.",
-  "version": "1.3.0",
+  "version": "2.0.0-alpha",
   "main": "simpleSqlParser.js",
   "keywords": [
     "sql",
@@ -13,12 +13,6 @@
     "email": "david.sferruzza@gmail.com",
     "url": "https://github.com/dsferruzza"
   },
-  "contributors": [
-    {
-      "name": "RienNeVaPlus",
-      "url": "https://github.com/RienNeVaPlus"
-    }
-  ],
   "maintainers": [
     {
       "name": "David Sferruzza",
@@ -35,14 +29,7 @@
   },
   "license": "MIT",
   "homepage": "https://github.com/dsferruzza/simpleSqlParser",
-  "devDependencies": {
-    "qunitjs": "*",
-    "grunt": "*",
-    "grunt-contrib-qunit": "*",
-    "grunt-contrib-jshint": "*",
-    "grunt-contrib-watch": "*"
-  },
-  "scripts": {
-    "test": "grunt"
+  "dependencies": {
+    "parsimmon": "0.4.0"
   }
 }

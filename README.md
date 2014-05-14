@@ -3,70 +3,7 @@ simpleSqlParser
 
 Javascript library to parse CRUD (Create Retrieve Update Delete) SQL queries.
 
-## How to use
-
-### From browser
-
-Import the JS file in your page:
-
-```html
-<script src="simpleSqlParser.js"></script>
-```
-
-### From Node.js
-
-Install the module from [npm](https://npmjs.org/package/simple-sql-parser) using `npm i simple-sql-parser --save`.
-
-Import the JS module in your app:
-
-```js
-var simpleSqlParser = require('simple-sql-parser');
-```
-
-### Parse a query:
-
-```js
-var ast = simpleSqlParser.sql2ast('your SQL query');
-console.log(ast);
-```
-
-### Create a query from AST:
-
-```js
-var query = simpleSqlParser.ast2sql(ast);
-console.log(query);
-```
-
-*AST means Abstract Syntax Tree.*
-
-## Examples
-
-* See `example.html` (open brower's console)
-* Have a look to the unit tests `tests/tests.js` to see what's possible
-
-## Notes
-
-simpleSqlParser only supports these queries:
-
-* SELECT
-* INSERT
-* UPDATE
-* DELETE
-
-simpleSqlParser **is not a full SQL parser!**
-It only support few SQL mechanisms and keywords.
-Feel free to make a pull request/issue.
-
-## How to install dev tools
-
-If you want to contribute, please write tests and respect the coding style.
-
-To install dev tools:
-
-- install Node.js (http://nodejs.org/)
-- install **grunt-cli** globally: `npm i -g grunt-cli`
-- install dev dependencies: `npm i`
-- use `grunt` to check your code!
+**This is a work in progress!**
 
 ## License
 
