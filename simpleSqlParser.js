@@ -192,8 +192,7 @@
 			seq(
 				optWhitespace,
 				opt(regex(/AS\s/i)),
-				alt(colName, str),
-				optWhitespace
+				alt(colName, str)
 			).map(function(node) {
 				var n = {};
 				n.alias = node[2];
