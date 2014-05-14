@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
+var qunit = require('gulp-qunit');
 
 gulp.task('lint', function() {
 	return gulp.src('./*.js')
@@ -8,4 +9,9 @@ gulp.task('lint', function() {
 		.pipe(jshint.reporter('fail'));
 });
 
-gulp.task('default', ['lint']);
+gulp.task('test', function() {
+	return gulp.src('./tests/tests.html')
+		.pipe(qunit());
+});
+
+gulp.task('default', ['lint', 'test']);
