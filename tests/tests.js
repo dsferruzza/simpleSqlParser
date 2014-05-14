@@ -93,7 +93,17 @@
 			]
 		});
 
-		/*testAst('SELECT FUNC(), OTHERFUN(col, FUNC(), "string") FROM table', {
+		/*testAst('SELECT 1 + 1 FROM table', {
+			type: 'select',
+			select: [
+				{ expression: '1 + 1', column: null, table: null, alias: null },
+			],
+			from: [
+				{ table: 'table', alias: null },
+			]
+		});
+
+		testAst('SELECT FUNC(), OTHERFUN(col, FUNC(), "string") FROM table', {
 			type: 'select',
 			select: [
 				{ expression: 'FUNC()', column: null, table: null, alias: null },
