@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "gulp": "3.6.2",
-    "gulp-jshint": "1.5.5"
+    "gulp-jshint": "1.5.5",
+    "qunit": "0.6.3"
   }
 }
