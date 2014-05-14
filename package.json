@@ -31,5 +31,9 @@
   "homepage": "https://github.com/dsferruzza/simpleSqlParser",
   "dependencies": {
     "parsimmon": "0.4.0"
+  },
+  "devDependencies": {
+    "gulp": "3.6.2",
+    "gulp-jshint": "1.5.5"
   }
 }

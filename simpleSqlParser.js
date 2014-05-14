@@ -2,7 +2,7 @@
 	"use strict";
 
 	// Load Parsimmon
-	if (typeof Parsimmon != 'object') var Parsimmon = require('Parsimmon');
+	var Parsimmon = (typeof Parsimmon != 'object') ? require('Parsimmon') : Parsimmon;
 
 
 
