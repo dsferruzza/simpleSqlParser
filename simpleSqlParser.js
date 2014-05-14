@@ -1,10 +1,5 @@
-(function(exports) {
+(function(exports, Parsimmon) {
 	"use strict";
-
-	// Load Parsimmon
-	var Parsimmon = (typeof Parsimmon != 'object') ? require('Parsimmon') : Parsimmon;
-
-
 
 	/********************************************************************************************
 		ALIASES
@@ -294,10 +289,10 @@
 		return p.parse(sql);
 	};
 
-})(typeof exports === "undefined" ? (this.simpleSqlParser = {}) : exports);
+})(typeof exports === "undefined" ? (this.simpleSqlParser = {}) : exports, typeof Parsimmon === 'object' ? Parsimmon : require('Parsimmon'));
 
 
-var simpleSqlParser = require('./simpleSqlParser.js');
+/*var simpleSqlParser = require('./simpleSqlParser.js');
 
 
 // Tests (will be rewritten/automatized/externalized)
@@ -319,3 +314,4 @@ q.forEach(function(query) {
 	console.log();
 });
 
+*/
