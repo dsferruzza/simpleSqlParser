@@ -148,7 +148,7 @@
 				expression: node.join(''),
 				table: node[0],
 				column: node[2],
-				TandC: true
+				//TandC: true
 			};
 		}),
 		colName.map(function(node) {
@@ -156,7 +156,7 @@
 				expression: node,
 				table: null,
 				column: node,
-				col: true
+				//col: true
 			};
 		}),
 		mathExpression.map(function(node) {
@@ -164,7 +164,7 @@
 				expression: node.trim(),
 				table: null,
 				column: null,
-				math: true
+				//math: true
 			};
 		}),
 		func.map(function(node) {
@@ -172,7 +172,7 @@
 				expression: node,
 				table: null,
 				column: null,
-				func: true
+				//func: true
 			};
 		}),
 		str.map(function(node) {
@@ -180,7 +180,7 @@
 				expression: node,
 				table: null,
 				column: null,
-				str: true
+				//str: true
 			};
 		})
 	);
