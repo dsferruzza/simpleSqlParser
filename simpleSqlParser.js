@@ -126,68 +126,70 @@
 		EXPRESSION PARSERS
 	********************************************************************************************/
 
-	// Mathematical expression
-	var mathExpression = seq(
+	// Expression
+	var expression = seq(
 		alt(
-			tableAndColumn,
-			number,
-			func,
-			colName,
-			str
+			tableAndColumn.map(function(node) {
+				return {
+					expression: node.join(''),
+					table: node[0],
+					column: node[2]
+				};
+			}),
+			colName.map(function(node) {
+				return {
+					expression: node,
+					table: null,
+					column: node
+				};
+			}),
+			func.map(function(node) {
+				return {
+					expression: node,
+					table: null,
+					column: null
+				};
+			}),
+			str.map(function(node) {
+				return {
+					expression: node,
+					table: null,
+					column: null
+				};
+			}),
+			number.map(function(node) {
+				return {
+					expression: node,
+					table: null,
+					column: null
+				};
+			})
 		),
-		optWhitespace,
-		opt(operator, null),
-		optWhitespace,
-		opt(lazy(function() { return mathExpression; }))
-	).map(mkString);
-
-	// Column expresion
-	var colExpression = alt(
-		tableAndColumn.map(function(node) {
+		opt(seq(
+			optWhitespace,
+			operator,
+			opt(seq(
+				optWhitespace,
+				lazy(function() { return expression; }).map(function(node) {
+					return node.expression;
+				})
+			).map(mkString), null)
+		).map(mkString), null)
+	).map(function(node) {
+		if (node[1] !== null) {
+			node[0] = node[0].expression;
 			return {
 				expression: node.join(''),
-				table: node[0],
-				column: node[2],
-				//TandC: true
-			};
-		}),
-		colName.map(function(node) {
-			return {
-				expression: node,
 				table: null,
-				column: node,
-				//col: true
+				column: null
 			};
-		}),
-		mathExpression.map(function(node) {
-			return {
-				expression: node.trim(),
-				table: null,
-				column: null,
-				//math: true
-			};
-		}),
-		func.map(function(node) {
-			return {
-				expression: node,
-				table: null,
-				column: null,
-				//func: true
-			};
-		}),
-		str.map(function(node) {
-			return {
-				expression: node,
-				table: null,
-				column: null,
-				//str: true
-			};
-		})
-	);
+		}
+		else return node[0];
+	});
 
 	// Expression following a SELECT statement
 	var colListExpression = seq(
-		colExpression,
+		expression,
 		opt(	// Alias
 			seq(
 				optWhitespace,
@@ -212,7 +214,7 @@
 	var argListExpression = alt(
 		str,
 		func,
-		colExpression.map(function(node) {
+		expression.map(function(node) {
 			return node.expression;
 		})
 	);
