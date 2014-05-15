@@ -37,6 +37,17 @@
 			]
 		});
 
+		testAst('SELECT fromage "from", asymetric AS as FROM table', {
+			type: 'select',
+			select: [
+				{ expression: 'fromage "from"', column: 'fromage', table: null, alias: 'from' },
+				{ expression: 'asymetric AS as', column: 'asymetric', table: null, alias: 'as' },
+			],
+			from: [
+				{ table: 'table', alias: null },
+			]
+		});
+
 		testAst('SELECT table.col1, table.`col2`, `table`.col3, `table`.`col4` FROM table', {
 			type: 'select',
 			select: [
