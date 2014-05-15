@@ -287,28 +287,3 @@
 	};
 
 })(typeof exports === "undefined" ? (this.simpleSqlParser = {}) : exports, typeof Parsimmon === 'object' ? Parsimmon : require('Parsimmon'));
-
-
-/*var simpleSqlParser = require('./simpleSqlParser.js');
-
-
-// Tests (will be rewritten/automatized/externalized)
-var q = [
-	'SELECT colname1 AS col1, colname2 "col2", "k\'ge\\"rg",`gfrg` , y, \'other string\' FROM table',
-	'SELECT FROM table1, table2 AS t2',
-	'SELECT * FROM table',
-	'SELECT a, NOW(), TRUC("test\\" ", table.col , MACHIN(NOW())), b FROM table',
-	'SELECT table.col FROM table',
-	'SELECT (1+2) / MACHIN(6.6, 2, table.`col`) AS truc FROM'
-];
-q.forEach(function(query) {
-	var ast = simpleSqlParser.sql2ast(query);
-	if (ast.status) {
-		console.log('--> ' + query);
-		console.log(ast.value);
-	}
-	else console.log(ast);
-	console.log();
-});
-
-*/
