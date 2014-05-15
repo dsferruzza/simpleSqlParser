@@ -30,7 +30,7 @@
 			type: 'select',
 			select: [
 				{ expression: 'col1', column: 'col1', table: null, alias: null },
-				{ expression: '`col2`', column: '`col2`', table: null, alias: null },
+				{ expression: '`col2`', column: 'col2', table: null, alias: null },
 			],
 			from: [
 				{ table: 'table', alias: null },
@@ -41,22 +41,23 @@
 			type: 'select',
 			select: [
 				{ expression: 'table.col1', column: 'col1', table: 'table', alias: null },
-				{ expression: 'table.`col2`', column: '`col2`', table: 'table', alias: null },
-				{ expression: '`table`.col3', column: 'col3', table: '`table`', alias: null },
-				{ expression: '`table`.`col4`', column: '`col4`', table: '`table`', alias: null },
+				{ expression: 'table.`col2`', column: 'col2', table: 'table', alias: null },
+				{ expression: '`table`.col3', column: 'col3', table: 'table', alias: null },
+				{ expression: '`table`.`col4`', column: 'col4', table: 'table', alias: null },
 			],
 			from: [
 				{ table: 'table', alias: null },
 			]
 		});
 
-		testAst('SELECT * FROM table AS t', {
+		testAst('SELECT * FROM table AS t, table2 AS "t2"', {
 			type: 'select',
 			select: [
 				{ expression: '*', column: '*', table: null, alias: null },
 			],
 			from: [
 				{ table: 'table', alias: 't' },
+				{ table: 'table2', alias: 't2' },
 			]
 		});
 
@@ -75,7 +76,7 @@
 			type: 'select',
 			select: [
 				{ expression: 'col1 AS alias', column: 'col1', table: null, alias: 'alias' },
-				{ expression: 'col2 AS "alias"', column: 'col2', table: null, alias: '"alias"' },
+				{ expression: 'col2 AS "alias"', column: 'col2', table: null, alias: 'alias' },
 			],
 			from: [
 				{ table: 'table', alias: null },
@@ -86,7 +87,7 @@
 			type: 'select',
 			select: [
 				{ expression: 'col1 alias', column: 'col1', table: null, alias: 'alias' },
-				{ expression: 'col2 "alias"', column: 'col2', table: null, alias: '"alias"' },
+				{ expression: 'col2 "alias"', column: 'col2', table: null, alias: 'alias' },
 			],
 			from: [
 				{ table: 'table', alias: null },

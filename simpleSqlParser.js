@@ -47,6 +47,11 @@
 		).map(mergeOptionnalList);
 	}
 
+	// Remove first and last character of a string
+	function removeQuotes(string) {
+		return string.replace(/^([`'"])(.*)\1$/, '$2');
+	}
+
 
 
 	/********************************************************************************************
@@ -132,8 +137,8 @@
 			tableAndColumn.map(function(node) {
 				return {
 					expression: node.join(''),
-					table: node[0],
-					column: node[2]
+					table: removeQuotes(node[0]),
+					column: removeQuotes(node[2])
 				};
 			}),
 			func.map(function(node) {
@@ -147,7 +152,7 @@
 				return {
 					expression: node,
 					table: null,
-					column: node
+					column: removeQuotes(node)
 				};
 			}),
 			str.map(function(node) {
@@ -197,7 +202,7 @@
 				alt(colName, str)
 			).map(function(node) {
 				var n = {};
-				n.alias = node[2];
+				n.alias = removeQuotes(node[2]);
 				n.expression = node.join('');
 				return n;
 			}),
@@ -229,7 +234,7 @@
 				alt(colName, str),
 				optWhitespace
 			).map(function(node) {
-				return node[3];
+				return removeQuotes(node[3]);
 			}),
 			null
 		)
