@@ -136,18 +136,18 @@
 					column: node[2]
 				};
 			}),
-			colName.map(function(node) {
-				return {
-					expression: node,
-					table: null,
-					column: node
-				};
-			}),
 			func.map(function(node) {
 				return {
 					expression: node,
 					table: null,
 					column: null
+				};
+			}),
+			colName.map(function(node) {
+				return {
+					expression: node,
+					table: null,
+					column: node
 				};
 			}),
 			str.map(function(node) {
@@ -211,13 +211,9 @@
 	});
 
 	// Expression inside a function
-	var argListExpression = alt(
-		str,
-		func,
-		expression.map(function(node) {
-			return node.expression;
-		})
-	);
+	var argListExpression = expression.map(function(node) {
+		return node.expression;
+	});
 
 	// Expression following a FROM statement
 	var tableListExpression = seq(

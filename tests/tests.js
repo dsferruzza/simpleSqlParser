@@ -93,26 +93,27 @@
 			]
 		});
 
-		testAst('SELECT 1 + 1 FROM table', {
+		testAst('SELECT 1 + 1, col1*0.7 AS test FROM table', {
 			type: 'select',
 			select: [
 				{ expression: '1 + 1', column: null, table: null, alias: null },
+				{ expression: 'col1*0.7 AS test', column: null, table: null, alias: 'test' },
 			],
 			from: [
 				{ table: 'table', alias: null },
 			]
 		});
 
-		/*testAst('SELECT FUNC(), OTHERFUN(col, FUNC(), "string") FROM table', {
+		testAst('SELECT FUNC(), OTHERFUN(col, FUNC(1/4, -3.05), "string") FROM table', {
 			type: 'select',
 			select: [
 				{ expression: 'FUNC()', column: null, table: null, alias: null },
-				{ expression: 'OTHERFUN(col, FUNC(), "string")', column: null, table: null, alias: null },
+				{ expression: 'OTHERFUN(col, FUNC(1/4, -3.05), "string")', column: null, table: null, alias: null },
 			],
 			from: [
 				{ table: 'table', alias: null },
 			]
-		});*/
+		});
 
 	});
 
