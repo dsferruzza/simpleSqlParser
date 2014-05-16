@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Demo - simpleSqlParser</title>
+</head>
+<body>
+	<p>
+		<label for="q">SQL query:</label><br>
+		<textarea id="q" cols="100" rows="5">SELECT * FROM table</textarea>
+	</p>
+	<p>
+		<button id="parse" type="button">Parse</button>
+	</p>
+	<h2>AST</h2>
+	<pre id="ast"></pre>
+
+	<script src="./node_modules/parsimmon/build/parsimmon.browser.min.js"></script>
+	<script src="./simpleSqlParser.js"></script>
+	<script>
+		var astElem = document.getElementById('ast');
+		var qElem = document.getElementById('q');
+		document.getElementById('parse').addEventListener('click', function(e) {
+			astElem.innerHTML = JSON.stringify(simpleSqlParser.sql2ast(q.value), null, "    ");
+		});
+	</script>
+</body>
+</html>
