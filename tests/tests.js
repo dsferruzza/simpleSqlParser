@@ -24,7 +24,8 @@
 			],
 			from: [
 				{ table: 'table', alias: null },
-			]
+			],
+			where: null,
 		});
 
 		// Column quotes
@@ -36,7 +37,8 @@
 			],
 			from: [
 				{ table: 'table', alias: null },
-			]
+			],
+			where: null,
 		});
 
 		// Special words
@@ -48,7 +50,8 @@
 			],
 			from: [
 				{ table: 'table', alias: null },
-			]
+			],
+			where: null,
 		});
 
 		// "table.column" notation
@@ -62,7 +65,8 @@
 			],
 			from: [
 				{ table: 'table', alias: null },
-			]
+			],
+			where: null,
 		});
 
 		// Strings
@@ -74,7 +78,8 @@
 			],
 			from: [
 				{ table: 'table', alias: null },
-			]
+			],
+			where: null,
 		});
 
 		// Column alias #1
@@ -86,7 +91,8 @@
 			],
 			from: [
 				{ table: 'table', alias: null },
-			]
+			],
+			where: null,
 		});
 
 		// Column alias #2
@@ -98,7 +104,8 @@
 			],
 			from: [
 				{ table: 'table', alias: null },
-			]
+			],
+			where: null,
 		});
 
 		// Mathematical expressions
@@ -110,7 +117,8 @@
 			],
 			from: [
 				{ table: 'table', alias: null },
-			]
+			],
+			where: null,
 		});
 
 		// Functions
@@ -122,7 +130,8 @@
 			],
 			from: [
 				{ table: 'table', alias: null },
-			]
+			],
+			where: null,
 		});
 
 		// Table alias
@@ -134,7 +143,36 @@
 			from: [
 				{ table: 'table', alias: 't' },
 				{ table: 'table2', alias: 't2' },
-			]
+			],
+			where: null,
+		});
+
+		// Where #1
+		testAst('SELECT * FROM table WHERE this >= that AND col IS NOT NULL', {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null },
+			],
+			from: [
+				{ table: 'table', alias: null },
+			],
+			where: {
+				expression: "this >= that AND col IS NOT NULL",
+			},
+		});
+
+		// Where #2
+		testAst('SELECT * FROM table WHERE (FUNC(this) = "string") AND (1+5 OR col1)', {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null },
+			],
+			from: [
+				{ table: 'table', alias: null },
+			],
+			where: {
+				expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",
+			},
 		});
 
 	});

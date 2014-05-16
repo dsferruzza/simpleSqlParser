@@ -60,7 +60,7 @@
 
 	// The name of a column/table
 	var colName = alt(
-		regex(/(?!FROM\s)[a-z*][a-z0-9_]*/i),
+		regex(/(?!(FROM|WHERE)\s)[a-z*][a-z0-9_]*/i),
 		regex(/`[^`\\]*(?:\\.[^`\\]*)*`/)
 	);
 
@@ -93,32 +93,32 @@
 		string('-'),
 		string('*'),
 		string('/'),
+		string('&&'),
 		string('&'),
 		string('~'),
+		string('||'),
 		string('|'),
 		string('^'),
 		regex(/XOR/i),
 		string('<=>'),
 		string('='),
 		string('!='),
-		string('>'),
 		string('>='),
-		string('<'),
+		string('>>'),
+		string('>'),
 		string('<='),
+		string('<<'),
+		string('<'),
 		regex(/IS NULL/i),
 		regex(/IS NOT/i),
 		regex(/IS NOT NULL/i),
 		regex(/IS/i),
-		string('>>'),
-		string('<<'),
 		regex(/LIKE/i),
 		regex(/NOT LIKE/i),
 		string('%'),
 		regex(/MOD/i),
 		regex(/NOT/i),
-		string('||'),
 		regex(/OR/i),
-		string('&&'),
 		regex(/AND/i)
 	);
 
@@ -229,12 +229,10 @@
 		opt(	// Alias
 			seq(
 				optWhitespace,
-				opt(regex(/AS/i)),
-				optWhitespace,
-				alt(colName, str),
-				optWhitespace
+				opt(regex(/AS\s/i)),
+				alt(colName, str)
 			).map(function(node) {
-				return removeQuotes(node[3]);
+				return removeQuotes(node[2]);
 			}),
 			null
 		)
@@ -243,6 +241,13 @@
 		n.table = node[0];
 		n.alias = node[1];
 		return n;
+	});
+
+	// Expression following a WHERE statement
+	var whereExpression = expression.map(function(node) {
+		return {
+			expression: node.expression
+		};
 	});
 
 
@@ -272,12 +277,14 @@
 	// SELECT parser
 	var p = seq(
 		regex(/SELECT/i).skip(optWhitespace).then(opt(colList)),
-		regex(/FROM/i).skip(optWhitespace).then(opt(tableList))
+		regex(/FROM/i).skip(optWhitespace).then(opt(tableList)),
+		opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null)
 	).map(function(node) {
 		return {
 			type: 'select',
 			select: node[0],
-			from: node[1]
+			from: node[1],
+			where: node[2]
 		};
 	});
 
