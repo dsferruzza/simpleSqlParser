@@ -14,7 +14,42 @@
 		deepEqual(m.sql2ast(query), ok(ast), query);
 	}
 
-	test('sql2ast', function() {
+	function isArray(variable, message) {
+		strictEqual(typeof variable, "object", message);
+		strictEqual(Array.isArray(variable), true, message);
+	}
+
+	function isObject(variable, message) {
+		strictEqual(typeof variable, "object", message);
+		strictEqual(Array.isArray(variable), false, message);
+	}
+
+	test('sql2ast - API', function() {
+
+		var q = [
+			'SELECT * FROM table',
+		];
+		var ast = q.map(m.sql2ast);
+
+		var types = ['select'];
+
+		ast.forEach(function(a) {
+			strictEqual(a.status, true, "Parser must parse valid SQL");
+			notStrictEqual(types.indexOf(a.value.type), -1, "AST must contain a valid type");
+
+			if (a.value.type === types[0]) {
+				isArray(a.value.select, "(SELECT) AST must contain a 'select' array");
+				isArray(a.value.from, "(SELECT) AST must contain a 'from' array");
+				isArray(a.value.join, "(SELECT) AST must contain a 'join' array");
+				isObject(a.value.where, "(SELECT) AST must contain a 'where' object");
+				isArray(a.value.order, "(SELECT) AST must contain a 'order' array");
+				isObject(a.value.limit, "(SELECT) AST must contain a 'limit' object");
+			}
+		});
+
+	});
+
+	test('sql2ast - select', function() {
 
 		// Simple select
 		testAst('SELECT * FROM table', {
@@ -25,6 +60,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: null,
@@ -40,6 +76,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: null,
@@ -55,6 +92,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: null,
@@ -72,6 +110,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: null,
@@ -87,6 +126,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: null,
@@ -102,6 +142,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: null,
@@ -117,6 +158,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: null,
@@ -132,6 +174,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: null,
@@ -147,6 +190,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: null,
@@ -162,6 +206,7 @@
 				{ table: 'table', alias: 't' },
 				{ table: 'table2', alias: 't2' },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: null,
@@ -176,6 +221,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: {
 				expression: "this >= that AND col IS NOT NULL",
 			},
@@ -192,6 +238,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: {
 				expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",
 			},
@@ -208,6 +255,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [
 				{ expression: "table.col1", table: "table", column: "col1", order: "ASC" },
@@ -226,6 +274,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: { from: null, nb: 5 },
@@ -240,6 +289,7 @@
 			from: [
 				{ table: 'table', alias: null },
 			],
+			join: [],
 			where: null,
 			order: [],
 			limit: { from: 1, nb: 2 },

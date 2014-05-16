@@ -325,6 +325,7 @@
 			type: 'select',
 			select: node[0],
 			from: node[1],
+			join: [],
 			where: node[2],
 			order: node[3],
 			limit: node[4],
