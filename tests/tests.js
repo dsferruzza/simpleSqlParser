@@ -16,6 +16,7 @@
 
 	test('sql2ast', function() {
 
+		// Simple select
 		testAst('SELECT * FROM table', {
 			type: 'select',
 			select: [
@@ -26,6 +27,7 @@
 			]
 		});
 
+		// Column quotes
 		testAst('SELECT col1, `col2` FROM table', {
 			type: 'select',
 			select: [
@@ -37,6 +39,7 @@
 			]
 		});
 
+		// Special words
 		testAst('SELECT fromage "from", asymetric AS as FROM table', {
 			type: 'select',
 			select: [
@@ -48,6 +51,7 @@
 			]
 		});
 
+		// "table.column" notation
 		testAst('SELECT table.col1, table.`col2`, `table`.col3, `table`.`col4` FROM table', {
 			type: 'select',
 			select: [
@@ -61,17 +65,7 @@
 			]
 		});
 
-		testAst('SELECT * FROM table AS t, table2 AS "t2"', {
-			type: 'select',
-			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
-			],
-			from: [
-				{ table: 'table', alias: 't' },
-				{ table: 'table2', alias: 't2' },
-			]
-		});
-
+		// Strings
 		testAst('SELECT "string", "\\"special\\" string" FROM table', {
 			type: 'select',
 			select: [
@@ -83,6 +77,7 @@
 			]
 		});
 
+		// Column alias #1
 		testAst('SELECT col1 AS alias, col2 AS "alias" FROM table', {
 			type: 'select',
 			select: [
@@ -94,6 +89,7 @@
 			]
 		});
 
+		// Column alias #2
 		testAst('SELECT col1 alias, col2 "alias" FROM table', {
 			type: 'select',
 			select: [
@@ -105,6 +101,7 @@
 			]
 		});
 
+		// Mathematical expressions
 		testAst('SELECT 1 + 1, col1*0.7 AS test FROM table', {
 			type: 'select',
 			select: [
@@ -116,6 +113,7 @@
 			]
 		});
 
+		// Functions
 		testAst('SELECT FUNC(), OTHERFUN(col, FUNC(1/4, -3.05), "string") FROM table', {
 			type: 'select',
 			select: [
@@ -124,6 +122,18 @@
 			],
 			from: [
 				{ table: 'table', alias: null },
+			]
+		});
+
+		// Table alias
+		testAst('SELECT * FROM table AS t, table2 AS "t2"', {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null },
+			],
+			from: [
+				{ table: 'table', alias: 't' },
+				{ table: 'table2', alias: 't2' },
 			]
 		});
 
