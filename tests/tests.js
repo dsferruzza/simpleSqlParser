@@ -26,6 +26,7 @@
 				{ table: 'table', alias: null },
 			],
 			where: null,
+			order: [],
 		});
 
 		// Column quotes
@@ -39,6 +40,7 @@
 				{ table: 'table', alias: null },
 			],
 			where: null,
+			order: [],
 		});
 
 		// Special words
@@ -52,6 +54,7 @@
 				{ table: 'table', alias: null },
 			],
 			where: null,
+			order: [],
 		});
 
 		// "table.column" notation
@@ -67,6 +70,7 @@
 				{ table: 'table', alias: null },
 			],
 			where: null,
+			order: [],
 		});
 
 		// Strings
@@ -80,6 +84,7 @@
 				{ table: 'table', alias: null },
 			],
 			where: null,
+			order: [],
 		});
 
 		// Column alias #1
@@ -93,6 +98,7 @@
 				{ table: 'table', alias: null },
 			],
 			where: null,
+			order: [],
 		});
 
 		// Column alias #2
@@ -106,6 +112,7 @@
 				{ table: 'table', alias: null },
 			],
 			where: null,
+			order: [],
 		});
 
 		// Mathematical expressions
@@ -119,6 +126,7 @@
 				{ table: 'table', alias: null },
 			],
 			where: null,
+			order: [],
 		});
 
 		// Functions
@@ -132,6 +140,7 @@
 				{ table: 'table', alias: null },
 			],
 			where: null,
+			order: [],
 		});
 
 		// Table alias
@@ -145,6 +154,7 @@
 				{ table: 'table2', alias: 't2' },
 			],
 			where: null,
+			order: [],
 		});
 
 		// Where #1
@@ -159,6 +169,7 @@
 			where: {
 				expression: "this >= that AND col IS NOT NULL",
 			},
+			order: [],
 		});
 
 		// Where #2
@@ -173,6 +184,24 @@
 			where: {
 				expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",
 			},
+			order: [],
+		});
+
+		// Order by
+		testAst('SELECT * FROM table ORDER BY table.col1, col2 DESC, FUNC(col3 + 7) ASC', {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null },
+			],
+			from: [
+				{ table: 'table', alias: null },
+			],
+			where: null,
+			order: [
+				{ expression: "table.col1", table: "table", column: "col1", order: "ASC" },
+				{ expression: "col2 DESC", table: null, column: "col2", order: "DESC" },
+				{ expression: "FUNC(col3 + 7) ASC", table: null, column: null, order: "ASC" },
+			]
 		});
 
 	});

@@ -60,7 +60,7 @@
 
 	// The name of a column/table
 	var colName = alt(
-		regex(/(?!(FROM|WHERE)\s)[a-z*][a-z0-9_]*/i),
+		regex(/(?!(FROM|WHERE|ORDER BY)\s)[a-z*][a-z0-9_]*/i),
 		regex(/`[^`\\]*(?:\\.[^`\\]*)*`/)
 	);
 
@@ -250,6 +250,22 @@
 		};
 	});
 
+	// Expression following an ORDER BY statement
+	var orderListExpression = seq(
+		expression,
+		opt(seq(
+			optWhitespace,
+			regex(/ASC|DESC/i)
+		), null)
+	).map(function(node) {
+		return {
+			expression: node[0].expression + ((node[1] !== null) ? node[1].join('') : ''),
+			order: (node[1] !== null) ? node[1][1] : 'ASC',
+			table: node[0].table,
+			column: node[0].column,
+		};
+	});
+
 
 
 	/********************************************************************************************
@@ -268,6 +284,9 @@
 	// List of table following a FROM statement
 	var tableList = optionnalList(tableListExpression);
 
+	// List of table following an ORDER BY statement
+	var orderList = optionnalList(orderListExpression);
+
 
 
 	/********************************************************************************************
@@ -278,13 +297,15 @@
 	var p = seq(
 		regex(/SELECT/i).skip(optWhitespace).then(opt(colList)),
 		regex(/FROM/i).skip(optWhitespace).then(opt(tableList)),
-		opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null)
+		opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null),
+		opt(regex(/ORDER BY/i).skip(optWhitespace).then(opt(orderList)))
 	).map(function(node) {
 		return {
 			type: 'select',
 			select: node[0],
 			from: node[1],
-			where: node[2]
+			where: node[2],
+			order: node[3],
 		};
 	});
 
