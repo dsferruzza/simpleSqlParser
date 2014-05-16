@@ -60,7 +60,7 @@
 
 	// The name of a column/table
 	var colName = alt(
-		regex(/(?!(FROM|WHERE|ORDER BY)\s)[a-z*][a-z0-9_]*/i),
+		regex(/(?!(FROM|WHERE|ORDER BY|LIMIT)\s)[a-z*][a-z0-9_]*/i),
 		regex(/`[^`\\]*(?:\\.[^`\\]*)*`/)
 	);
 
@@ -266,6 +266,26 @@
 		};
 	});
 
+	// Expression following a LIMIT statement
+	var limitExpression = seq(
+		number,
+		opt(seq(
+			optWhitespace,
+			string(','),
+			optWhitespace,
+			number
+		), null)
+	).map(function(node) {
+		if (node[1] === null) return {
+			from: null,
+			nb: parseInt(node[0], 10),
+		};
+		else return {
+			from: parseInt(node[0], 10),
+			nb: parseInt(node[1][3], 10),
+		};
+	});
+
 
 
 	/********************************************************************************************
@@ -298,7 +318,8 @@
 		regex(/SELECT/i).skip(optWhitespace).then(opt(colList)),
 		regex(/FROM/i).skip(optWhitespace).then(opt(tableList)),
 		opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null),
-		opt(regex(/ORDER BY/i).skip(optWhitespace).then(opt(orderList)))
+		opt(regex(/ORDER BY/i).skip(optWhitespace).then(opt(orderList))),
+		opt(regex(/LIMIT/i).skip(optWhitespace).then(opt(limitExpression)), null)
 	).map(function(node) {
 		return {
 			type: 'select',
@@ -306,6 +327,7 @@
 			from: node[1],
 			where: node[2],
 			order: node[3],
+			limit: node[4],
 		};
 	});
 

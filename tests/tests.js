@@ -27,6 +27,7 @@
 			],
 			where: null,
 			order: [],
+			limit: null,
 		});
 
 		// Column quotes
@@ -41,6 +42,7 @@
 			],
 			where: null,
 			order: [],
+			limit: null,
 		});
 
 		// Special words
@@ -55,6 +57,7 @@
 			],
 			where: null,
 			order: [],
+			limit: null,
 		});
 
 		// "table.column" notation
@@ -71,6 +74,7 @@
 			],
 			where: null,
 			order: [],
+			limit: null,
 		});
 
 		// Strings
@@ -85,6 +89,7 @@
 			],
 			where: null,
 			order: [],
+			limit: null,
 		});
 
 		// Column alias #1
@@ -99,6 +104,7 @@
 			],
 			where: null,
 			order: [],
+			limit: null,
 		});
 
 		// Column alias #2
@@ -113,6 +119,7 @@
 			],
 			where: null,
 			order: [],
+			limit: null,
 		});
 
 		// Mathematical expressions
@@ -127,6 +134,7 @@
 			],
 			where: null,
 			order: [],
+			limit: null,
 		});
 
 		// Functions
@@ -141,6 +149,7 @@
 			],
 			where: null,
 			order: [],
+			limit: null,
 		});
 
 		// Table alias
@@ -155,6 +164,7 @@
 			],
 			where: null,
 			order: [],
+			limit: null,
 		});
 
 		// Where #1
@@ -170,6 +180,7 @@
 				expression: "this >= that AND col IS NOT NULL",
 			},
 			order: [],
+			limit: null,
 		});
 
 		// Where #2
@@ -185,6 +196,7 @@
 				expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",
 			},
 			order: [],
+			limit: null,
 		});
 
 		// Order by
@@ -201,7 +213,36 @@
 				{ expression: "table.col1", table: "table", column: "col1", order: "ASC" },
 				{ expression: "col2 DESC", table: null, column: "col2", order: "DESC" },
 				{ expression: "FUNC(col3 + 7) ASC", table: null, column: null, order: "ASC" },
-			]
+			],
+			limit: null,
+		});
+
+		// Limit #1
+		testAst('SELECT * FROM table LIMIT 5', {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null },
+			],
+			from: [
+				{ table: 'table', alias: null },
+			],
+			where: null,
+			order: [],
+			limit: { from: null, nb: 5 },
+		});
+
+		// Limit #2
+		testAst('SELECT * FROM table LIMIT 1, 2', {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null },
+			],
+			from: [
+				{ table: 'table', alias: null },
+			],
+			where: null,
+			order: [],
+			limit: { from: 1, nb: 2 },
 		});
 
 	});
