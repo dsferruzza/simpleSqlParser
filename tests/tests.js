@@ -10,8 +10,8 @@
 		};
 	}
 
-	function testAst(query, ast) {
-		deepEqual(m.sql2ast(query), ok(ast), query);
+	function testAst(comment, query, ast) {
+		deepEqual(m.sql2ast(query), ok(ast), comment + ': ' + query);
 	}
 
 	function isArray(variable, message) {
@@ -51,8 +51,7 @@
 
 	test('sql2ast - select', function() {
 
-		// Simple select
-		testAst('SELECT * FROM table', {
+		testAst('Simple select', 'SELECT * FROM table', {
 			type: 'select',
 			select: [
 				{ expression: '*', column: '*', table: null, alias: null },
@@ -66,8 +65,7 @@
 			limit: null,
 		});
 
-		// Column quotes
-		testAst('SELECT col1, `col2` FROM table', {
+		testAst('Column quotes', 'SELECT col1, `col2` FROM table', {
 			type: 'select',
 			select: [
 				{ expression: 'col1', column: 'col1', table: null, alias: null },
@@ -82,8 +80,7 @@
 			limit: null,
 		});
 
-		// Special words
-		testAst('SELECT fromage "from", asymetric AS as FROM table', {
+		testAst('Special words', 'SELECT fromage "from", asymetric AS as FROM table', {
 			type: 'select',
 			select: [
 				{ expression: 'fromage "from"', column: 'fromage', table: null, alias: 'from' },
@@ -98,8 +95,7 @@
 			limit: null,
 		});
 
-		// "table.column" notation
-		testAst('SELECT table.col1, table.`col2`, `table`.col3, `table`.`col4` FROM table', {
+		testAst('"table.column" notation', 'SELECT table.col1, table.`col2`, `table`.col3, `table`.`col4` FROM table', {
 			type: 'select',
 			select: [
 				{ expression: 'table.col1', column: 'col1', table: 'table', alias: null },
@@ -116,8 +112,7 @@
 			limit: null,
 		});
 
-		// Strings
-		testAst('SELECT "string", "\\"special\\" string" FROM table', {
+		testAst('Strings', 'SELECT "string", "\\"special\\" string" FROM table', {
 			type: 'select',
 			select: [
 				{ expression: '"string"', column: null, table: null, alias: null },
@@ -132,8 +127,7 @@
 			limit: null,
 		});
 
-		// Column alias #1
-		testAst('SELECT col1 AS alias, col2 AS "alias" FROM table', {
+		testAst('Column alias #1', 'SELECT col1 AS alias, col2 AS "alias" FROM table', {
 			type: 'select',
 			select: [
 				{ expression: 'col1 AS alias', column: 'col1', table: null, alias: 'alias' },
@@ -148,8 +142,7 @@
 			limit: null,
 		});
 
-		// Column alias #2
-		testAst('SELECT col1 alias, col2 "alias" FROM table', {
+		testAst('Column alias #2', 'SELECT col1 alias, col2 "alias" FROM table', {
 			type: 'select',
 			select: [
 				{ expression: 'col1 alias', column: 'col1', table: null, alias: 'alias' },
@@ -164,8 +157,7 @@
 			limit: null,
 		});
 
-		// Mathematical expressions
-		testAst('SELECT 1 + 1, col1*0.7 AS test FROM table', {
+		testAst('Mathematical expressions', 'SELECT 1 + 1, col1*0.7 AS test FROM table', {
 			type: 'select',
 			select: [
 				{ expression: '1 + 1', column: null, table: null, alias: null },
@@ -180,8 +172,7 @@
 			limit: null,
 		});
 
-		// Functions
-		testAst('SELECT FUNC(), OTHERFUN(col, FUNC(1/4, -3.05), "string") FROM table', {
+		testAst('Functions', 'SELECT FUNC(), OTHERFUN(col, FUNC(1/4, -3.05), "string") FROM table', {
 			type: 'select',
 			select: [
 				{ expression: 'FUNC()', column: null, table: null, alias: null },
@@ -196,8 +187,7 @@
 			limit: null,
 		});
 
-		// Table alias
-		testAst('SELECT * FROM table AS t, table2 AS "t2"', {
+		testAst('Table alias', 'SELECT * FROM table AS t, table2 AS "t2"', {
 			type: 'select',
 			select: [
 				{ expression: '*', column: '*', table: null, alias: null },
@@ -212,8 +202,7 @@
 			limit: null,
 		});
 
-		// Where #1
-		testAst('SELECT * FROM table WHERE this >= that AND col IS NOT NULL', {
+		testAst('Where #1', 'SELECT * FROM table WHERE this >= that AND col IS NOT NULL', {
 			type: 'select',
 			select: [
 				{ expression: '*', column: '*', table: null, alias: null },
@@ -229,8 +218,7 @@
 			limit: null,
 		});
 
-		// Where #2
-		testAst('SELECT * FROM table WHERE (FUNC(this) = "string") AND (1+5 OR col1)', {
+		testAst('Where #2', 'SELECT * FROM table WHERE (FUNC(this) = "string") AND (1+5 OR col1)', {
 			type: 'select',
 			select: [
 				{ expression: '*', column: '*', table: null, alias: null },
@@ -246,8 +234,7 @@
 			limit: null,
 		});
 
-		// Order by
-		testAst('SELECT * FROM table ORDER BY table.col1, col2 DESC, FUNC(col3 + 7) ASC', {
+		testAst('Order by', 'SELECT * FROM table ORDER BY table.col1, col2 DESC, FUNC(col3 + 7) ASC', {
 			type: 'select',
 			select: [
 				{ expression: '*', column: '*', table: null, alias: null },
@@ -265,8 +252,7 @@
 			limit: null,
 		});
 
-		// Limit #1
-		testAst('SELECT * FROM table LIMIT 5', {
+		testAst('Limit #1', 'SELECT * FROM table LIMIT 5', {
 			type: 'select',
 			select: [
 				{ expression: '*', column: '*', table: null, alias: null },
@@ -280,8 +266,7 @@
 			limit: { from: null, nb: 5 },
 		});
 
-		// Limit #2
-		testAst('SELECT * FROM table LIMIT 1, 2', {
+		testAst('Limit #2', 'SELECT * FROM table LIMIT 1, 2', {
 			type: 'select',
 			select: [
 				{ expression: '*', column: '*', table: null, alias: null },
