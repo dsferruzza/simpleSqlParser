@@ -60,7 +60,7 @@
 
 	// The name of a column/table
 	var colName = alt(
-		regex(/(?!(FROM|WHERE|ORDER BY|LIMIT)\s)[a-z*][a-z0-9_]*/i),
+		regex(/(?!(FROM|WHERE|ORDER BY|LIMIT|INNER|LEFT|RIGHT|JOIN|ON)\s)[a-z*][a-z0-9_]*/i),
 		regex(/`[^`\\]*(?:\\.[^`\\]*)*`/)
 	);
 
@@ -243,6 +243,32 @@
 		return n;
 	});
 
+	// JOIN expression (including JOIN statements)
+	var joinExpression = seq(
+		opt(seq(
+			regex(/INNER|LEFT|RIGHT/i),
+			whitespace
+		).map(function(node) {
+			return node[0].toLowerCase();
+		}), null),
+		regex(/JOIN/i),
+		optWhitespace,
+		tableListExpression,
+		optWhitespace,
+		regex(/ON/i),
+		optWhitespace,
+		expression
+	).map(function(node) {
+		var n = {};
+		n.type = node[0] || 'inner';
+		n.table = node[3].table;
+		n.alias = node[3].alias;
+		n.condition = {
+			expression: node[7].expression,
+		};
+		return n;
+	});
+
 	// Expression following a WHERE statement
 	var whereExpression = expression.map(function(node) {
 		return {
@@ -307,6 +333,9 @@
 	// List of table following an ORDER BY statement
 	var orderList = optionnalList(orderListExpression);
 
+	// List of joins (including JOIN statements)
+	var joinList = optWhitespace.then(joinExpression).skip(optWhitespace).many();
+
 
 
 	/********************************************************************************************
@@ -317,6 +346,7 @@
 	var selectParser = seq(
 		regex(/SELECT/i).skip(optWhitespace).then(opt(colList)),
 		regex(/FROM/i).skip(optWhitespace).then(opt(tableList)),
+		opt(joinList),
 		opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null),
 		opt(regex(/ORDER BY/i).skip(optWhitespace).then(opt(orderList))),
 		opt(regex(/LIMIT/i).skip(optWhitespace).then(opt(limitExpression)), null)
@@ -325,10 +355,10 @@
 			type: 'select',
 			select: node[0],
 			from: node[1],
-			join: [],
-			where: node[2],
-			order: node[3],
-			limit: node[4],
+			join: node[2],
+			where: node[3],
+			order: node[4],
+			limit: node[5],
 		};
 	});
 

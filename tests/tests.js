@@ -207,6 +207,40 @@
 			limit: null,
 		});
 
+		testAst('Simple inner join', 'SELECT * FROM table INNER JOIN table2 ON table2.id = id_table2', {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null },
+			],
+			from: [
+				{ table: 'table', alias: null },
+			],
+			join: [
+				{ type: 'inner', table: 'table2', alias: null, condition: { expression: 'table2.id = id_table2' } },
+			],
+			where: null,
+			order: [],
+			limit: null,
+		});
+
+		testAst('Several joins', 'SELECT * FROM table JOIN t1 ON t1.id = id_table2 AND t1.bool LEFT JOIN t2 ON t2.id = t1.id_t2 RIGHT JOIN t3 AS table3 ON t3.id = FUNC(t1.stuff)', {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null },
+			],
+			from: [
+				{ table: 'table', alias: null },
+			],
+			join: [
+				{ type: 'inner', table: 't1', alias: null, condition: { expression: 't1.id = id_table2 AND t1.bool' } },
+				{ type: 'left', table: 't2', alias: null, condition: { expression: 't2.id = t1.id_t2' } },
+				{ type: 'right', table: 't3', alias: 'table3', condition: { expression: 't3.id = FUNC(t1.stuff)' } },
+			],
+			where: null,
+			order: [],
+			limit: null,
+		});
+
 		testAst('Where #1', 'SELECT * FROM table WHERE this >= that AND col IS NOT NULL', {
 			type: 'select',
 			select: [
