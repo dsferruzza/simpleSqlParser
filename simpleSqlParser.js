@@ -314,7 +314,7 @@
 	********************************************************************************************/
 
 	// SELECT parser
-	var p = seq(
+	var selectParser = seq(
 		regex(/SELECT/i).skip(optWhitespace).then(opt(colList)),
 		regex(/FROM/i).skip(optWhitespace).then(opt(tableList)),
 		opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null),
@@ -331,6 +331,21 @@
 			limit: node[4],
 		};
 	});
+
+	// DELETE parser
+	var deleteParser = seq(
+		regex(/DELETE FROM/i).skip(optWhitespace).then(opt(tableList)),
+		opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null)
+	).map(function(node) {
+		return {
+			type: 'delete',
+			from: node[0],
+			where: node[1],
+		};
+	});
+
+	// Main parser
+	var p = alt(selectParser, deleteParser);
 
 
 

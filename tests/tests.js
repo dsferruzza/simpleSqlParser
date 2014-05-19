@@ -28,10 +28,11 @@
 
 		var q = [
 			'SELECT * FROM table',
+			'DELETE FROM table'
 		];
 		var ast = q.map(m.sql2ast);
 
-		var types = ['select'];
+		var types = ['select', 'delete'];
 
 		ast.forEach(function(a) {
 			strictEqual(a.status, true, "Parser must parse valid SQL");
@@ -44,6 +45,10 @@
 				isObject(a.value.where, "(SELECT) AST must contain a 'where' object");
 				isArray(a.value.order, "(SELECT) AST must contain a 'order' array");
 				isObject(a.value.limit, "(SELECT) AST must contain a 'limit' object");
+			}
+			else if (a.value.type === types[0]) {
+				isArray(a.value.from, "(DELETE) AST must contain a 'from' array");
+				isObject(a.value.where, "(DELETE) AST must contain a 'where' object");
 			}
 		});
 
@@ -278,6 +283,47 @@
 			where: null,
 			order: [],
 			limit: { from: 1, nb: 2 },
+		});
+
+	});
+
+	test('sql2ast - delete', function() {
+
+		testAst('Simple delete', 'DELETE FROM table', {
+			type: 'delete',
+			from: [
+				{ table: 'table', alias: null },
+			],
+			where: null,
+		});
+
+		testAst('Several tables with aliases', 'DELETE FROM table1 AS t1, table2 "t2"', {
+			type: 'delete',
+			from: [
+				{ table: 'table1', alias: 't1' },
+				{ table: 'table2', alias: 't2' },
+			],
+			where: null,
+		});
+
+		testAst('Where #1', 'DELETE FROM table WHERE this >= that AND col IS NOT NULL', {
+			type: 'delete',
+			from: [
+				{ table: 'table', alias: null },
+			],
+			where: {
+				expression: "this >= that AND col IS NOT NULL",
+			},
+		});
+
+		testAst('Where #2', 'DELETE FROM table WHERE (FUNC(this) = "string") AND (1+5 OR col1)', {
+			type: 'delete',
+			from: [
+				{ table: 'table', alias: null },
+			],
+			where: {
+				expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",
+			},
 		});
 
 	});
