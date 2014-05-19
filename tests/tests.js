@@ -46,7 +46,7 @@
 				isArray(a.value.order, "(SELECT) AST must contain a 'order' array");
 				isObject(a.value.limit, "(SELECT) AST must contain a 'limit' object");
 			}
-			else if (a.value.type === types[0]) {
+			else if (a.value.type === types[1]) {
 				isArray(a.value.from, "(DELETE) AST must contain a 'from' array");
 				isObject(a.value.where, "(DELETE) AST must contain a 'where' object");
 			}
