@@ -60,7 +60,7 @@
 
 	// The name of a column/table
 	var colName = alt(
-		regex(/(?!(FROM|WHERE|ORDER BY|LIMIT|INNER|LEFT|RIGHT|JOIN|ON)\s)[a-z*][a-z0-9_]*/i),
+		regex(/(?!(FROM|WHERE|ORDER BY|LIMIT|INNER|LEFT|RIGHT|JOIN|ON|VALUES)\s)[a-z*][a-z0-9_]*/i),
 		regex(/`[^`\\]*(?:\\.[^`\\]*)*`/)
 	);
 
@@ -312,6 +312,27 @@
 		};
 	});
 
+	// Expression designating a column before VALUES in INSERT query
+	var insertColListExpression = alt(
+		tableAndColumn.map(function(node) {
+			return {
+				expression: node.join(''),
+				column: removeQuotes(node[2])
+			};
+		}),
+		colName.map(function(node) {
+			return {
+				expression: node,
+				column: removeQuotes(node)
+			};
+		})
+	);
+
+	// Expression following a VALUES statement
+	var valueExpression = expression.map(function(node) {
+		return node.expression;
+	});
+
 
 
 	/********************************************************************************************
@@ -335,6 +356,12 @@
 
 	// List of joins (including JOIN statements)
 	var joinList = optWhitespace.then(joinExpression).skip(optWhitespace).many();
+
+	// List of columns before VALUES in INSERT query
+	var insertColList = optionnalList(insertColListExpression);
+
+	// Lisf of values following a VALUES statement
+	var valuesList = optionnalList(valueExpression);
 
 
 
@@ -362,6 +389,40 @@
 		};
 	});
 
+	// INSERT parser
+	var insertParser = seq(
+		regex(/INSERT INTO/i).skip(optWhitespace).then(tableListExpression),
+		optWhitespace,
+		opt(
+			seq(
+				string('('),
+				insertColList,
+				string(')')
+			).map(function(node) {
+				return node[1];
+			})
+		),
+		optWhitespace,
+		regex(/VALUES\s?\(/i).skip(optWhitespace).then(valuesList),
+		string(')')
+	).map(function(node) {
+		var values = [];
+		var bigger = Math.max(node[2].length, node[4].length);
+
+		for (var i = 0; i < bigger; ++i) {
+			values[i] = {
+				target: node[2][i] || null,
+				value: node[4][i] || null,
+			};
+		}
+
+		return {
+			type: 'insert',
+			into: node[0],
+			values: values,
+		};
+	});
+
 	// DELETE parser
 	var deleteParser = seq(
 		regex(/DELETE FROM/i).skip(optWhitespace).then(opt(tableList)),
@@ -375,7 +436,7 @@
 	});
 
 	// Main parser
-	var p = alt(selectParser, deleteParser);
+	var p = alt(selectParser, insertParser, deleteParser);
 
 
 

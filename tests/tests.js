@@ -28,11 +28,12 @@
 
 		var q = [
 			'SELECT * FROM table',
-			'DELETE FROM table'
+			'INSERT INTO table VALUES (1, 2, 3)',
+			'DELETE FROM table',
 		];
 		var ast = q.map(m.sql2ast);
 
-		var types = ['select', 'delete'];
+		var types = ['select', 'delete', 'insert'];
 
 		ast.forEach(function(a) {
 			strictEqual(a.status, true, "Parser must parse valid SQL");
@@ -49,6 +50,10 @@
 			else if (a.value.type === types[1]) {
 				isArray(a.value.from, "(DELETE) AST must contain a 'from' array");
 				isObject(a.value.where, "(DELETE) AST must contain a 'where' object");
+			}
+			else if (a.value.type === types[2]) {
+				isObject(a.value.into, "(INSERT) AST must contain a 'into' object");
+				isArray(a.value.values, "(INSERT) AST must contain a 'values' array");
 			}
 		});
 
@@ -318,6 +323,50 @@
 			order: [],
 			limit: { from: 1, nb: 2 },
 		});
+
+	});
+
+	test('sql2ast - insert', function() {
+
+		testAst('Simple insert', 'INSERT INTO table VALUES (1, 2, 3)', {
+			type: 'insert',
+			into: {
+				table: 'table',
+				alias: null,
+			},
+			values: [
+				{ target: null, value: '1'},
+				{ target: null, value: '2'},
+				{ target: null, value: '3'},
+			],
+		});
+
+		testAst('Complex values', 'INSERT INTO table VALUES (1 + 9, FUNC(2, col), "string")', {
+			type: 'insert',
+			into: {
+				table: 'table',
+				alias: null,
+			},
+			values: [
+				{ target: null, value: '1 + 9'},
+				{ target: null, value: 'FUNC(2, col)'},
+				{ target: null, value: '"string"'},
+			],
+		});
+
+		testAst('Insert with columns', 'INSERT INTO table (col1, `col2`, col3) VALUES (1, 2, 3)', {
+			type: 'insert',
+			into: {
+				table: 'table',
+				alias: null,
+			},
+			values: [
+				{ target: { expression: 'col1', column: 'col1' }, value: '1'},
+				{ target: { expression: '`col2`', column: 'col2' }, value: '2'},
+				{ target: { expression: 'col3', column: 'col3' }, value: '3'},
+			],
+		});
+
 
 	});
 
