@@ -3,7 +3,7 @@ var jshint = require('gulp-jshint');
 var qunit = require('gulp-qunit');
 
 gulp.task('lint', function() {
-	return gulp.src('./*.js')
+	return gulp.src(['*.js', 'tests/*.js'])
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'))
 		.pipe(jshint.reporter('fail'));
