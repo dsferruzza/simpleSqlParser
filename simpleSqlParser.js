@@ -60,7 +60,7 @@
 
 	// The name of a column/table
 	var colName = alt(
-		regex(/(?!(FROM|WHERE|ORDER BY|LIMIT|INNER|LEFT|RIGHT|JOIN|ON|VALUES)\s)[a-z*][a-z0-9_]*/i),
+		regex(/(?!(FROM|WHERE|ORDER BY|LIMIT|INNER|LEFT|RIGHT|JOIN|ON|VALUES|SET)\s)[a-z*][a-z0-9_]*/i),
 		regex(/`[^`\\]*(?:\\.[^`\\]*)*`/)
 	);
 
@@ -333,6 +333,20 @@
 		return node.expression;
 	});
 
+	// Expression that assign a value to a column
+	var assignExpression = seq(
+		insertColListExpression,
+		optWhitespace,
+		string('='),
+		optWhitespace,
+		expression
+	).map(function(node) {
+		return {
+			target: node[0],
+			value: node[4].expression,
+		};
+	});
+
 
 
 	/********************************************************************************************
@@ -360,8 +374,11 @@
 	// List of columns before VALUES in INSERT query
 	var insertColList = optionnalList(insertColListExpression);
 
-	// Lisf of values following a VALUES statement
+	// List of values following a VALUES statement
 	var valuesList = optionnalList(valueExpression);
+
+	// List of assign expression following a SET statement
+	var assignList = optionnalList(assignExpression);
 
 
 
@@ -423,6 +440,21 @@
 		};
 	});
 
+	var updateParser = seq(
+		regex(/UPDATE/i).skip(optWhitespace).then(tableListExpression),
+		optWhitespace,
+		regex(/SET/i).skip(optWhitespace).then(assignList),
+		optWhitespace,
+		opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null)
+	).map(function(node) {
+		return {
+			type: 'update',
+			table: node[0],
+			values: node[2],
+			where: node[4],
+		};
+	});
+
 	// DELETE parser
 	var deleteParser = seq(
 		regex(/DELETE FROM/i).skip(optWhitespace).then(opt(tableList)),
@@ -436,7 +468,7 @@
 	});
 
 	// Main parser
-	var p = alt(selectParser, insertParser, deleteParser);
+	var p = alt(selectParser, insertParser, updateParser, deleteParser);
 
 
 

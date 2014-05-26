@@ -29,11 +29,12 @@
 		var q = [
 			'SELECT * FROM table',
 			'INSERT INTO table VALUES (1, 2, 3)',
+			'UPDATE table SET col = "value"',
 			'DELETE FROM table',
 		];
 		var ast = q.map(m.sql2ast);
 
-		var types = ['select', 'delete', 'insert'];
+		var types = ['select', 'delete', 'insert', 'update'];
 
 		ast.forEach(function(a) {
 			strictEqual(a.status, true, "Parser must parse valid SQL");
@@ -54,6 +55,11 @@
 			else if (a.value.type === types[2]) {
 				isObject(a.value.into, "(INSERT) AST must contain a 'into' object");
 				isArray(a.value.values, "(INSERT) AST must contain a 'values' array");
+			}
+			else if (a.value.type === types[3]) {
+				isObject(a.value.table, "(UPDATE) AST must contain a 'table' object");
+				isArray(a.value.values, "(UPDATE) AST must contain a 'values' array");
+				isObject(a.value.where, "(UPDATE) AST must contain a 'where' object");
 			}
 		});
 
@@ -367,6 +373,50 @@
 			],
 		});
 
+
+	});
+
+	test('sql2ast - update', function() {
+
+		testAst('Simple update', 'UPDATE table SET col = "value"', {
+			type: 'update',
+			table: {
+				table: 'table',
+				alias: null,
+			},
+			where: null,
+			values: [
+				{ target: { expression: 'col', column: 'col' }, value: '"value"'},
+			],
+		});
+
+		testAst('Several columns', 'UPDATE table SET col = "value", col2 = NULL, table.col3 = col', {
+			type: 'update',
+			table: {
+				table: 'table',
+				alias: null,
+			},
+			where: null,
+			values: [
+				{ target: { expression: 'col', column: 'col' }, value: '"value"'},
+				{ target: { expression: 'col2', column: 'col2' }, value: 'NULL'},
+				{ target: { expression: 'table.col3', column: 'col3' }, value: 'col'},
+			],
+		});
+
+		testAst('Where #1', 'UPDATE table SET col = "value" WHERE this >= that AND col IS NOT NULL', {
+			type: 'update',
+			table: {
+				table: 'table',
+				alias: null,
+			},
+			where: {
+				expression: "this >= that AND col IS NOT NULL",
+			},
+			values: [
+				{ target: { expression: 'col', column: 'col' }, value: '"value"'},
+			],
+		});
 
 	});
 
