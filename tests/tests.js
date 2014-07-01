@@ -589,4 +589,10 @@
 		});
 	});
 
+	test('ast2sql - delete', function() {
+		Delete.forEach(function(test) {
+			testBackAndForth(test.c, test.q);
+		});
+	});
+
 })();

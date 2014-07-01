@@ -600,6 +600,11 @@
 			parts.push(update(ast));
 			parts.push(where(ast));
 		}
+		else if (ast.type === 'delete') {
+			parts.push('DELETE');
+			parts.push(from(ast));
+			parts.push(where(ast));
+		}
 		else return false;
 
 		return parts.filter(function(item) {
