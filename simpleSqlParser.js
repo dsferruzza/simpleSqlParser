@@ -570,6 +570,18 @@
 			return result;
 		}
 
+		function table(ast) {
+			return 'UPDATE ' + ast.table.expression;
+		}
+
+		function update(ast) {
+			var result = 'SET ';
+			result += ast.values.map(function(item) {
+				return item.target.expression + ' = ' + item.value;
+			}).join(', ');
+			return result;
+		}
+
 		var parts = [];
 		if (ast.type === 'select') {
 			parts.push(select(ast));
@@ -582,6 +594,11 @@
 		else if (ast.type === 'insert') {
 			parts.push(into(ast));
 			parts.push(values(ast));
+		}
+		else if (ast.type === 'update') {
+			parts.push(table(ast));
+			parts.push(update(ast));
+			parts.push(where(ast));
 		}
 		else return false;
 

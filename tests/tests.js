@@ -583,4 +583,10 @@
 		});
 	});
 
+	test('ast2sql - update', function() {
+		Update.forEach(function(test) {
+			testBackAndForth(test.c, test.q);
+		});
+	});
+
 })();
