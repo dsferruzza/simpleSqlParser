@@ -60,7 +60,7 @@
 
 	// The name of a column/table
 	var colName = alt(
-		regex(/(?!(FROM|WHERE|ORDER BY|LIMIT|INNER|LEFT|RIGHT|JOIN|ON|VALUES|SET)\s)[a-z*][a-z0-9_]*/i),
+		regex(/(?!(FROM|WHERE|GROUP BY|ORDER BY|LIMIT|INNER|LEFT|RIGHT|JOIN|ON|VALUES|SET)\s)[a-z*][a-z0-9_]*/i),
 		regex(/`[^`\\]*(?:\\.[^`\\]*)*`/)
 	);
 
@@ -369,6 +369,9 @@
 	// List of table following a FROM statement
 	var tableList = optionnalList(tableListExpression);
 
+	// List of table following an GROUP BY statement
+	var groupList = optionnalList(expression);
+
 	// List of table following an ORDER BY statement
 	var orderList = optionnalList(orderListExpression);
 
@@ -396,6 +399,7 @@
 		regex(/FROM/i).skip(optWhitespace).then(opt(tableList)),
 		opt(joinList),
 		opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null),
+		opt(regex(/GROUP BY/i).skip(optWhitespace).then(opt(groupList))),
 		opt(regex(/ORDER BY/i).skip(optWhitespace).then(opt(orderList))),
 		opt(regex(/LIMIT/i).skip(optWhitespace).then(opt(limitExpression)), null)
 	).map(function(node) {
@@ -405,8 +409,9 @@
 			from: node[1],
 			join: node[2],
 			where: node[3],
-			order: node[4],
-			limit: node[5],
+			group: node[4],
+			order: node[5],
+			limit: node[6],
 		};
 	});
 
@@ -525,6 +530,17 @@
 			return result;
 		}
 
+		function group(ast) {
+			var result = '';
+			if (ast.group.length > 0) {
+				result += 'GROUP BY ';
+				result += ast.group.map(function(item) {
+					return item.expression;
+				}).join(', ');
+			}
+			return result;
+		}
+
 		function order(ast) {
 			var result = '';
 			if (ast.order.length > 0) {
@@ -588,6 +604,7 @@
 			parts.push(from(ast));
 			parts.push(join(ast));
 			parts.push(where(ast));
+			parts.push(group(ast));
 			parts.push(order(ast));
 			parts.push(limit(ast));
 		}
