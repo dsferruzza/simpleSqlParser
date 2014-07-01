@@ -480,4 +480,43 @@
 		return p.parse(sql);
 	};
 
+	exports.ast2sql = function(ast) {
+		if (typeof ast === 'object' && ast.status === true) ast = ast.value;
+		else return false;
+
+		function into(ast) {
+			var result = 'INSERT INTO ' + ast.into.table;
+			if (ast.into.alias !== null) result += ' AS ' + ast.into.alias;
+			return result;
+		}
+
+		function values(ast) {
+			var result = '';
+			var targets = ast.values.filter(function(item) {
+				return item.target !== null;
+			});
+			if (targets.length > 0) {
+				result += '(';
+				result += targets.map(function(item) {
+					return item.target.expression;
+				}).join(', ');
+				result += ') ';
+			}
+			result += 'VALUES (';
+			result += ast.values.map(function(item) {
+				return item.value;
+			}).join(', ');
+			result += ')';
+			return result;
+		}
+
+		var parts = [];
+		if (ast.type === 'insert') {
+			parts.push(into(ast));
+			parts.push(values(ast));
+		}
+
+		return parts.join(' ');
+	};
+
 })(typeof exports === "undefined" ? (this.simpleSqlParser = {}) : exports, typeof Parsimmon === 'object' ? Parsimmon : require('Parsimmon'));

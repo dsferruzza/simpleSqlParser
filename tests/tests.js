@@ -14,6 +14,10 @@
 		deepEqual(m.sql2ast(query), ok(ast), comment + ': ' + query);
 	}
 
+	function testBackAndForth(comment, query) {
+		deepEqual(query, m.ast2sql(m.sql2ast(query)), comment + ': ' + query);
+	}
+
 	function isArray(variable, message) {
 		strictEqual(typeof variable, "object", message);
 		strictEqual(Array.isArray(variable), true, message);
@@ -558,6 +562,12 @@
 	test('sql2ast - delete', function() {
 		Delete.forEach(function(test) {
 			testAst(test.c, test.q, test.a);
+		});
+	});
+
+	test('ast2sql - insert', function() {
+		Insert.forEach(function(test) {
+			testBackAndForth(test.c, test.q);
 		});
 	});
 
