@@ -232,14 +232,18 @@
 				opt(regex(/AS\s/i)),
 				alt(colName, str)
 			).map(function(node) {
-				return removeQuotes(node[2]);
+				return {
+					alias: removeQuotes(node[2]),
+					expression : node.join(''),
+				};
 			}),
 			null
 		)
 	).map(function(node) {
 		var n = {};
 		n.table = node[0];
-		n.alias = node[1];
+		n.alias = (node[1] !== null) ? node[1].alias : null;
+		n.expression = node[0] + ((node[1] !== null) ? node[1].expression : '');
 		return n;
 	});
 
@@ -495,9 +499,7 @@
 		function from(ast) {
 			var result = 'FROM ';
 			result += ast.from.map(function(item) {
-				var newItem = item.table;
-				if (item.alias !== null) newItem += ' AS ' + item.alias;
-				return newItem;
+				return item.expression;
 			}).join(', ');
 			return result;
 		}
@@ -545,9 +547,7 @@
 		}
 
 		function into(ast) {
-			var result = 'INSERT INTO ' + ast.into.table;
-			if (ast.into.alias !== null) result += ' AS ' + ast.into.alias;
-			return result;
+			return 'INSERT INTO ' + ast.into.expression;
 		}
 
 		function values(ast) {
@@ -586,7 +586,7 @@
 		else return false;
 
 		return parts.filter(function(item) {
-			return item != '';
+			return item !== '';
 		}).join(' ');
 	};
 

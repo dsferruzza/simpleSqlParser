@@ -79,7 +79,7 @@
 					{ expression: '*', column: '*', table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -97,7 +97,7 @@
 					{ expression: '`col2`', column: 'col2', table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -115,7 +115,7 @@
 					{ expression: 'asymetric AS as', column: 'asymetric', table: null, alias: 'as' },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -135,7 +135,7 @@
 					{ expression: '`table`.`col4`', column: 'col4', table: 'table', alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -153,7 +153,7 @@
 					{ expression: '"\\"special\\" string"', column: null, table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -171,7 +171,7 @@
 					{ expression: 'col2 AS "alias"', column: 'col2', table: null, alias: 'alias' },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -189,7 +189,7 @@
 					{ expression: 'col2 "alias"', column: 'col2', table: null, alias: 'alias' },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -207,7 +207,7 @@
 					{ expression: 'col1*0.7 AS test', column: null, table: null, alias: 'test' },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -225,7 +225,7 @@
 					{ expression: 'OTHERFUN(col, FUNC(1/4, -3.05), "string")', column: null, table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -242,8 +242,8 @@
 					{ expression: '*', column: '*', table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: 't' },
-					{ table: 'table2', alias: 't2' },
+					{ expression: 'table AS t', table: 'table', alias: 't' },
+					{ expression: 'table2 AS "t2"', table: 'table2', alias: 't2' },
 				],
 				join: [],
 				where: null,
@@ -260,7 +260,7 @@
 					{ expression: '*', column: '*', table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [
 					{ type: 'inner', table: 'table2', alias: null, condition: { expression: 'table2.id = id_table2' } },
@@ -279,7 +279,7 @@
 					{ expression: '*', column: '*', table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [
 					{ type: 'inner', table: 't1', alias: null, condition: { expression: 't1.id = id_table2 AND t1.bool' } },
@@ -300,7 +300,7 @@
 					{ expression: '*', column: '*', table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: {
@@ -319,7 +319,7 @@
 					{ expression: '*', column: '*', table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: {
@@ -338,7 +338,7 @@
 					{ expression: '*', column: '*', table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -359,7 +359,7 @@
 					{ expression: '*', column: '*', table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -376,7 +376,7 @@
 					{ expression: '*', column: '*', table: null, alias: null },
 				],
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				join: [],
 				where: null,
@@ -393,6 +393,7 @@
 			a: {
 				type: 'insert',
 				into: {
+					expression: 'table',
 					table: 'table',
 					alias: null,
 				},
@@ -409,6 +410,7 @@
 			a: {
 				type: 'insert',
 				into: {
+					expression: 'table',
 					table: 'table',
 					alias: null,
 				},
@@ -425,6 +427,7 @@
 			a: {
 				type: 'insert',
 				into: {
+					expression: 'table',
 					table: 'table',
 					alias: null,
 				},
@@ -444,6 +447,7 @@
 			a: {
 				type: 'update',
 				table: {
+					expression: 'table',
 					table: 'table',
 					alias: null,
 				},
@@ -459,6 +463,7 @@
 			a: {
 				type: 'update',
 				table: {
+					expression: 'table',
 					table: 'table',
 					alias: null,
 				},
@@ -476,6 +481,7 @@
 			a: {
 				type: 'update',
 				table: {
+					expression: 'table',
 					table: 'table',
 					alias: null,
 				},
@@ -496,7 +502,7 @@
 			a: {
 				type: 'delete',
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				where: null,
 			},
@@ -507,8 +513,8 @@
 			a: {
 				type: 'delete',
 				from: [
-					{ table: 'table1', alias: 't1' },
-					{ table: 'table2', alias: 't2' },
+					{ expression: 'table1 AS t1', table: 'table1', alias: 't1' },
+					{ expression: 'table2 "t2"', table: 'table2', alias: 't2' },
 				],
 				where: null,
 			},
@@ -519,7 +525,7 @@
 			a: {
 				type: 'delete',
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				where: {
 					expression: "this >= that AND col IS NOT NULL",
@@ -532,7 +538,7 @@
 			a: {
 				type: 'delete',
 				from: [
-					{ table: 'table', alias: null },
+					{ expression: 'table', table: 'table', alias: null },
 				],
 				where: {
 					expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",
