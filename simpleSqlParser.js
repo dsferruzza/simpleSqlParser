@@ -484,6 +484,66 @@
 		if (typeof ast === 'object' && ast.status === true) ast = ast.value;
 		else return false;
 
+		function select(ast) {
+			var result = 'SELECT ';
+			result += ast.select.map(function(item) {
+				return item.expression;
+			}).join(', ');
+			return result;
+		}
+
+		function from(ast) {
+			var result = 'FROM ';
+			result += ast.from.map(function(item) {
+				var newItem = item.table;
+				if (item.alias !== null) newItem += ' AS ' + item.alias;
+				return newItem;
+			}).join(', ');
+			return result;
+		}
+
+		function join(ast) {
+			return ast.join.map(function(item) {
+				var result = '';
+				if (item.type === 'inner') result += 'INNER JOIN ';
+				else if (item.type === 'left') result += 'LEFT JOIN ';
+				else if (item.type === 'right') result += 'RIGHT JOIN ';
+				else return '';
+				result += item.table;
+				if (item.alias !== null) result += ' AS ' + item.alias;
+				result += ' ON ';
+				result += item.condition.expression;
+				return result;
+			}).join(' ');
+		}
+
+		function where(ast) {
+			var result = '';
+			if (ast.where !== null) result += 'WHERE ' + ast.where.expression;
+			return result;
+		}
+
+		function order(ast) {
+			var result = '';
+			if (ast.order.length > 0) {
+				result += 'ORDER BY ';
+				result += ast.order.map(function(item) {
+					return item.expression;
+				}).join(', ');
+			}
+			return result;
+		}
+
+		function limit(ast) {
+			var result = '';
+			if (ast.limit !== null) {
+				result += 'LIMIT ';
+				if (ast.limit.from !== null) result += ast.limit.from + ', ';
+				result += ast.limit.nb;
+			}
+			return result;
+		}
+
 		function into(ast) {
 			var result = 'INSERT INTO ' + ast.into.table;
 			if (ast.into.alias !== null) result += ' AS ' + ast.into.alias;
@@ -511,12 +571,23 @@
 		}
 
 		var parts = [];
-		if (ast.type === 'insert') {
+		if (ast.type === 'select') {
+			parts.push(select(ast));
+			parts.push(from(ast));
+			parts.push(join(ast));
+			parts.push(where(ast));
+			parts.push(order(ast));
+			parts.push(limit(ast));
+		}
+		else if (ast.type === 'insert') {
 			parts.push(into(ast));
 			parts.push(values(ast));
 		}
+		else return false;
 
-		return parts.join(' ');
+		return parts.filter(function(item) {
+			return item != '';
+		}).join(' ');
 	};
 
 })(typeof exports === "undefined" ? (this.simpleSqlParser = {}) : exports, typeof Parsimmon === 'object' ? Parsimmon : require('Parsimmon'));

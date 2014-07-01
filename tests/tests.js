@@ -15,7 +15,7 @@
 	}
 
 	function testBackAndForth(comment, query) {
-		deepEqual(query, m.ast2sql(m.sql2ast(query)), comment + ': ' + query);
+		deepEqual(m.ast2sql(m.sql2ast(query)), query, comment + ': ' + query);
 	}
 
 	function isArray(variable, message) {
@@ -272,7 +272,7 @@
 		},
 		{
 			c: 'Several joins',
-			q: 'SELECT * FROM table JOIN t1 ON t1.id = id_table2 AND t1.bool LEFT JOIN t2 ON t2.id = t1.id_t2 RIGHT JOIN t3 AS table3 ON t3.id = FUNC(t1.stuff)',
+			q: 'SELECT * FROM table INNER JOIN t1 ON t1.id = id_table2 AND t1.bool LEFT JOIN t2 ON t2.id = t1.id_t2 RIGHT JOIN t3 AS table3 ON t3.id = FUNC(t1.stuff)',
 			a: {
 				type: 'select',
 				select: [
@@ -562,6 +562,12 @@
 	test('sql2ast - delete', function() {
 		Delete.forEach(function(test) {
 			testAst(test.c, test.q, test.a);
+		});
+	});
+
+	test('ast2sql - select', function() {
+		Select.forEach(function(test) {
+			testBackAndForth(test.c, test.q);
 		});
 	});
 
