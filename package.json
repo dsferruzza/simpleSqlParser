@@ -30,12 +30,12 @@
   "license": "MIT",
   "homepage": "https://github.com/dsferruzza/simpleSqlParser",
   "dependencies": {
-    "parsimmon": "0.4.0"
+    "parsimmon": "0.5.1"
   },
   "devDependencies": {
-    "gulp": "3.6.2",
-    "gulp-jshint": "1.6.1",
+    "gulp": "3.8.5",
+    "gulp-jshint": "1.6.3",
     "gulp-qunit": "0.3.3",
-    "qunit": "0.6.3"
+    "qunit": "0.6.4"
   }
 }
