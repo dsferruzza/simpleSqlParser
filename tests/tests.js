@@ -49,6 +49,7 @@
 				isArray(a.value.from, "(SELECT) AST must contain a 'from' array");
 				isArray(a.value.join, "(SELECT) AST must contain a 'join' array");
 				isObject(a.value.where, "(SELECT) AST must contain a 'where' object");
+				isArray(a.value.group, "(SELECT) AST must contain a 'group' array");
 				isArray(a.value.order, "(SELECT) AST must contain a 'order' array");
 				isObject(a.value.limit, "(SELECT) AST must contain a 'limit' object");
 			}
