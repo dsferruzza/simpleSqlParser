@@ -345,6 +345,46 @@
 			},
 		},
 		{
+			c: 'Where #3',
+			q: 'SELECT * FROM table WHERE column IN ("val1", "val2")',
+			a: {
+				type: 'select',
+				select: [
+					{ expression: '*', column: '*', table: null, alias: null },
+				],
+				from: [
+					{ expression: 'table', table: 'table', alias: null },
+				],
+				join: [],
+				where: {
+					expression: "column IN (\"val1\", \"val2\")",
+				},
+				group: [],
+				order: [],
+				limit: null,
+			},
+		},
+		{
+			c: 'Where #3 with spaces',
+			q: 'SELECT * FROM table WHERE column IN ( "val1", "val2" )',
+			a: {
+				type: 'select',
+				select: [
+					{ expression: '*', column: '*', table: null, alias: null },
+				],
+				from: [
+					{ expression: 'table', table: 'table', alias: null },
+				],
+				join: [],
+				where: {
+					expression: "column IN ( \"val1\", \"val2\" )",
+				},
+				group: [],
+				order: [],
+				limit: null,
+			},
+		},
+		{
 			c: 'Group by',
 			q: 'SELECT * FROM table GROUP BY col1, MONTH(col2), table.col3',
 			a: {

@@ -119,7 +119,8 @@
 		regex(/MOD/i),
 		regex(/NOT/i),
 		regex(/OR/i),
-		regex(/AND/i)
+		regex(/AND/i),
+		regex(/IN/i)
 	);
 
 	// A number
@@ -130,6 +131,29 @@
 	/********************************************************************************************
 		EXPRESSION PARSERS
 	********************************************************************************************/
+
+	// List (following IN, for example)
+	var list = seq(
+		string('('),
+		optWhitespace,
+		seq(
+			alt(
+				number,
+				str
+			),
+			optWhitespace,
+			opt(string(',')),
+			optWhitespace,
+			opt(
+				alt(
+					number,
+					str
+				)
+			)
+		).map(mkString),
+		optWhitespace,
+		string(')')
+	).map(mkString);
 
 	// Expression
 	var expression = seq(
@@ -163,6 +187,13 @@
 				};
 			}),
 			number.map(function(node) {
+				return {
+					expression: node,
+					table: null,
+					column: null
+				};
+			}),
+			list.map(function(node) {
 				return {
 					expression: node,
 					table: null,
