@@ -209,7 +209,7 @@
 			});
 			return result;
 		};
-		
+
 		analysis['GROUP BY'] = function (str) {
 			str = str.split(',');
 			var result = [];
@@ -413,7 +413,7 @@
 			}
 
 			if (/^(AND|OR)$/i.test(tokenValue)) return {type: 'logic', value: tokenValue};
-			if (/^(IS|NOT)$/i.test(tokenValue)) return {type: 'operator', value: tokenValue};
+			if (/^(IS|NOT|LIKE)$/i.test(tokenValue)) return {type: 'operator', value: tokenValue};
 			else return {type: 'word', value: tokenValue};
 		},
 
@@ -627,7 +627,7 @@
 			}
 			else return '';
 		}
-		
+
 		function group_by(ast) {
 			if (typeof ast['GROUP BY'] != 'undefined') {
 				var result = ' GROUP BY ';
@@ -639,7 +639,7 @@
 			}
 			else return '';
 		}
-		
+
 		function limit(ast) {
 			if (typeof ast['LIMIT'] != 'undefined' && typeof ast['LIMIT'].nb != 'undefined' && parseInt(ast['LIMIT'].nb, 10) > 0) {
 				var result = ' LIMIT ';
