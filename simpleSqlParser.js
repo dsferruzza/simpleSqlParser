@@ -413,7 +413,7 @@
 			}
 
 			if (/^(AND|OR)$/i.test(tokenValue)) return {type: 'logic', value: tokenValue};
-			if (/^(IS|NOT|LIKE)$/i.test(tokenValue)) return {type: 'operator', value: tokenValue};
+			if (/^(IN|IS|NOT|LIKE)$/i.test(tokenValue)) return {type: 'operator', value: tokenValue};
 			else return {type: 'word', value: tokenValue};
 		},
 
