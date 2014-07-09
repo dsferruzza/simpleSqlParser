@@ -747,12 +747,12 @@
 			if (typeof cond.operator != 'undefined') {
 				result += ' ' + cond.operator;
 				if (typeof cond.right != 'undefined') {
-          if (cond.operator === 'IN'){
-            result += ' (' + cond.right + ')';
-          }
-          else {
-            result += ' ' + cond.right;
-          }
+					if (cond.operator === 'IN') {
+						result += ' (' + cond.right + ')';
+					}
+					else {
+						result += ' ' + cond.right;
+					}
 				}
 			}
 		}
