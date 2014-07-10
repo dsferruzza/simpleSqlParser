@@ -15,7 +15,7 @@
 		deepEqual(m.trim('test test'), 'test test');
 		deepEqual(m.trim('    test     \
 								'), 'test');
-		
+
 		var integer = 5;
 		var array = [0, 1, 2];
 		var object = {test: "test", great_aswer: 42};
@@ -26,17 +26,17 @@
 
 	test('protect/unprotect', function () {
 		expect(9);
-		
+
 		deepEqual(m.protect('test'), '#t#e#s#t#');
 		deepEqual(m.protect('#t#e#s#t#'), '###t###e###s###t###');
-		
+
 		deepEqual(m.unprotect('#t#e#s#t#'), 'test');
 		deepEqual(m.unprotect('###t###e###s###t###'), '#t#e#s#t#');
-		
+
 		var string = "this is a (complex) string, with some special chars like !:@.#ù%$^\
 		and also a line break and des caractères français !";
 		deepEqual(m.unprotect(m.protect(string)), string);
-		
+
 		deepEqual(m.protect(''), '#');
 		deepEqual(m.unprotect('#'), '');
 		deepEqual(m.protect('#'), '###');
@@ -45,7 +45,7 @@
 
 	test('protect_split', function () {
 		expect(10);
-		
+
 		deepEqual(m.protect_split(',', 'test'), ['test']);
 		deepEqual(m.protect_split(',', 'test(1,2)'), ['test(1,2)']);
 		deepEqual(m.protect_split(',', 'test1,test2'), ['test1', 'test2']);
@@ -252,7 +252,7 @@
 	});
 
 	test('condition parser', function () {
-		expect(20);
+		expect(22);
 
 		deepEqual(m.CondParser.parse('column = othercolumn'), {left: 'column', operator: '=', right: 'othercolumn'});
 
@@ -347,6 +347,10 @@
 		deepEqual(m.CondParser.parse('column IS NULL'), {left: 'column', operator: 'IS', right: 'NULL'});
 
 		deepEqual(m.CondParser.parse('column IS NOT NULL'), {left: 'column', operator: 'IS NOT', right: 'NULL'});
+
+		deepEqual(m.CondParser.parse('column LIKE "string%"'), {left: 'column', operator: 'LIKE', right: '"string%"'});
+
+		deepEqual(m.CondParser.parse('column IN (1,5,7)'), {left: 'column', operator: 'IN', right: "1,5,7"});
 	});
 
 	test('parse SQL', function() {
@@ -462,7 +466,7 @@
 				},
 			],
 		}, q);
-		
+
 		q = 'SELECT * FROM table LEFT JOIN table10 ON table.id = table10.id RIGHT JOIN table2 ON table.id = table2.id INNER JOIN table3 AS t3 ON table.id = FUNCTION(table4.id_table, "string()") JOIN table4 ON table.id=table4.id';
 			deepEqual(m.sql2ast(q), {
 				'SELECT': [{name: '*'}],
@@ -564,7 +568,7 @@
 				{column: 'column2', order: 'DESC'},
 			],
 		}, q);
-		
+
 		q = 'SELECT * FROM table ORDER BY column1, column2';
 		deepEqual(m.sql2ast(q), {
 			'SELECT': [{name: '*'}],
