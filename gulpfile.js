@@ -27,4 +27,14 @@ gulp.task('browserifyWithDeps', function() {
 		.pipe(gulp.dest('./dist'));
 });
 
-gulp.task('default', ['lint', 'test', 'browserifyWithDeps']);
+gulp.task('browserifyWithoutDeps', function() {
+	var bundler = browserify('./simpleSqlParser.js');
+	bundler.exclude('Parsimmon');
+	bundler.transform('browserify-shim');
+	return bundler
+		.bundle({ standalone: 'simpleSqlParser' })
+		.pipe(source('simpleSqlParser.withoutDeps.js'))
+		.pipe(gulp.dest('./dist'));
+});
+
+gulp.task('default', ['lint', 'test', 'browserifyWithDeps', 'browserifyWithoutDeps']);

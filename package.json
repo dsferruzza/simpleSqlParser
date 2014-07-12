@@ -34,10 +34,14 @@
   },
   "devDependencies": {
     "browserify": "4.2.0",
+    "browserify-shim": "3.6.0",
     "chai": "1.9.1",
     "gulp": "3.8.6",
     "gulp-jshint": "1.7.1",
     "gulp-mocha": "0.5.1",
     "vinyl-source-stream": "0.1.1"
+  },
+  "browserify-shim": {
+    "Parsimmon": "global:Parsimmon"
   }
 }
