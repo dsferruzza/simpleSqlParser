@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
-var qunit = require('gulp-qunit');
+var mocha = require('gulp-mocha');
 
 gulp.task('lint', function() {
 	return gulp.src(['*.js', 'tests/*.js'])
@@ -10,8 +10,11 @@ gulp.task('lint', function() {
 });
 
 gulp.task('test', function() {
-	return gulp.src('./tests/tests.html')
-		.pipe(qunit());
+	return gulp.src('./tests/tests.js')
+		.pipe(mocha({
+			ui: 'qunit',
+			reporter: 'spec',
+		}));
 });
 
 gulp.task('default', ['lint', 'test']);

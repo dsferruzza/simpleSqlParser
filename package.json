@@ -33,9 +33,9 @@
     "parsimmon": "0.5.1"
   },
   "devDependencies": {
+    "chai": "1.9.1",
     "gulp": "3.8.5",
     "gulp-jshint": "1.6.4",
-    "gulp-qunit": "0.3.3",
-    "qunit": "0.6.4"
+    "gulp-mocha": "0.5.1"
   }
 }
