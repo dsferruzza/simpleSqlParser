@@ -5,6 +5,21 @@ Javascript library to parse CRUD (Create Retrieve Update Delete) SQL queries.
 
 **This is a work in progress!**
 
+## How to install dev tools
+
+If you want to contribute, please write tests and respect the coding style.
+
+To install dev tools:
+
+- install Node.js (http://nodejs.org/)
+- install **gulp** globally: `npm i -g gulp`
+- install dev dependencies: `npm i`
+- use `gulp` to check your code!
+
+To update dev tools (because `package.json` has changed):
+
+- install new dev dependencies: `npm i`
+
 ## License
 
 The MIT License (MIT)
