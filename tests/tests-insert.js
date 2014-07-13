@@ -1,4 +1,4 @@
-/*global test:true*/
+/*global test:true,suite:true*/
 "use strict";
 
 var expect = require('chai').expect;
@@ -58,14 +58,18 @@ var Insert = [
 	},
 ];
 
-test('sql2ast - insert', function() {
-	Insert.forEach(function(test) {
-		h.testAst(test.c, test.q, test.a);
+suite('sql2ast - insert');
+
+Insert.forEach(function(item) {
+	test(item.c, function() {
+		h.testAst(item.c, item.q, item.a);
 	});
 });
 
-test('ast2sql - insert', function() {
-	Insert.forEach(function(test) {
-		h.testBackAndForth(test.c, test.q);
+suite('ast2sql - insert');
+
+Insert.forEach(function(item) {
+	test(item.c, function() {
+		h.testBackAndForth(item.c, item.q);
 	});
 });

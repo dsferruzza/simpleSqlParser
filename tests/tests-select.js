@@ -1,4 +1,4 @@
-/*global test:true*/
+/*global test:true,suite:true*/
 "use strict";
 
 var expect = require('chai').expect;
@@ -400,14 +400,18 @@ var Select = [
 	},
 ];
 
-test('sql2ast - select', function() {
-	Select.forEach(function(test) {
-		h.testAst(test.c, test.q, test.a);
+suite('sql2ast - select');
+
+Select.forEach(function(item) {
+	test(item.c, function() {
+		h.testAst(item.c, item.q, item.a);
 	});
 });
 
-test('ast2sql - select', function() {
-	Select.forEach(function(test) {
-		h.testBackAndForth(test.c, test.q);
+suite('ast2sql - select');
+
+Select.forEach(function(item) {
+	test(item.c, function() {
+		h.testBackAndForth(item.c, item.q);
 	});
 });
