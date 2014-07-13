@@ -2,7 +2,7 @@
 "use strict";
 
 var expect = require('chai').expect;
-var m = require('../simpleSqlParser');
+var m = require('../index');
 var h = require('./helpers.js');
 
 test('sql2ast - API', function() {

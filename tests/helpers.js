@@ -1,7 +1,7 @@
 "use strict";
 
 var expect = require('chai').expect;
-var m = require('../simpleSqlParser');
+var m = require('../index');
 
 function ok(ast) {
 	return {

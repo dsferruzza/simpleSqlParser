@@ -1,4 +1,10 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.simpleSqlParser=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+"use strict";
+
+module.exports.sql2ast = _dereq_('./src/sql2ast.js');
+module.exports.ast2sql = _dereq_('./src/ast2sql.js');
+
+},{"./src/ast2sql.js":8,"./src/sql2ast.js":9}],2:[function(_dereq_,module,exports){
 var P = _dereq_('pjs').P;
 var Parsimmon = {};
 
@@ -396,11 +402,11 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
 });
 module.exports = Parsimmon;
 
-},{"pjs":4}],2:[function(_dereq_,module,exports){
+},{"pjs":5}],3:[function(_dereq_,module,exports){
 module.exports = _dereq_('./build/parsimmon.commonjs');
 exports.version = _dereq_('./package.json').version;
 
-},{"./build/parsimmon.commonjs":1,"./package.json":6}],3:[function(_dereq_,module,exports){
+},{"./build/parsimmon.commonjs":2,"./package.json":7}],4:[function(_dereq_,module,exports){
 // pass
 var P = (function(prototype, ownProperty, undefined) {
   return function P(_superclass /* = Object */, definition) {
@@ -476,11 +482,11 @@ var P = (function(prototype, ownProperty, undefined) {
 })('prototype', ({}).hasOwnProperty);
 exports.P = P;
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],5:[function(_dereq_,module,exports){
 exports.P = _dereq_('./build/p.commonjs').P;
 exports.version = _dereq_('./package.json').version;
 
-},{"./build/p.commonjs":3,"./package.json":5}],5:[function(_dereq_,module,exports){
+},{"./build/p.commonjs":4,"./package.json":6}],6:[function(_dereq_,module,exports){
 module.exports={
   "name": "pjs",
   "version": "5.1.1",
@@ -544,7 +550,7 @@ module.exports={
   "directories": {}
 }
 
-},{}],6:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 module.exports={
   "name": "parsimmon",
   "version": "0.5.1",
@@ -614,7 +620,150 @@ module.exports={
   "directories": {}
 }
 
-},{}],7:[function(_dereq_,module,exports){
+},{}],8:[function(_dereq_,module,exports){
+"use strict";
+
+module.exports = function(ast) {
+	if (typeof ast === 'object' && ast.status === true) ast = ast.value;
+	else return false;
+
+	function select(ast) {
+		var result = 'SELECT ';
+		result += ast.select.map(function(item) {
+			return item.expression;
+		}).join(', ');
+		return result;
+	}
+
+	function from(ast) {
+		var result = 'FROM ';
+		result += ast.from.map(function(item) {
+			return item.expression;
+		}).join(', ');
+		return result;
+	}
+
+	function join(ast) {
+		return ast.join.map(function(item) {
+			var result = '';
+			if (item.type === 'inner') result += 'INNER JOIN ';
+			else if (item.type === 'left') result += 'LEFT JOIN ';
+			else if (item.type === 'right') result += 'RIGHT JOIN ';
+			else return '';
+			result += item.table;
+			if (item.alias !== null) result += ' AS ' + item.alias;
+			result += ' ON ';
+			result += item.condition.expression;
+			return result;
+		}).join(' ');
+	}
+
+	function where(ast) {
+		var result = '';
+		if (ast.where !== null) result += 'WHERE ' + ast.where.expression;
+		return result;
+	}
+
+	function group(ast) {
+		var result = '';
+		if (ast.group.length > 0) {
+			result += 'GROUP BY ';
+			result += ast.group.map(function(item) {
+				return item.expression;
+			}).join(', ');
+		}
+		return result;
+	}
+
+	function order(ast) {
+		var result = '';
+		if (ast.order.length > 0) {
+			result += 'ORDER BY ';
+			result += ast.order.map(function(item) {
+				return item.expression;
+			}).join(', ');
+		}
+		return result;
+	}
+
+	function limit(ast) {
+		var result = '';
+		if (ast.limit !== null) {
+			result += 'LIMIT ';
+			if (ast.limit.from !== null) result += ast.limit.from + ', ';
+			result += ast.limit.nb;
+		}
+		return result;
+	}
+
+	function into(ast) {
+		return 'INSERT INTO ' + ast.into.expression;
+	}
+
+	function values(ast) {
+		var result = '';
+		var targets = ast.values.filter(function(item) {
+			return item.target !== null;
+		});
+		if (targets.length > 0) {
+			result += '(';
+			result += targets.map(function(item) {
+				return item.target.expression;
+			}).join(', ');
+			result += ') ';
+		}
+		result += 'VALUES (';
+		result += ast.values.map(function(item) {
+			return item.value;
+		}).join(', ');
+		result += ')';
+		return result;
+	}
+
+	function table(ast) {
+		return 'UPDATE ' + ast.table.expression;
+	}
+
+	function update(ast) {
+		var result = 'SET ';
+		result += ast.values.map(function(item) {
+			return item.target.expression + ' = ' + item.value;
+		}).join(', ');
+		return result;
+	}
+
+	var parts = [];
+	if (ast.type === 'select') {
+		parts.push(select(ast));
+		parts.push(from(ast));
+		parts.push(join(ast));
+		parts.push(where(ast));
+		parts.push(group(ast));
+		parts.push(order(ast));
+		parts.push(limit(ast));
+	}
+	else if (ast.type === 'insert') {
+		parts.push(into(ast));
+		parts.push(values(ast));
+	}
+	else if (ast.type === 'update') {
+		parts.push(table(ast));
+		parts.push(update(ast));
+		parts.push(where(ast));
+	}
+	else if (ast.type === 'delete') {
+		parts.push('DELETE');
+		parts.push(from(ast));
+		parts.push(where(ast));
+	}
+	else return false;
+
+	return parts.filter(function(item) {
+		return item !== '';
+	}).join(' ');
+};
+
+},{}],9:[function(_dereq_,module,exports){
 "use strict";
 var Parsimmon = _dereq_('Parsimmon');
 
@@ -1133,150 +1282,10 @@ var p = alt(selectParser, insertParser, updateParser, deleteParser);
 	PUBLIC FUNCTIONS
 ********************************************************************************************/
 
-exports.sql2ast = function(sql) {
+module.exports = function(sql) {
 	return p.parse(sql);
 };
 
-exports.ast2sql = function(ast) {
-	if (typeof ast === 'object' && ast.status === true) ast = ast.value;
-	else return false;
-
-	function select(ast) {
-		var result = 'SELECT ';
-		result += ast.select.map(function(item) {
-			return item.expression;
-		}).join(', ');
-		return result;
-	}
-
-	function from(ast) {
-		var result = 'FROM ';
-		result += ast.from.map(function(item) {
-			return item.expression;
-		}).join(', ');
-		return result;
-	}
-
-	function join(ast) {
-		return ast.join.map(function(item) {
-			var result = '';
-			if (item.type === 'inner') result += 'INNER JOIN ';
-			else if (item.type === 'left') result += 'LEFT JOIN ';
-			else if (item.type === 'right') result += 'RIGHT JOIN ';
-			else return '';
-			result += item.table;
-			if (item.alias !== null) result += ' AS ' + item.alias;
-			result += ' ON ';
-			result += item.condition.expression;
-			return result;
-		}).join(' ');
-	}
-
-	function where(ast) {
-		var result = '';
-		if (ast.where !== null) result += 'WHERE ' + ast.where.expression;
-		return result;
-	}
-
-	function group(ast) {
-		var result = '';
-		if (ast.group.length > 0) {
-			result += 'GROUP BY ';
-			result += ast.group.map(function(item) {
-				return item.expression;
-			}).join(', ');
-		}
-		return result;
-	}
-
-	function order(ast) {
-		var result = '';
-		if (ast.order.length > 0) {
-			result += 'ORDER BY ';
-			result += ast.order.map(function(item) {
-				return item.expression;
-			}).join(', ');
-		}
-		return result;
-	}
-
-	function limit(ast) {
-		var result = '';
-		if (ast.limit !== null) {
-			result += 'LIMIT ';
-			if (ast.limit.from !== null) result += ast.limit.from + ', ';
-			result += ast.limit.nb;
-		}
-		return result;
-	}
-
-	function into(ast) {
-		return 'INSERT INTO ' + ast.into.expression;
-	}
-
-	function values(ast) {
-		var result = '';
-		var targets = ast.values.filter(function(item) {
-			return item.target !== null;
-		});
-		if (targets.length > 0) {
-			result += '(';
-			result += targets.map(function(item) {
-				return item.target.expression;
-			}).join(', ');
-			result += ') ';
-		}
-		result += 'VALUES (';
-		result += ast.values.map(function(item) {
-			return item.value;
-		}).join(', ');
-		result += ')';
-		return result;
-	}
-
-	function table(ast) {
-		return 'UPDATE ' + ast.table.expression;
-	}
-
-	function update(ast) {
-		var result = 'SET ';
-		result += ast.values.map(function(item) {
-			return item.target.expression + ' = ' + item.value;
-		}).join(', ');
-		return result;
-	}
-
-	var parts = [];
-	if (ast.type === 'select') {
-		parts.push(select(ast));
-		parts.push(from(ast));
-		parts.push(join(ast));
-		parts.push(where(ast));
-		parts.push(group(ast));
-		parts.push(order(ast));
-		parts.push(limit(ast));
-	}
-	else if (ast.type === 'insert') {
-		parts.push(into(ast));
-		parts.push(values(ast));
-	}
-	else if (ast.type === 'update') {
-		parts.push(table(ast));
-		parts.push(update(ast));
-		parts.push(where(ast));
-	}
-	else if (ast.type === 'delete') {
-		parts.push('DELETE');
-		parts.push(from(ast));
-		parts.push(where(ast));
-	}
-	else return false;
-
-	return parts.filter(function(item) {
-		return item !== '';
-	}).join(' ');
-};
-
-},{"Parsimmon":2}]},{},[7])
-(7)
+},{"Parsimmon":3}]},{},[1])
+(1)
 });

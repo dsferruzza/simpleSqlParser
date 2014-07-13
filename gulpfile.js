@@ -7,7 +7,7 @@ var source = require('vinyl-source-stream');
 var browserify = require('browserify');
 
 gulp.task('lint', function() {
-	return gulp.src(['*.js', 'tests/*.js'])
+	return gulp.src(['*.js', 'src/*.js', 'tests/*.js'])
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'))
 		.pipe(jshint.reporter('fail'));
@@ -24,7 +24,7 @@ gulp.task('mocha', function() {
 gulp.task('test', ['lint', 'mocha']);
 
 gulp.task('browserifyWithDeps', function() {
-	var bundler = browserify('./simpleSqlParser.js');
+	var bundler = browserify('./index.js');
 	return bundler
 		.bundle({ standalone: 'simpleSqlParser' })
 		.pipe(source('simpleSqlParser.js'))
@@ -32,7 +32,7 @@ gulp.task('browserifyWithDeps', function() {
 });
 
 gulp.task('browserifyWithoutDeps', function() {
-	var bundler = browserify('./simpleSqlParser.js');
+	var bundler = browserify('./index.js');
 	bundler.exclude('Parsimmon');
 	bundler.transform('browserify-shim');
 	return bundler
