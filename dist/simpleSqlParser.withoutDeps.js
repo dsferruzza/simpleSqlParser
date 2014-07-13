@@ -203,6 +203,29 @@ function removeQuotes(string) {
 	return string.replace(/^([`'"])(.*)\1$/, '$2');
 }
 
+// Add the starting and ending char positions of matches of a given parser
+function getPos(parser) {
+	return seq(
+		Parsimmon.index,
+		parser,
+		Parsimmon.index
+	).map(function(node) {
+		var pos = {
+			start: node[0],
+			end: node[2],
+		};
+		if (typeof node[1] == 'object') {
+			var n = node[1];
+			n.position = pos;
+			return n;
+		}
+		else {
+			pos.out = node[1];
+			return pos;
+		}
+	});
+}
+
 
 
 /********************************************************************************************
@@ -546,7 +569,7 @@ var argList = seq(
 ).map(mergeOptionnalList);
 
 // List of expressions following a SELECT statement
-var colList = optionnalList(colListExpression);
+var colList = optionnalList(getPos(colListExpression));
 
 // List of table following a FROM statement
 var tableList = optionnalList(tableListExpression);

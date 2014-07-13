@@ -11,7 +11,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -29,8 +29,8 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: 'col1', column: 'col1', table: null, alias: null },
-				{ expression: '`col2`', column: 'col2', table: null, alias: null },
+				{ expression: 'col1', column: 'col1', table: null, alias: null, position: { start: 7, end: 11 } },
+				{ expression: '`col2`', column: 'col2', table: null, alias: null, position: { start: 13, end: 19 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -48,8 +48,8 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: 'fromage "from"', column: 'fromage', table: null, alias: 'from' },
-				{ expression: 'asymetric AS as', column: 'asymetric', table: null, alias: 'as' },
+				{ expression: 'fromage "from"', column: 'fromage', table: null, alias: 'from', position: { start: 7, end: 21 } },
+				{ expression: 'asymetric AS as', column: 'asymetric', table: null, alias: 'as', position: { start: 23, end: 38 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -67,10 +67,10 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: 'table.col1', column: 'col1', table: 'table', alias: null },
-				{ expression: 'table.`col2`', column: 'col2', table: 'table', alias: null },
-				{ expression: '`table`.col3', column: 'col3', table: 'table', alias: null },
-				{ expression: '`table`.`col4`', column: 'col4', table: 'table', alias: null },
+				{ expression: 'table.col1', column: 'col1', table: 'table', alias: null, position: { start: 7, end: 17 } },
+				{ expression: 'table.`col2`', column: 'col2', table: 'table', alias: null, position: { start: 19, end: 31 } },
+				{ expression: '`table`.col3', column: 'col3', table: 'table', alias: null, position: { start: 33, end: 45 } },
+				{ expression: '`table`.`col4`', column: 'col4', table: 'table', alias: null, position: { start: 47, end: 61 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -88,8 +88,8 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '"string"', column: null, table: null, alias: null },
-				{ expression: '"\\"special\\" string"', column: null, table: null, alias: null },
+				{ expression: '"string"', column: null, table: null, alias: null, position: { start: 7, end: 15 } },
+				{ expression: '"\\"special\\" string"', column: null, table: null, alias: null, position: { start: 17, end: 37 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -107,8 +107,8 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: 'col1 AS alias', column: 'col1', table: null, alias: 'alias' },
-				{ expression: 'col2 AS "alias"', column: 'col2', table: null, alias: 'alias' },
+				{ expression: 'col1 AS alias', column: 'col1', table: null, alias: 'alias', position: { start: 7, end: 20 } },
+				{ expression: 'col2 AS "alias"', column: 'col2', table: null, alias: 'alias', position: { start: 22, end: 37 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -126,8 +126,8 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: 'col1 alias', column: 'col1', table: null, alias: 'alias' },
-				{ expression: 'col2 "alias"', column: 'col2', table: null, alias: 'alias' },
+				{ expression: 'col1 alias', column: 'col1', table: null, alias: 'alias', position: { start: 7, end: 17 } },
+				{ expression: 'col2 "alias"', column: 'col2', table: null, alias: 'alias', position: { start: 19, end: 31 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -145,8 +145,8 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '1 + 1', column: null, table: null, alias: null },
-				{ expression: 'col1*0.7 AS test', column: null, table: null, alias: 'test' },
+				{ expression: '1 + 1', column: null, table: null, alias: null, position: { start: 7, end: 12 } },
+				{ expression: 'col1*0.7 AS test', column: null, table: null, alias: 'test', position: { start: 14, end: 30 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -164,8 +164,8 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: 'FUNC()', column: null, table: null, alias: null },
-				{ expression: 'OTHERFUN(col, FUNC(1/4, -3.05), "string")', column: null, table: null, alias: null },
+				{ expression: 'FUNC()', column: null, table: null, alias: null, position: { start: 7, end: 13 } },
+				{ expression: 'OTHERFUN(col, FUNC(1/4, -3.05), "string")', column: null, table: null, alias: null, position: { start: 15, end: 56 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -183,7 +183,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table AS t', table: 'table', alias: 't' },
@@ -202,7 +202,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -222,7 +222,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -244,7 +244,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -264,7 +264,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -284,7 +284,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -304,7 +304,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -324,7 +324,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -346,7 +346,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -368,7 +368,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
@@ -386,7 +386,7 @@ var Select = [
 		a: {
 			type: 'select',
 			select: [
-				{ expression: '*', column: '*', table: null, alias: null },
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
 				{ expression: 'table', table: 'table', alias: null },
