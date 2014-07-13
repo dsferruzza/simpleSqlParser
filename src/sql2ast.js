@@ -421,7 +421,7 @@ var argList = seq(
 var colList = optionnalList(getPos(colListExpression));
 
 // List of table following a FROM statement
-var tableList = optionnalList(tableListExpression);
+var tableList = optionnalList(getPos(tableListExpression));
 
 // List of table following an GROUP BY statement
 var groupList = optionnalList(expression);

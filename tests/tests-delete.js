@@ -11,7 +11,7 @@ var Delete = [
 		a: {
 			type: 'delete',
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 12, end: 17 } },
 			],
 			where: null,
 		},
@@ -22,8 +22,8 @@ var Delete = [
 		a: {
 			type: 'delete',
 			from: [
-				{ expression: 'table1 AS t1', table: 'table1', alias: 't1' },
-				{ expression: 'table2 "t2"', table: 'table2', alias: 't2' },
+				{ expression: 'table1 AS t1', table: 'table1', alias: 't1', position: { start: 12, end: 24 } },
+				{ expression: 'table2 "t2"', table: 'table2', alias: 't2', position: { start: 26, end: 37 } },
 			],
 			where: null,
 		},
@@ -34,7 +34,7 @@ var Delete = [
 		a: {
 			type: 'delete',
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 12, end: 17 } },
 			],
 			where: {
 				expression: "this >= that AND col IS NOT NULL",
@@ -47,7 +47,7 @@ var Delete = [
 		a: {
 			type: 'delete',
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 12, end: 17 } },
 			],
 			where: {
 				expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",

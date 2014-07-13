@@ -14,7 +14,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [],
 			where: null,
@@ -33,7 +33,7 @@ var Select = [
 				{ expression: '`col2`', column: 'col2', table: null, alias: null, position: { start: 13, end: 19 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 25, end: 30 } },
 			],
 			join: [],
 			where: null,
@@ -52,7 +52,7 @@ var Select = [
 				{ expression: 'asymetric AS as', column: 'asymetric', table: null, alias: 'as', position: { start: 23, end: 38 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 44, end: 49 } },
 			],
 			join: [],
 			where: null,
@@ -73,7 +73,7 @@ var Select = [
 				{ expression: '`table`.`col4`', column: 'col4', table: 'table', alias: null, position: { start: 47, end: 61 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 67, end: 72 } },
 			],
 			join: [],
 			where: null,
@@ -92,7 +92,7 @@ var Select = [
 				{ expression: '"\\"special\\" string"', column: null, table: null, alias: null, position: { start: 17, end: 37 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 43, end: 48 } },
 			],
 			join: [],
 			where: null,
@@ -111,7 +111,7 @@ var Select = [
 				{ expression: 'col2 AS "alias"', column: 'col2', table: null, alias: 'alias', position: { start: 22, end: 37 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 43, end: 48 } },
 			],
 			join: [],
 			where: null,
@@ -130,7 +130,7 @@ var Select = [
 				{ expression: 'col2 "alias"', column: 'col2', table: null, alias: 'alias', position: { start: 19, end: 31 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 37, end: 42 } },
 			],
 			join: [],
 			where: null,
@@ -149,7 +149,7 @@ var Select = [
 				{ expression: 'col1*0.7 AS test', column: null, table: null, alias: 'test', position: { start: 14, end: 30 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 36, end: 41 } },
 			],
 			join: [],
 			where: null,
@@ -168,7 +168,7 @@ var Select = [
 				{ expression: 'OTHERFUN(col, FUNC(1/4, -3.05), "string")', column: null, table: null, alias: null, position: { start: 15, end: 56 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 62, end: 67 } },
 			],
 			join: [],
 			where: null,
@@ -186,8 +186,8 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table AS t', table: 'table', alias: 't' },
-				{ expression: 'table2 AS "t2"', table: 'table2', alias: 't2' },
+				{ expression: 'table AS t', table: 'table', alias: 't', position: { start: 14, end: 24 } },
+				{ expression: 'table2 AS "t2"', table: 'table2', alias: 't2', position: { start: 26, end: 40 } },
 			],
 			join: [],
 			where: null,
@@ -205,7 +205,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [
 				{ type: 'inner', table: 'table2', alias: null, condition: { expression: 'table2.id = id_table2' } },
@@ -225,7 +225,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [
 				{ type: 'inner', table: 't1', alias: null, condition: { expression: 't1.id = id_table2 AND t1.bool' } },
@@ -247,7 +247,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [],
 			where: {
@@ -267,7 +267,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [],
 			where: {
@@ -287,7 +287,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [],
 			where: {
@@ -307,7 +307,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [],
 			where: {
@@ -327,7 +327,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [],
 			where: null,
@@ -349,7 +349,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [],
 			where: null,
@@ -371,7 +371,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [],
 			where: null,
@@ -389,7 +389,7 @@ var Select = [
 				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
 			],
 			from: [
-				{ expression: 'table', table: 'table', alias: null },
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [],
 			where: null,
