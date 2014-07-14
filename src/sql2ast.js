@@ -427,7 +427,7 @@ var colList = optionnalList(getPos(colListExpression));
 var tableList = optionnalList(getPos(tableListExpression));
 
 // List of table following an GROUP BY statement
-var groupList = optionnalList(expression);
+var groupList = optionnalList(getPos(expression));
 
 // List of table following an ORDER BY statement
 var orderList = optionnalList(orderListExpression);

@@ -336,9 +336,9 @@ var Select = [
 			join: [],
 			where: null,
 			group: [
-				{ expression: 'col1', table: null, column: 'col1' },
-				{ expression: 'MONTH(col2)', table: null, column: null },
-				{ expression: 'table.col3', table: 'table', column: 'col3' },
+				{ expression: 'col1', table: null, column: 'col1', position: { start: 29, end: 33 } },
+				{ expression: 'MONTH(col2)', table: null, column: null, position: { start: 35, end: 46 } },
+				{ expression: 'table.col3', table: 'table', column: 'col3', position: { start: 48, end: 58 } },
 			],
 			order: [],
 			limit: null,
