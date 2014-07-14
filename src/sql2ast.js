@@ -311,18 +311,20 @@ var joinExpression = seq(
 	}), null),
 	regex(/JOIN/i),
 	optWhitespace,
-	tableListExpression,
+	getPos(tableListExpression),
 	optWhitespace,
 	regex(/ON/i),
 	optWhitespace,
-	expression
+	getPos(expression)
 ).map(function(node) {
 	var n = {};
 	n.type = node[0] || 'inner';
 	n.table = node[3].table;
 	n.alias = node[3].alias;
+	n.position = node[3].position;
 	n.condition = {
 		expression: node[7].expression,
+		position: node[7].position,
 	};
 	return n;
 });

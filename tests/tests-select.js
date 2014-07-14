@@ -208,7 +208,7 @@ var Select = [
 				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [
-				{ type: 'inner', table: 'table2', alias: null, condition: { expression: 'table2.id = id_table2' } },
+				{ type: 'inner', table: 'table2', alias: null, position: { start: 31, end: 37 }, condition: { expression: 'table2.id = id_table2', position: { start: 41, end: 62 } } },
 			],
 			where: null,
 			group: [],
@@ -228,9 +228,9 @@ var Select = [
 				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
 			],
 			join: [
-				{ type: 'inner', table: 't1', alias: null, condition: { expression: 't1.id = id_table2 AND t1.bool' } },
-				{ type: 'left', table: 't2', alias: null, condition: { expression: 't2.id = t1.id_t2' } },
-				{ type: 'right', table: 't3', alias: 'table3', condition: { expression: 't3.id = FUNC(t1.stuff)' } },
+				{ type: 'inner', table: 't1', alias: null, position: { start: 31, end: 33 }, condition: { expression: 't1.id = id_table2 AND t1.bool', position: { start: 37, end: 66 } } },
+				{ type: 'left', table: 't2', alias: null, position: { start: 77, end: 79 }, condition: { expression: 't2.id = t1.id_t2', position: { start: 83, end: 99 } } },
+				{ type: 'right', table: 't3', alias: 'table3', position: { start: 111, end: 123 }, condition: { expression: 't3.id = FUNC(t1.stuff)', position: { start: 127, end: 149 } } },
 			],
 			where: null,
 			group: [],
