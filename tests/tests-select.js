@@ -359,9 +359,9 @@ var Select = [
 			where: null,
 			group: [],
 			order: [
-				{ expression: "table.col1", table: "table", column: "col1", order: "ASC" },
-				{ expression: "col2 DESC", table: null, column: "col2", order: "DESC" },
-				{ expression: "FUNC(col3 + 7) ASC", table: null, column: null, order: "ASC" },
+				{ expression: "table.col1", table: "table", column: "col1", order: "ASC", position: { start: 29, end: 39 } },
+				{ expression: "col2 DESC", table: null, column: "col2", order: "DESC", position: { start: 41, end: 50 } },
+				{ expression: "FUNC(col3 + 7) ASC", table: null, column: null, order: "ASC", position: { start: 52, end: 70 } },
 			],
 			limit: null,
 		},

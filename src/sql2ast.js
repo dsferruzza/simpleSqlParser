@@ -430,7 +430,7 @@ var tableList = optionnalList(getPos(tableListExpression));
 var groupList = optionnalList(getPos(expression));
 
 // List of table following an ORDER BY statement
-var orderList = optionnalList(orderListExpression);
+var orderList = optionnalList(getPos(orderListExpression));
 
 // List of joins (including JOIN statements)
 var joinList = optWhitespace.then(joinExpression).skip(optWhitespace).many();
