@@ -252,6 +252,7 @@ var Select = [
 			join: [],
 			where: {
 				expression: "this >= that AND col IS NOT NULL",
+				position: { start: 26, end: 58 },
 			},
 			group: [],
 			order: [],
@@ -272,6 +273,7 @@ var Select = [
 			join: [],
 			where: {
 				expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",
+				position: { start: 26, end: 67 },
 			},
 			group: [],
 			order: [],
@@ -292,6 +294,7 @@ var Select = [
 			join: [],
 			where: {
 				expression: "column IN (\"val1\", \"val2\")",
+				position: { start: 26, end: 52 },
 			},
 			group: [],
 			order: [],
@@ -312,6 +315,7 @@ var Select = [
 			join: [],
 			where: {
 				expression: "column IN ( \"val1\", \"val2\" )",
+				position: { start: 26, end: 54 },
 			},
 			group: [],
 			order: [],

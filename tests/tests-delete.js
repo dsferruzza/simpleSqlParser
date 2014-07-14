@@ -38,6 +38,7 @@ var Delete = [
 			],
 			where: {
 				expression: "this >= that AND col IS NOT NULL",
+				position: { start: 24, end: 56 },
 			},
 		},
 	},
@@ -51,6 +52,7 @@ var Delete = [
 			],
 			where: {
 				expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",
+				position: { start: 24, end: 65 },
 			},
 		},
 	},

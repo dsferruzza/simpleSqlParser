@@ -330,9 +330,10 @@ var joinExpression = seq(
 });
 
 // Expression following a WHERE statement
-var whereExpression = expression.map(function(node) {
+var whereExpression = getPos(expression).map(function(node) {
 	return {
-		expression: node.expression
+		expression: node.expression,
+		position: node.position,
 	};
 });
 

@@ -51,6 +51,7 @@ var Update = [
 			},
 			where: {
 				expression: "this >= that AND col IS NOT NULL",
+				position: { start: 37, end: 69 },
 			},
 			values: [
 				{ target: { expression: 'col', column: 'col' }, value: '"value"'},
