@@ -462,26 +462,29 @@ var joinExpression = seq(
 	}), null),
 	regex(/JOIN/i),
 	optWhitespace,
-	tableListExpression,
+	getPos(tableListExpression),
 	optWhitespace,
 	regex(/ON/i),
 	optWhitespace,
-	expression
+	getPos(expression)
 ).map(function(node) {
 	var n = {};
 	n.type = node[0] || 'inner';
 	n.table = node[3].table;
 	n.alias = node[3].alias;
+	n.position = node[3].position;
 	n.condition = {
 		expression: node[7].expression,
+		position: node[7].position,
 	};
 	return n;
 });
 
 // Expression following a WHERE statement
-var whereExpression = expression.map(function(node) {
+var whereExpression = getPos(expression).map(function(node) {
 	return {
-		expression: node.expression
+		expression: node.expression,
+		position: node.position,
 	};
 });
 
@@ -572,13 +575,13 @@ var argList = seq(
 var colList = optionnalList(getPos(colListExpression));
 
 // List of table following a FROM statement
-var tableList = optionnalList(tableListExpression);
+var tableList = optionnalList(getPos(tableListExpression));
 
 // List of table following an GROUP BY statement
-var groupList = optionnalList(expression);
+var groupList = optionnalList(getPos(expression));
 
 // List of table following an ORDER BY statement
-var orderList = optionnalList(orderListExpression);
+var orderList = optionnalList(getPos(orderListExpression));
 
 // List of joins (including JOIN statements)
 var joinList = optWhitespace.then(joinExpression).skip(optWhitespace).many();
