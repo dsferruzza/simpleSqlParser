@@ -3,6 +3,8 @@ simpleSqlParser
 
 Javascript library to parse CRUD (Create Retrieve Update Delete) SQL queries.
 
+**v1 will be deprecated as soon as v2 is complete! Try v2: https://github.com/dsferruzza/simpleSqlParser/tree/v2**
+
 ## How to use
 
 ### From browser
