@@ -789,9 +789,7 @@ var lazy = Parsimmon.lazy;
 // "empty" parameter will be returned as result if the optionnal parser can't match
 function opt(parser, empty) {
 	if (typeof empty == 'undefined') empty = [];
-	return parser.or(string('').map(function(node) {
-		return empty;
-	}));
+	return parser.or(Parsimmon.succeed(empty));
 }
 
 // Join results of a parser
@@ -907,7 +905,7 @@ var operator = alt(
 	string('%'),
 	regex(/MOD/i),
 	regex(/NOT/i),
-	regex(/OR/i),
+	regex(/OR\s/i),	// A space is forced after so this doesn't get mixed up with ORDER BY
 	regex(/AND/i),
 	regex(/IN/i)
 );
@@ -1222,9 +1220,9 @@ var selectParser = seq(
 	regex(/FROM/i).skip(optWhitespace).then(opt(tableList)),
 	opt(joinList),
 	opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null),
-	opt(regex(/GROUP BY/i).skip(optWhitespace).then(opt(groupList))),
-	opt(regex(/ORDER BY/i).skip(optWhitespace).then(opt(orderList))),
-	opt(regex(/LIMIT/i).skip(optWhitespace).then(opt(limitExpression)), null)
+	opt(regex(/\s?GROUP BY/i).skip(optWhitespace).then(opt(groupList))),
+	opt(regex(/\s?ORDER BY/i).skip(optWhitespace).then(opt(orderList))),
+	opt(regex(/\s?LIMIT/i).skip(optWhitespace).then(opt(limitExpression)), null)
 ).map(function(node) {
 	return {
 		type: 'select',
@@ -1310,7 +1308,9 @@ var p = alt(selectParser, insertParser, updateParser, deleteParser);
 ********************************************************************************************/
 
 module.exports = function(sql) {
-	return p.parse(sql);
+	var result = p.parse(sql);
+	if (result.status === false) result.error = Parsimmon.formatError(sql, result);
+	return result;
 };
 
 },{"Parsimmon":3}]},{},[1])
