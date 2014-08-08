@@ -544,5 +544,7 @@ var p = alt(selectParser, insertParser, updateParser, deleteParser);
 ********************************************************************************************/
 
 module.exports = function(sql) {
-	return p.parse(sql);
+	var result = p.parse(sql);
+	if (result.status === false) result.error = Parsimmon.formatError(sql, result);
+	return result;
 };
