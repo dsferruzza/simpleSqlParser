@@ -323,6 +323,29 @@ var Select = [
 		},
 	},
 	{
+		c: 'Where followed by something else',
+		q: 'SELECT * FROM table WHERE cond ORDER BY col LIMIT 1',
+		a: {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
+			],
+			from: [
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
+			],
+			join: [],
+			where: {
+				expression: "cond",
+				position: { start: 26, end: 30 },
+			},
+			group: [],
+			order: [
+				{ expression: "col", table: null, column: "col", order: "ASC", position: { start: 40, end: 43 } },
+			],
+			limit: { from: null, nb: 1 },
+		},
+	},
+	{
 		c: 'Group by',
 		q: 'SELECT * FROM table GROUP BY col1, MONTH(col2), table.col3',
 		a: {

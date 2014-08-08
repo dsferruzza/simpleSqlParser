@@ -139,7 +139,7 @@ var operator = alt(
 	string('%'),
 	regex(/MOD/i),
 	regex(/NOT/i),
-	regex(/OR/i),
+	regex(/OR\s/i),	// A space is forced after so this doesn't get mixed up with ORDER BY
 	regex(/AND/i),
 	regex(/IN/i)
 );
@@ -454,9 +454,9 @@ var selectParser = seq(
 	regex(/FROM/i).skip(optWhitespace).then(opt(tableList)),
 	opt(joinList),
 	opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null),
-	opt(regex(/GROUP BY/i).skip(optWhitespace).then(opt(groupList))),
-	opt(regex(/ORDER BY/i).skip(optWhitespace).then(opt(orderList))),
-	opt(regex(/LIMIT/i).skip(optWhitespace).then(opt(limitExpression)), null)
+	opt(regex(/\s?GROUP BY/i).skip(optWhitespace).then(opt(groupList))),
+	opt(regex(/\s?ORDER BY/i).skip(optWhitespace).then(opt(orderList))),
+	opt(regex(/\s?LIMIT/i).skip(optWhitespace).then(opt(limitExpression)), null)
 ).map(function(node) {
 	return {
 		type: 'select',
