@@ -1272,6 +1272,7 @@ var insertParser = seq(
 	};
 });
 
+// UPDATE parser
 var updateParser = seq(
 	regex(/UPDATE/i).skip(optWhitespace).then(tableListExpression),
 	optWhitespace,
