@@ -23,9 +23,7 @@ var lazy = Parsimmon.lazy;
 // "empty" parameter will be returned as result if the optionnal parser can't match
 function opt(parser, empty) {
 	if (typeof empty == 'undefined') empty = [];
-	return parser.or(string('').map(function(node) {
-		return empty;
-	}));
+	return parser.or(Parsimmon.succeed(empty));
 }
 
 // Join results of a parser
