@@ -1,11 +1,11 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.simpleSqlParser=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.simpleSqlParser=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
-module.exports.sql2ast = _dereq_('./src/sql2ast.js');
-module.exports.ast2sql = _dereq_('./src/ast2sql.js');
+module.exports.sql2ast = require('./src/sql2ast.js');
+module.exports.ast2sql = require('./src/ast2sql.js');
 
-},{"./src/ast2sql.js":8,"./src/sql2ast.js":9}],2:[function(_dereq_,module,exports){
-var P = _dereq_('pjs').P;
+},{"./src/ast2sql.js":8,"./src/sql2ast.js":9}],2:[function(require,module,exports){
+var P = require('pjs').P;
 var Parsimmon = {};
 
 Parsimmon.Parser = P(function(_, _super, Parser) {
@@ -402,11 +402,11 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
 });
 module.exports = Parsimmon;
 
-},{"pjs":5}],3:[function(_dereq_,module,exports){
-module.exports = _dereq_('./build/parsimmon.commonjs');
-exports.version = _dereq_('./package.json').version;
+},{"pjs":5}],3:[function(require,module,exports){
+module.exports = require('./build/parsimmon.commonjs');
+exports.version = require('./package.json').version;
 
-},{"./build/parsimmon.commonjs":2,"./package.json":7}],4:[function(_dereq_,module,exports){
+},{"./build/parsimmon.commonjs":2,"./package.json":7}],4:[function(require,module,exports){
 // pass
 var P = (function(prototype, ownProperty, undefined) {
   return function P(_superclass /* = Object */, definition) {
@@ -482,11 +482,11 @@ var P = (function(prototype, ownProperty, undefined) {
 })('prototype', ({}).hasOwnProperty);
 exports.P = P;
 
-},{}],5:[function(_dereq_,module,exports){
-exports.P = _dereq_('./build/p.commonjs').P;
-exports.version = _dereq_('./package.json').version;
+},{}],5:[function(require,module,exports){
+exports.P = require('./build/p.commonjs').P;
+exports.version = require('./package.json').version;
 
-},{"./build/p.commonjs":4,"./package.json":6}],6:[function(_dereq_,module,exports){
+},{"./build/p.commonjs":4,"./package.json":6}],6:[function(require,module,exports){
 module.exports={
   "name": "pjs",
   "version": "5.1.1",
@@ -550,7 +550,7 @@ module.exports={
   "directories": {}
 }
 
-},{}],7:[function(_dereq_,module,exports){
+},{}],7:[function(require,module,exports){
 module.exports={
   "name": "parsimmon",
   "version": "0.5.1",
@@ -620,7 +620,7 @@ module.exports={
   "directories": {}
 }
 
-},{}],8:[function(_dereq_,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 module.exports = function(ast) {
@@ -763,9 +763,9 @@ module.exports = function(ast) {
 	}).join(' ');
 };
 
-},{}],9:[function(_dereq_,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
-var Parsimmon = _dereq_('Parsimmon');
+var Parsimmon = require('Parsimmon');
 
 /********************************************************************************************
 	ALIASES
@@ -1313,6 +1313,5 @@ module.exports = function(sql) {
 	return result;
 };
 
-},{"Parsimmon":3}]},{},[1])
-(1)
+},{"Parsimmon":3}]},{},[1])(1)
 });

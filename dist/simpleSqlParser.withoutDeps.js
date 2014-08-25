@@ -1,10 +1,10 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.simpleSqlParser=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.simpleSqlParser=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
-module.exports.sql2ast = _dereq_('./src/sql2ast.js');
-module.exports.ast2sql = _dereq_('./src/ast2sql.js');
+module.exports.sql2ast = require('./src/sql2ast.js');
+module.exports.ast2sql = require('./src/ast2sql.js');
 
-},{"./src/ast2sql.js":2,"./src/sql2ast.js":3}],2:[function(_dereq_,module,exports){
+},{"./src/ast2sql.js":2,"./src/sql2ast.js":3}],2:[function(require,module,exports){
 "use strict";
 
 module.exports = function(ast) {
@@ -147,7 +147,7 @@ module.exports = function(ast) {
 	}).join(' ');
 };
 
-},{}],3:[function(_dereq_,module,exports){
+},{}],3:[function(require,module,exports){
 (function (global){
 "use strict";
 var Parsimmon = (typeof window !== "undefined" ? window.Parsimmon : typeof global !== "undefined" ? global.Parsimmon : null);
@@ -698,7 +698,6 @@ module.exports = function(sql) {
 	return result;
 };
 
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}]},{},[1])
-(1)
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}]},{},[1])(1)
 });

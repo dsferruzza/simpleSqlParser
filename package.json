@@ -33,8 +33,8 @@
     "parsimmon": "0.5.1"
   },
   "devDependencies": {
-    "browserify": "4.2.3",
-    "browserify-shim": "3.6.0",
+    "browserify": "5.10.1",
+    "browserify-shim": "3.7.0",
     "chai": "1.9.1",
     "gulp": "3.8.7",
     "gulp-jshint": "1.8.4",

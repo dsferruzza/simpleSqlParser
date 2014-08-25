@@ -24,19 +24,19 @@ gulp.task('mocha', function() {
 gulp.task('test', ['lint', 'mocha']);
 
 gulp.task('browserifyWithDeps', function() {
-	var bundler = browserify('./index.js');
+	var bundler = browserify({ standalone: 'simpleSqlParser', entries: './index.js' });
 	return bundler
-		.bundle({ standalone: 'simpleSqlParser' })
+		.bundle()
 		.pipe(source('simpleSqlParser.js'))
 		.pipe(gulp.dest('./dist'));
 });
 
 gulp.task('browserifyWithoutDeps', function() {
-	var bundler = browserify('./index.js');
+	var bundler = browserify({ standalone: 'simpleSqlParser', entries: './index.js' });
 	bundler.exclude('Parsimmon');
 	bundler.transform('browserify-shim');
 	return bundler
-		.bundle({ standalone: 'simpleSqlParser' })
+		.bundle()
 		.pipe(source('simpleSqlParser.withoutDeps.js'))
 		.pipe(gulp.dest('./dist'));
 });
