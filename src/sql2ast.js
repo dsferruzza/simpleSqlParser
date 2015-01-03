@@ -1,5 +1,5 @@
 "use strict";
-var Parsimmon = require('Parsimmon');
+var Parsimmon = require('parsimmon');
 
 /********************************************************************************************
 	ALIASES
