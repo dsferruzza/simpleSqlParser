@@ -765,7 +765,7 @@ module.exports = function(ast) {
 
 },{}],9:[function(require,module,exports){
 "use strict";
-var Parsimmon = require('Parsimmon');
+var Parsimmon = require('parsimmon');
 
 /********************************************************************************************
 	ALIASES
@@ -1313,5 +1313,5 @@ module.exports = function(sql) {
 	return result;
 };
 
-},{"Parsimmon":3}]},{},[1])(1)
+},{"parsimmon":3}]},{},[1])(1)
 });

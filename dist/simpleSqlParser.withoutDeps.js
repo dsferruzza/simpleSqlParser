@@ -150,7 +150,7 @@ module.exports = function(ast) {
 },{}],3:[function(require,module,exports){
 (function (global){
 "use strict";
-var Parsimmon = (typeof window !== "undefined" ? window.Parsimmon : typeof global !== "undefined" ? global.Parsimmon : null);
+var Parsimmon = (typeof window !== "undefined" ? window.parsimmon : typeof global !== "undefined" ? global.parsimmon : null);
 
 /********************************************************************************************
 	ALIASES
