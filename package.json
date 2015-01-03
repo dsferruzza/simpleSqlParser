@@ -44,6 +44,6 @@
     "vinyl-source-stream": "1.0.0"
   },
   "browserify-shim": {
-    "Parsimmon": "global:Parsimmon"
+    "parsimmon": "global:parsimmon"
   }
 }
