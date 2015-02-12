@@ -1,21 +1,28 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.simpleSqlParser=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.simpleSqlParser = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
 module.exports.sql2ast = require('./src/sql2ast.js');
 module.exports.ast2sql = require('./src/ast2sql.js');
 
-},{"./src/ast2sql.js":8,"./src/sql2ast.js":9}],2:[function(require,module,exports){
-var P = require('pjs').P;
+},{"./src/ast2sql.js":5,"./src/sql2ast.js":6}],2:[function(require,module,exports){
+// pass
 var Parsimmon = {};
 
-Parsimmon.Parser = P(function(_, _super, Parser) {
+Parsimmon.Parser = (function() {
   "use strict";
+
   // The Parser object is a wrapper for a parser function.
   // Externally, you use one to parse a string by calling
   //   var result = SomeParser.parse('Me Me Me! Parse Me!');
   // You should never call the constructor, rather you should
   // construct your Parser from the base parsers and the
   // parser combinator methods.
+  function Parser(action) {
+    if (!(this instanceof Parser)) return new Parser(action);
+    this._ = action;
+  };
+
+  var _ = Parser.prototype;
 
   function makeSuccess(index, value) {
     return {
@@ -70,8 +77,6 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
     );
   };
 
-  _.init = function(body) { this._ = body; };
-
   _.parse = function(stream) {
     var result = this.skip(eof)._(stream, 0);
 
@@ -105,6 +110,15 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
     });
   };
 
+
+  var seqMap = Parsimmon.seqMap = function() {
+    var args = [].slice.call(arguments);
+    var mapper = args.pop();
+    return seq.apply(null, args).map(function(results) {
+      return mapper.apply(null, results);
+    });
+  };
+
   /**
    * Allows to add custom primitive parsers
    */
@@ -134,7 +148,7 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
 
   _.then = function(next) {
     if (typeof next === 'function') {
-      throw new Error('chaining features of .then are no longer supported');
+      throw new Error('chaining features of .then are no longer supported, use .chain instead');
     }
 
     assertParser(next);
@@ -214,9 +228,7 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
           i = result.index;
           accum.push(result.value);
         }
-        else {
-          return prevResult;
-        }
+        else return prevResult;
       }
 
       for (; times < max; times += 1) {
@@ -226,9 +238,7 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
           i = result.index;
           accum.push(result.value);
         }
-        else {
-          break;
-        }
+        else break;
       }
 
       return furthestBacktrackFor(makeSuccess(i, accum), prevResult);
@@ -236,12 +246,12 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
   };
 
   // -*- higher-level combinators -*- //
-  _.result = function(res) { return this.then(succeed(res)); };
+  _.result = function(res) { return this.map(function(_) { return res; }); };
   _.atMost = function(n) { return this.times(0, n); };
   _.atLeast = function(n) {
     var self = this;
-    return seq(this.times(n), this.many()).map(function(results) {
-      return results[0].concat(results[1]);
+    return seqMap(this.times(n), this.many(), function(init, rest) {
+      return init.concat(rest);
     });
   };
 
@@ -259,8 +269,8 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
   };
 
   _.mark = function() {
-    return seq(index, this, index).map(function(results) {
-      return { start: results[0], value: results[1], end: results[2] };
+    return seqMap(index, this, index, function(start, value, end) {
+      return { start: start, value: value, end: end };
     });
   };
 
@@ -285,19 +295,20 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
     });
   };
 
-  var regex = Parsimmon.regex = function(re) {
+  var regex = Parsimmon.regex = function(re, group) {
     var anchored = RegExp('^(?:'+re.source+')', (''+re).slice((''+re).lastIndexOf('/')+1));
+    if (group == null) group = 0;
 
     return Parser(function(stream, i) {
       var match = anchored.exec(stream.slice(i));
 
       if (match) {
-        var result = match[0];
-        return makeSuccess(i+result.length, result);
+        var fullMatch = match[0];
+        var groupMatch = match[group];
+        if (groupMatch != null) return makeSuccess(i+fullMatch.length, groupMatch);
       }
-      else {
-        return makeFailure(i, re);
-      }
+
+      return makeFailure(i, re);
     });
   };
 
@@ -346,6 +357,14 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
     });
   };
 
+  var oneOf = Parsimmon.oneOf = function(str) {
+    return test(function(ch) { return str.indexOf(ch) >= 0; });
+  };
+
+  var noneOf = Parsimmon.noneOf = function(str) {
+    return test(function(ch) { return str.indexOf(ch) < 0; });
+  };
+
   var takeWhile = Parsimmon.takeWhile = function(predicate) {
     return Parser(function(stream, i) {
       var j = i;
@@ -384,9 +403,7 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
   _.of = Parser.of = Parsimmon.of = succeed
 
   _.ap = function(other) {
-    return seq(this, other).map(function(results) {
-      return results[0](results[1]);
-    });
+    return seqMap(this, other, function(f, x) { return f(x); })
   };
 
   //- Monad
@@ -399,161 +416,19 @@ Parsimmon.Parser = P(function(_, _super, Parser) {
       return furthestBacktrackFor(nextParser._(stream, result.index), result);
     });
   };
-});
+
+  return Parser;
+})();
 module.exports = Parsimmon;
 
-},{"pjs":5}],3:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 module.exports = require('./build/parsimmon.commonjs');
 exports.version = require('./package.json').version;
 
-},{"./build/parsimmon.commonjs":2,"./package.json":7}],4:[function(require,module,exports){
-// pass
-var P = (function(prototype, ownProperty, undefined) {
-  return function P(_superclass /* = Object */, definition) {
-    // handle the case where no superclass is given
-    if (definition === undefined) {
-      definition = _superclass;
-      _superclass = Object;
-    }
-
-    // C is the class to be returned.
-    //
-    // When called, creates and initializes an instance of C, unless
-    // `this` is already an instance of C, then just initializes `this`;
-    // either way, returns the instance of C that was initialized.
-    //
-    //  TODO: the Chrome inspector shows all created objects as `C`
-    //        rather than `Object`.  Setting the .name property seems to
-    //        have no effect.  Is there a way to override this behavior?
-    function C() {
-      var self = this instanceof C ? this : new Bare;
-      self.init.apply(self, arguments);
-      return self;
-    }
-
-    // C.Bare is a class with a noop constructor.  Its prototype will be
-    // the same as C, so that instances of C.Bare are instances of C.
-    // `new MyClass.Bare` then creates new instances of C without
-    // calling .init().
-    function Bare() {}
-    C.Bare = Bare;
-
-    // Extend the prototype chain: first use Bare to create an
-    // uninitialized instance of the superclass, then set up Bare
-    // to create instances of this class.
-    var _super = Bare[prototype] = _superclass[prototype];
-    var proto = Bare[prototype] = C[prototype] = C.p = new Bare;
-
-    // pre-declaring the iteration variable for the loop below to save
-    // a `var` keyword after minification
-    var key;
-
-    // set the constructor property on the prototype, for convenience
-    proto.constructor = C;
-
-    C.extend = function(def) { return P(C, def); }
-
-    return (C.open = function(def) {
-      if (typeof def === 'function') {
-        // call the defining function with all the arguments you need
-        // extensions captures the return value.
-        def = def.call(C, proto, _super, C, _superclass);
-      }
-
-      // ...and extend it
-      if (typeof def === 'object') {
-        for (key in def) {
-          if (ownProperty.call(def, key)) {
-            proto[key] = def[key];
-          }
-        }
-      }
-
-      // if no init, assume we're inheriting from a non-Pjs class, so
-      // default to using the superclass constructor.
-      if (!('init' in proto)) proto.init = _superclass;
-
-      return C;
-    })(definition);
-  }
-
-  // as a minifier optimization, we've closured in a few helper functions
-  // and the string 'prototype' (C[p] is much shorter than C.prototype)
-})('prototype', ({}).hasOwnProperty);
-exports.P = P;
-
-},{}],5:[function(require,module,exports){
-exports.P = require('./build/p.commonjs').P;
-exports.version = require('./package.json').version;
-
-},{"./build/p.commonjs":4,"./package.json":6}],6:[function(require,module,exports){
-module.exports={
-  "name": "pjs",
-  "version": "5.1.1",
-  "description": "A lightweight class system.  It's just prototypes!",
-  "keywords": [
-    "class",
-    "pjs",
-    "P",
-    "inheritance",
-    "super"
-  ],
-  "author": {
-    "name": "Jeanine Adkisson",
-    "email": "jneen at jneen dot net"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/jneen/pjs"
-  },
-  "files": [
-    "index.js",
-    "src",
-    "test",
-    "Makefile",
-    "package.json",
-    "README.md",
-    "CHANGELOG.md",
-    "build/p.commonjs.js"
-  ],
-  "main": "index.js",
-  "devDependencies": {
-    "mocha": "*",
-    "uglify-js": "*"
-  },
-  "scripts": {
-    "test": "make test"
-  },
-  "bugs": {
-    "url": "https://github.com/jneen/pjs/issues"
-  },
-  "homepage": "https://github.com/jneen/pjs",
-  "_id": "pjs@5.1.1",
-  "_shasum": "9dfc4673bb01deffd6915fb1dec75827aba42abf",
-  "_resolved": "https://registry.npmjs.org/pjs/-/pjs-5.1.1.tgz",
-  "_from": "pjs@5.x",
-  "_npmVersion": "1.4.14",
-  "_npmUser": {
-    "name": "jayferd",
-    "email": "jjmadkisson@gmail.com"
-  },
-  "maintainers": [
-    {
-      "name": "jayferd",
-      "email": "jjmadkisson@gmail.com"
-    }
-  ],
-  "dist": {
-    "shasum": "9dfc4673bb01deffd6915fb1dec75827aba42abf",
-    "tarball": "http://registry.npmjs.org/pjs/-/pjs-5.1.1.tgz"
-  },
-  "directories": {}
-}
-
-},{}],7:[function(require,module,exports){
+},{"./build/parsimmon.commonjs":2,"./package.json":4}],4:[function(require,module,exports){
 module.exports={
   "name": "parsimmon",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "A monadic LL(infinity) parser combinator library",
   "keywords": [
     "parsing",
@@ -594,10 +469,10 @@ module.exports={
     "url": "https://github.com/jneen/parsimmon/issues"
   },
   "homepage": "https://github.com/jneen/parsimmon",
-  "_id": "parsimmon@0.5.1",
-  "_shasum": "247c970d7d5e99a51115b16a106de96f0eb9303b",
-  "_resolved": "https://registry.npmjs.org/parsimmon/-/parsimmon-0.5.1.tgz",
-  "_from": "parsimmon@0.5.1",
+  "_id": "parsimmon@0.6.0",
+  "_shasum": "6d1615e8cd3913a2a5438720afb7f073aec3e776",
+  "_resolved": "https://registry.npmjs.org/parsimmon/-/parsimmon-0.6.0.tgz",
+  "_from": "parsimmon@0.6.0",
   "_npmVersion": "1.4.14",
   "_npmUser": {
     "name": "jayferd",
@@ -614,13 +489,13 @@ module.exports={
     }
   ],
   "dist": {
-    "shasum": "247c970d7d5e99a51115b16a106de96f0eb9303b",
-    "tarball": "http://registry.npmjs.org/parsimmon/-/parsimmon-0.5.1.tgz"
+    "shasum": "6d1615e8cd3913a2a5438720afb7f073aec3e776",
+    "tarball": "http://registry.npmjs.org/parsimmon/-/parsimmon-0.6.0.tgz"
   },
   "directories": {}
 }
 
-},{}],8:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 module.exports = function(ast) {
@@ -763,7 +638,7 @@ module.exports = function(ast) {
 	}).join(' ');
 };
 
-},{}],9:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 var Parsimmon = require('parsimmon');
 
