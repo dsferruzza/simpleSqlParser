@@ -1,7 +1,7 @@
 {
   "name": "simple-sql-parser",
   "description": "Javascript library to parse CRUD (Create Retrieve Update Delete) SQL queries.",
-  "version": "2.0.0-alpha",
+  "version": "2.0.0-alpha.1",
   "main": "index.js",
   "keywords": [
     "sql",
