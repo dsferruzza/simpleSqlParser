@@ -30,18 +30,18 @@
   "license": "MIT",
   "homepage": "https://github.com/dsferruzza/simpleSqlParser",
   "dependencies": {
-    "parsimmon": "0.6.0"
+    "parsimmon": "0.7.0"
   },
   "devDependencies": {
-    "browserify": "9.0.3",
-    "browserify-shim": "3.8.3",
-    "chai": "2.1.0",
+    "browserify": "10.2.3",
+    "browserify-shim": "3.8.7",
+    "chai": "2.3.0",
     "gulp": "3.8.11",
-    "gulp-jshint": "1.9.2",
-    "gulp-mocha": "2.0.0",
-    "gulp-rename": "1.2.0",
-    "gulp-uglify": "1.1.0",
-    "vinyl-source-stream": "1.0.0"
+    "gulp-jshint": "1.11.0",
+    "gulp-mocha": "2.1.0",
+    "gulp-rename": "1.2.2",
+    "gulp-uglify": "1.2.0",
+    "vinyl-source-stream": "1.1.0"
   },
   "browserify-shim": {
     "parsimmon": "global:parsimmon"
