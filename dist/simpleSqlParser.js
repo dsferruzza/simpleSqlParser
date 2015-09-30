@@ -443,57 +443,77 @@ exports.version = require('./package.json').version;
 
 },{"./build/parsimmon.commonjs":2,"./package.json":4}],4:[function(require,module,exports){
 module.exports={
-  "name": "parsimmon",
-  "version": "0.7.0",
-  "description": "A monadic LL(infinity) parser combinator library",
-  "keywords": [
-    "parsing",
-    "parse",
-    "parser combinators"
+  "_args": [
+    [
+      "parsimmon@0.7.0",
+      "D:\\Users\\David\\Documents\\EscaleDigitale\\simpleSqlParser"
+    ]
   ],
+  "_from": "parsimmon@0.7.0",
+  "_id": "parsimmon@0.7.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/parsimmon",
+  "_npmUser": {
+    "email": "jjmadkisson@gmail.com",
+    "name": "jayferd"
+  },
+  "_npmVersion": "1.4.14",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "parsimmon",
+    "raw": "parsimmon@0.7.0",
+    "rawSpec": "0.7.0",
+    "scope": null,
+    "spec": "0.7.0",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/parsimmon/-/parsimmon-0.7.0.tgz",
+  "_shasum": "652fc7cbade73c5edb42a266ec556c906d82c9fb",
+  "_shrinkwrap": null,
+  "_spec": "parsimmon@0.7.0",
+  "_where": "D:\\Users\\David\\Documents\\EscaleDigitale\\simpleSqlParser",
   "author": {
-    "name": "Jeanine Adkisson",
-    "email": "jneen at jneen dot net"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/jneen/parsimmon"
-  },
-  "files": [
-    "index.js",
-    "src",
-    "test",
-    "Makefile",
-    "package.json",
-    "build/parsimmon.commonjs.js",
-    "build/parsimmon.browser.js",
-    "build/parsimmon.browser.min.js"
-  ],
-  "main": "index.js",
-  "devDependencies": {
-    "mocha": "1.8.x",
-    "chai": "1.5.x",
-    "uglify-js": "2.x"
-  },
-  "dependencies": {
-    "pjs": "5.x"
-  },
-  "scripts": {
-    "test": "make test"
+    "email": "jneen at jneen dot net",
+    "name": "Jeanine Adkisson"
   },
   "bugs": {
     "url": "https://github.com/jneen/parsimmon/issues"
   },
-  "homepage": "https://github.com/jneen/parsimmon",
-  "_id": "parsimmon@0.7.0",
-  "_shasum": "652fc7cbade73c5edb42a266ec556c906d82c9fb",
-  "_resolved": "https://registry.npmjs.org/parsimmon/-/parsimmon-0.7.0.tgz",
-  "_from": "parsimmon@0.7.0",
-  "_npmVersion": "1.4.14",
-  "_npmUser": {
-    "name": "jayferd",
-    "email": "jjmadkisson@gmail.com"
+  "dependencies": {
+    "pjs": "5.x"
   },
+  "description": "A monadic LL(infinity) parser combinator library",
+  "devDependencies": {
+    "chai": "1.5.x",
+    "mocha": "1.8.x",
+    "uglify-js": "2.x"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "652fc7cbade73c5edb42a266ec556c906d82c9fb",
+    "tarball": "http://registry.npmjs.org/parsimmon/-/parsimmon-0.7.0.tgz"
+  },
+  "files": [
+    "Makefile",
+    "build/parsimmon.browser.js",
+    "build/parsimmon.browser.min.js",
+    "build/parsimmon.commonjs.js",
+    "index.js",
+    "package.json",
+    "src",
+    "test"
+  ],
+  "homepage": "https://github.com/jneen/parsimmon",
+  "keywords": [
+    "parse",
+    "parser combinators",
+    "parsing"
+  ],
+  "main": "index.js",
   "maintainers": [
     {
       "name": "jayferd",
@@ -504,11 +524,17 @@ module.exports={
       "email": "jneen@jneen.net"
     }
   ],
-  "dist": {
-    "shasum": "652fc7cbade73c5edb42a266ec556c906d82c9fb",
-    "tarball": "http://registry.npmjs.org/parsimmon/-/parsimmon-0.7.0.tgz"
+  "name": "parsimmon",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jneen/parsimmon.git"
   },
-  "directories": {}
+  "scripts": {
+    "test": "make test"
+  },
+  "version": "0.7.0"
 }
 
 },{}],5:[function(require,module,exports){
