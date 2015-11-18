@@ -22,7 +22,7 @@ var lazy = Parsimmon.lazy;
 // Make a parser optionnal
 // "empty" parameter will be returned as result if the optionnal parser can't match
 function opt(parser, empty) {
-	if (typeof empty == 'undefined') empty = [];
+	if (typeof empty == 'undefined') return parser.or(Parsimmon.succeed([]));
 	return parser.or(Parsimmon.succeed(empty));
 }
 
@@ -46,8 +46,8 @@ function optionnalList(parser) {
 }
 
 // Remove first and last character of a string
-function removeQuotes(string) {
-	return string.replace(/^([`'"])(.*)\1$/, '$2');
+function removeQuotes(str) {
+	return str.replace(/^([`'"])(.*)\1$/, '$2');
 }
 
 // Add the starting and ending char positions of matches of a given parser
@@ -97,7 +97,9 @@ var func = seq(
 		regex(/[a-zA-Z0-9_]+\(/),
 		string('(')
 		),
+	/*eslint-disable no-use-before-define*/
 	opt(lazy(function() { return argList; })).map(mkString),
+	/*eslint-enable no-use-before-define*/
 	string(')')
 ).map(mkString);
 
@@ -361,14 +363,18 @@ var limitExpression = seq(
 		number
 	), null)
 ).map(function(node) {
-	if (node[1] === null) return {
-		from: null,
-		nb: parseInt(node[0], 10),
-	};
-	else return {
-		from: parseInt(node[0], 10),
-		nb: parseInt(node[1][3], 10),
-	};
+	if (node[1] === null) {
+		return {
+			from: null,
+			nb: parseInt(node[0], 10),
+		};
+	}
+	else {
+		return {
+			from: parseInt(node[0], 10),
+			nb: parseInt(node[1][3], 10),
+		};
+	}
 });
 
 // Expression designating a column before VALUES in INSERT query

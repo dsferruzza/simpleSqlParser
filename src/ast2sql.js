@@ -1,8 +1,9 @@
 "use strict";
 
-module.exports = function(ast) {
-	if (typeof ast === 'object' && ast.status === true) ast = ast.value;
-	else return false;
+module.exports = function(astObject) {
+	/*if (typeof ast === 'object' && ast.status === true) ast = ast.value;
+	else return false;*/
+	if (typeof astObject !== 'object' || astObject.status !== true) return false;
 
 	function select(ast) {
 		var result = 'SELECT ';
@@ -109,6 +110,7 @@ module.exports = function(ast) {
 		return result;
 	}
 
+	var ast = astObject.value;
 	var parts = [];
 	if (ast.type === 'select') {
 		parts.push(select(ast));
