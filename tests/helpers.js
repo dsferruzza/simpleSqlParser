@@ -6,7 +6,7 @@ var m = require('../index');
 function ok(ast) {
 	return {
 		status: true,
-		value: ast
+		value: ast,
 	};
 }
 

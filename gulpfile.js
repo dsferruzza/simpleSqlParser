@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var jshint = require('gulp-jshint');
+var eslint = require('gulp-eslint');
 var mocha = require('gulp-mocha');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
@@ -8,9 +8,9 @@ var browserify = require('browserify');
 
 gulp.task('lint', function() {
 	return gulp.src(['*.js', 'src/*.js', 'tests/*.js'])
-		.pipe(jshint())
-		.pipe(jshint.reporter('default'))
-		.pipe(jshint.reporter('fail'));
+		.pipe(eslint())
+		.pipe(eslint.format())
+		.pipe(eslint.failAfterError());
 });
 
 gulp.task('mocha', function() {

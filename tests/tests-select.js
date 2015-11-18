@@ -1,7 +1,6 @@
 /*global test:true,suite:true*/
 "use strict";
 
-var expect = require('chai').expect;
 var h = require('./helpers.js');
 
 var Select = [

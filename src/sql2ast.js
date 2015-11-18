@@ -183,42 +183,42 @@ var expression = seq(
 			return {
 				expression: node.join(''),
 				table: removeQuotes(node[0]),
-				column: removeQuotes(node[2])
+				column: removeQuotes(node[2]),
 			};
 		}),
 		func.map(function(node) {
 			return {
 				expression: node,
 				table: null,
-				column: null
+				column: null,
 			};
 		}),
 		colName.map(function(node) {
 			return {
 				expression: node,
 				table: null,
-				column: removeQuotes(node)
+				column: removeQuotes(node),
 			};
 		}),
 		str.map(function(node) {
 			return {
 				expression: node,
 				table: null,
-				column: null
+				column: null,
 			};
 		}),
 		number.map(function(node) {
 			return {
 				expression: node,
 				table: null,
-				column: null
+				column: null,
 			};
 		}),
 		list.map(function(node) {
 			return {
 				expression: node,
 				table: null,
-				column: null
+				column: null,
 			};
 		})
 	),
@@ -238,7 +238,7 @@ var expression = seq(
 		return {
 			expression: node.join(''),
 			table: null,
-			column: null
+			column: null,
 		};
 	}
 	else return node[0];
@@ -376,13 +376,13 @@ var insertColListExpression = alt(
 	tableAndColumn.map(function(node) {
 		return {
 			expression: node.join(''),
-			column: removeQuotes(node[2])
+			column: removeQuotes(node[2]),
 		};
 	}),
 	colName.map(function(node) {
 		return {
 			expression: node,
-			column: removeQuotes(node)
+			column: removeQuotes(node),
 		};
 	})
 );
