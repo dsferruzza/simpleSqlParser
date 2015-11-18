@@ -1,5 +1,5 @@
 /*global test:true,suite:true*/
-"use strict";
+'use strict';
 
 var h = require('./helpers.js');
 
@@ -15,9 +15,9 @@ var Insert = [
 				alias: null,
 			},
 			values: [
-				{ target: null, value: '1'},
-				{ target: null, value: '2'},
-				{ target: null, value: '3'},
+				{ target: null, value: '1' },
+				{ target: null, value: '2' },
+				{ target: null, value: '3' },
 			],
 		},
 	},
@@ -32,9 +32,9 @@ var Insert = [
 				alias: null,
 			},
 			values: [
-				{ target: null, value: '1 + 9'},
-				{ target: null, value: 'FUNC(2, col)'},
-				{ target: null, value: '"string"'},
+				{ target: null, value: '1 + 9' },
+				{ target: null, value: 'FUNC(2, col)' },
+				{ target: null, value: '"string"' },
 			],
 		},
 	},
@@ -49,9 +49,9 @@ var Insert = [
 				alias: null,
 			},
 			values: [
-				{ target: { expression: 'col1', column: 'col1' }, value: '1'},
-				{ target: { expression: '`col2`', column: 'col2' }, value: '2'},
-				{ target: { expression: 'col3', column: 'col3' }, value: '3'},
+				{ target: { expression: 'col1', column: 'col1' }, value: '1' },
+				{ target: { expression: '`col2`', column: 'col2' }, value: '2' },
+				{ target: { expression: 'col3', column: 'col3' }, value: '3' },
 			],
 		},
 	},

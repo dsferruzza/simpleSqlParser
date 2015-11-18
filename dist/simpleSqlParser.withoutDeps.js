@@ -1,11 +1,11 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.simpleSqlParser = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";
+'use strict';
 
 module.exports.sql2ast = require('./src/sql2ast.js');
 module.exports.ast2sql = require('./src/ast2sql.js');
 
 },{"./src/ast2sql.js":2,"./src/sql2ast.js":3}],2:[function(require,module,exports){
-"use strict";
+'use strict';
 
 module.exports = function(astObject) {
 	/*if (typeof ast === 'object' && ast.status === true) ast = ast.value;
@@ -151,7 +151,7 @@ module.exports = function(astObject) {
 
 },{}],3:[function(require,module,exports){
 (function (global){
-"use strict";
+'use strict';
 var Parsimmon = (typeof window !== "undefined" ? window['parsimmon'] : typeof global !== "undefined" ? global['parsimmon'] : null);
 
 /********************************************************************************************
@@ -251,7 +251,9 @@ var func = seq(
 		string('(')
 		),
 	/*eslint-disable no-use-before-define*/
-	opt(lazy(function() { return argList; })).map(mkString),
+	opt(lazy(function() {
+		return argList;
+	})).map(mkString),
 	/*eslint-enable no-use-before-define*/
 	string(')')
 ).map(mkString);
@@ -382,7 +384,9 @@ var expression = seq(
 		operator,
 		opt(seq(
 			optWhitespace,
-			lazy(function() { return expression; }).map(function(node) {
+			lazy(function() {
+				return expression;
+			}).map(function(node) {
 				return node.expression;
 			})
 		).map(mkString), null)
@@ -418,7 +422,7 @@ var colListExpression = seq(
 ).map(function(node) {
 	var n = node[0];
 	n.alias = (node[1] !== null) ? node[1].alias : null;
-	n.expression = n.expression + ((node[1] !== null) ? node[1].expression : '');
+	n.expression += ((node[1] !== null) ? node[1].expression : '');
 	return n;
 });
 
@@ -441,7 +445,7 @@ var tableListExpression = seq(
 		).map(function(node) {
 			return {
 				alias: removeQuotes(node[2]),
-				expression : node.join(''),
+				expression: node.join(''),
 			};
 		}),
 		null

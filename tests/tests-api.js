@@ -1,5 +1,5 @@
 /*global test:true,suite:true*/
-"use strict";
+'use strict';
 
 var expect = require('chai').expect;
 var m = require('../index');

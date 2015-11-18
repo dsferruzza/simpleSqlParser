@@ -1,5 +1,5 @@
 /*global test:true,suite:true*/
-"use strict";
+'use strict';
 
 var h = require('./helpers.js');
 
@@ -16,7 +16,7 @@ var Update = [
 			},
 			where: null,
 			values: [
-				{ target: { expression: 'col', column: 'col' }, value: '"value"'},
+				{ target: { expression: 'col', column: 'col' }, value: '"value"' },
 			],
 		},
 	},
@@ -32,9 +32,9 @@ var Update = [
 			},
 			where: null,
 			values: [
-				{ target: { expression: 'col', column: 'col' }, value: '"value"'},
-				{ target: { expression: 'col2', column: 'col2' }, value: 'NULL'},
-				{ target: { expression: 'table.col3', column: 'col3' }, value: 'col'},
+				{ target: { expression: 'col', column: 'col' }, value: '"value"' },
+				{ target: { expression: 'col2', column: 'col2' }, value: 'NULL' },
+				{ target: { expression: 'table.col3', column: 'col3' }, value: 'col' },
 			],
 		},
 	},
@@ -49,11 +49,11 @@ var Update = [
 				alias: null,
 			},
 			where: {
-				expression: "this >= that AND col IS NOT NULL",
+				expression: 'this >= that AND col IS NOT NULL',
 				position: { start: 37, end: 69 },
 			},
 			values: [
-				{ target: { expression: 'col', column: 'col' }, value: '"value"'},
+				{ target: { expression: 'col', column: 'col' }, value: '"value"' },
 			],
 		},
 	},

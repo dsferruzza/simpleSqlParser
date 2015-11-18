@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 module.exports = function(astObject) {
 	/*if (typeof ast === 'object' && ast.status === true) ast = ast.value;

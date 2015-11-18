@@ -1,5 +1,5 @@
 /*global test:true,suite:true*/
-"use strict";
+'use strict';
 
 var h = require('./helpers.js');
 
@@ -250,7 +250,7 @@ var Select = [
 			],
 			join: [],
 			where: {
-				expression: "this >= that AND col IS NOT NULL",
+				expression: 'this >= that AND col IS NOT NULL',
 				position: { start: 26, end: 58 },
 			},
 			group: [],
@@ -271,7 +271,7 @@ var Select = [
 			],
 			join: [],
 			where: {
-				expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",
+				expression: '(FUNC(this) = "string") AND (1+5 OR col1)',
 				position: { start: 26, end: 67 },
 			},
 			group: [],
@@ -292,7 +292,7 @@ var Select = [
 			],
 			join: [],
 			where: {
-				expression: "column IN (\"val1\", \"val2\")",
+				expression: 'column IN ("val1", "val2")',
 				position: { start: 26, end: 52 },
 			},
 			group: [],
@@ -313,7 +313,7 @@ var Select = [
 			],
 			join: [],
 			where: {
-				expression: "column IN ( \"val1\", \"val2\" )",
+				expression: 'column IN ( "val1", "val2" )',
 				position: { start: 26, end: 54 },
 			},
 			group: [],
@@ -334,12 +334,12 @@ var Select = [
 			],
 			join: [],
 			where: {
-				expression: "cond",
+				expression: 'cond',
 				position: { start: 26, end: 30 },
 			},
 			group: [],
 			order: [
-				{ expression: "col", table: null, column: "col", order: "ASC", position: { start: 40, end: 43 } },
+				{ expression: 'col', table: null, column: 'col', order: 'ASC', position: { start: 40, end: 43 } },
 			],
 			limit: { from: null, nb: 1 },
 		},
@@ -381,9 +381,9 @@ var Select = [
 			where: null,
 			group: [],
 			order: [
-				{ expression: "table.col1", table: "table", column: "col1", order: "ASC", position: { start: 29, end: 39 } },
-				{ expression: "col2 DESC", table: null, column: "col2", order: "DESC", position: { start: 41, end: 50 } },
-				{ expression: "FUNC(col3 + 7) ASC", table: null, column: null, order: "ASC", position: { start: 52, end: 70 } },
+				{ expression: 'table.col1', table: 'table', column: 'col1', order: 'ASC', position: { start: 29, end: 39 } },
+				{ expression: 'col2 DESC', table: null, column: 'col2', order: 'DESC', position: { start: 41, end: 50 } },
+				{ expression: 'FUNC(col3 + 7) ASC', table: null, column: null, order: 'ASC', position: { start: 52, end: 70 } },
 			],
 			limit: null,
 		},

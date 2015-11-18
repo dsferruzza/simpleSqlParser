@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 var Parsimmon = require('parsimmon');
 
 /********************************************************************************************
@@ -98,7 +98,9 @@ var func = seq(
 		string('(')
 		),
 	/*eslint-disable no-use-before-define*/
-	opt(lazy(function() { return argList; })).map(mkString),
+	opt(lazy(function() {
+		return argList;
+	})).map(mkString),
 	/*eslint-enable no-use-before-define*/
 	string(')')
 ).map(mkString);
@@ -229,7 +231,9 @@ var expression = seq(
 		operator,
 		opt(seq(
 			optWhitespace,
-			lazy(function() { return expression; }).map(function(node) {
+			lazy(function() {
+				return expression;
+			}).map(function(node) {
 				return node.expression;
 			})
 		).map(mkString), null)
@@ -265,7 +269,7 @@ var colListExpression = seq(
 ).map(function(node) {
 	var n = node[0];
 	n.alias = (node[1] !== null) ? node[1].alias : null;
-	n.expression = n.expression + ((node[1] !== null) ? node[1].expression : '');
+	n.expression += ((node[1] !== null) ? node[1].expression : '');
 	return n;
 });
 
@@ -288,7 +292,7 @@ var tableListExpression = seq(
 		).map(function(node) {
 			return {
 				alias: removeQuotes(node[2]),
-				expression : node.join(''),
+				expression: node.join(''),
 			};
 		}),
 		null

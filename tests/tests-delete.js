@@ -1,5 +1,5 @@
 /*global test:true,suite:true*/
-"use strict";
+'use strict';
 
 var h = require('./helpers.js');
 
@@ -36,7 +36,7 @@ var Delete = [
 				{ expression: 'table', table: 'table', alias: null, position: { start: 12, end: 17 } },
 			],
 			where: {
-				expression: "this >= that AND col IS NOT NULL",
+				expression: 'this >= that AND col IS NOT NULL',
 				position: { start: 24, end: 56 },
 			},
 		},
@@ -50,7 +50,7 @@ var Delete = [
 				{ expression: 'table', table: 'table', alias: null, position: { start: 12, end: 17 } },
 			],
 			where: {
-				expression: "(FUNC(this) = \"string\") AND (1+5 OR col1)",
+				expression: '(FUNC(this) = "string") AND (1+5 OR col1)',
 				position: { start: 24, end: 65 },
 			},
 		},
