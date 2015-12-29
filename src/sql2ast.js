@@ -151,6 +151,19 @@ var operator = alt(
 // A number
 var number = regex(/[-]?\d+\.?\d*/);
 
+// A duration
+var duration = seq(
+	number,
+	alt(
+		string('u'),
+		string('s'),
+		string('m'),
+		string('h'),
+		string('d'),
+		string('w')
+	)
+);
+
 
 
 /********************************************************************************************
@@ -207,6 +220,13 @@ var expression = seq(
 		str.map(function(node) {
 			return {
 				expression: node,
+				table: null,
+				column: null,
+			};
+		}),
+		duration.map(function(node) {
+			return {
+				expression: mkString(node),
 				table: null,
 				column: null,
 			};

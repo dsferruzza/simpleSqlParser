@@ -363,6 +363,27 @@ var Select = [
 		},
 	},
 	{
+		c: 'Durations',
+		q: 'SELECT * FROM table WHERE this >= 15m',
+		a: {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
+			],
+			from: [
+				{ expression: 'table', table: 'table', alias: null, position: { start: 14, end: 19 } },
+			],
+			join: [],
+			where: {
+				expression: 'this >= 15m',
+				position: { start: 26, end: 37 },
+			},
+			group: [],
+			order: [],
+			limit: null,
+		},
+	},
+	{
 		c: 'Group by',
 		q: 'SELECT * FROM table GROUP BY col1, MONTH(col2), table.col3',
 		a: {
