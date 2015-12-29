@@ -23,6 +23,24 @@ var Select = [
 		},
 	},
 	{
+		c: 'Quoted table name',
+		q: 'SELECT * FROM "quoted.table"',
+		a: {
+			type: 'select',
+			select: [
+				{ expression: '*', column: '*', table: null, alias: null, position: { start: 7, end: 8 } },
+			],
+			from: [
+				{ expression: '"quoted.table"', table: 'quoted.table', alias: null, position: { start: 14, end: 28 } },
+			],
+			join: [],
+			where: null,
+			group: [],
+			order: [],
+			limit: null,
+		},
+	},
+	{
 		c: 'Column quotes',
 		q: 'SELECT col1, `col2` FROM table',
 		a: {

@@ -967,7 +967,13 @@ var argListExpression = expression.map(function(node) {
 var tableListExpression = seq(
 	alt(
 		tableAndColumn.map(mkString),
-		colName
+		colName,
+		regex(/"([^"\\]*(?:\\.[^"\\]*)*)"/, 1).map(function(node) {
+			return {
+				table: node,
+				expression: '"' + node + '"',
+			};
+		})
 	),
 	opt(	// Alias
 		seq(
@@ -984,9 +990,15 @@ var tableListExpression = seq(
 	)
 ).map(function(node) {
 	var n = {};
-	n.table = node[0];
+	if (typeof node[0] === 'object') {
+		n.table = node[0].table;
+		n.expression = node[0].expression;
+	}
+	else {
+		n.table = node[0];
+		n.expression = node[0] + ((node[1] !== null) ? node[1].expression : '');
+	}
 	n.alias = (node[1] !== null) ? node[1].alias : null;
-	n.expression = node[0] + ((node[1] !== null) ? node[1].expression : '');
 	return n;
 });
 
