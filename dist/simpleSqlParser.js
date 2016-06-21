@@ -445,7 +445,14 @@ exports.version = require('./package.json').version;
 module.exports={
   "_args": [
     [
-      "parsimmon@0.7.0",
+      {
+        "name": "parsimmon",
+        "raw": "parsimmon@0.7.0",
+        "rawSpec": "0.7.0",
+        "scope": null,
+        "spec": "0.7.0",
+        "type": "version"
+      },
       "D:\\Users\\David\\Documents\\EscaleDigitale\\simpleSqlParser"
     ]
   ],
@@ -495,33 +502,33 @@ module.exports={
   "directories": {},
   "dist": {
     "shasum": "652fc7cbade73c5edb42a266ec556c906d82c9fb",
-    "tarball": "http://registry.npmjs.org/parsimmon/-/parsimmon-0.7.0.tgz"
+    "tarball": "https://registry.npmjs.org/parsimmon/-/parsimmon-0.7.0.tgz"
   },
   "files": [
-    "Makefile",
-    "build/parsimmon.browser.js",
-    "build/parsimmon.browser.min.js",
-    "build/parsimmon.commonjs.js",
     "index.js",
-    "package.json",
     "src",
-    "test"
+    "test",
+    "Makefile",
+    "package.json",
+    "build/parsimmon.commonjs.js",
+    "build/parsimmon.browser.js",
+    "build/parsimmon.browser.min.js"
   ],
   "homepage": "https://github.com/jneen/parsimmon",
   "keywords": [
+    "parsing",
     "parse",
-    "parser combinators",
-    "parsing"
+    "parser combinators"
   ],
   "main": "index.js",
   "maintainers": [
     {
-      "name": "jayferd",
-      "email": "jjmadkisson@gmail.com"
+      "email": "jjmadkisson@gmail.com",
+      "name": "jayferd"
     },
     {
-      "name": "jneen",
-      "email": "jneen@jneen.net"
+      "email": "jneen@jneen.net",
+      "name": "jneen"
     }
   ],
   "name": "parsimmon",
