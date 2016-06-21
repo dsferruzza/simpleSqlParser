@@ -461,7 +461,7 @@ var assignList = optionnalList(assignExpression);
 // SELECT parser
 var selectParser = seq(
 	regex(/SELECT/i).skip(optWhitespace).then(opt(colList)),
-	regex(/FROM/i).skip(optWhitespace).then(opt(tableList)),
+	opt(regex(/FROM/i).skip(optWhitespace).then(opt(tableList)), []),
 	opt(joinList),
 	opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null),
 	opt(regex(/\s?GROUP BY/i).skip(optWhitespace).then(opt(groupList))),

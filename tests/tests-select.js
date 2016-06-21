@@ -23,6 +23,22 @@ var Select = [
 		},
 	},
 	{
+		c: 'Simple select with negative number',
+		q: 'SELECT -5',
+		a: {
+			type: 'select',
+			select: [
+				{ expression: '-5', column: null, table: null, alias: null, position: { start: 7, end: 9 } },
+			],
+			from: [],
+			join: [],
+			where: null,
+			group: [],
+			order: [],
+			limit: null,
+		},
+	},
+	{
 		c: 'Column quotes',
 		q: 'SELECT col1, `col2` FROM table',
 		a: {

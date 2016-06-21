@@ -14,10 +14,13 @@ module.exports = function(astObject) {
 	}
 
 	function from(ast) {
-		var result = 'FROM ';
-		result += ast.from.map(function(item) {
-			return item.expression;
-		}).join(', ');
+		var result = '';
+		if (ast.from.length > 0) {
+			result += 'FROM ';
+			result += ast.from.map(function(item) {
+				return item.expression;
+			}).join(', ');
+		}
 		return result;
 	}
 

@@ -561,10 +561,13 @@ module.exports = function(astObject) {
 	}
 
 	function from(ast) {
-		var result = 'FROM ';
-		result += ast.from.map(function(item) {
-			return item.expression;
-		}).join(', ');
+		var result = '';
+		if (ast.from.length > 0) {
+			result += 'FROM ';
+			result += ast.from.map(function(item) {
+				return item.expression;
+			}).join(', ');
+		}
 		return result;
 	}
 
@@ -1153,7 +1156,7 @@ var assignList = optionnalList(assignExpression);
 // SELECT parser
 var selectParser = seq(
 	regex(/SELECT/i).skip(optWhitespace).then(opt(colList)),
-	regex(/FROM/i).skip(optWhitespace).then(opt(tableList)),
+	opt(regex(/FROM/i).skip(optWhitespace).then(opt(tableList)), []),
 	opt(joinList),
 	opt(regex(/WHERE/i).skip(optWhitespace).then(opt(whereExpression)), null),
 	opt(regex(/\s?GROUP BY/i).skip(optWhitespace).then(opt(groupList))),
